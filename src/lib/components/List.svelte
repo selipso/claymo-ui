@@ -37,5 +37,7 @@
     padding: 0;
     list-style: none;
   }
-  .padded { padding-block: 8px; }
+  .padded {
+    padding-block: 8px;
+  }
 </style>

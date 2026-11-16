@@ -62,7 +62,10 @@
     box-shadow: var(--clay-well);
     color: var(--clay-ink);
   }
-  .scroll[data-size="small"] { --cell-y: 8px; --cell-x: 12px; }
+  .scroll[data-size="small"] {
+    --cell-y: 8px;
+    --cell-x: 12px;
+  }
 
   table {
     width: 100%;
@@ -70,7 +73,9 @@
     border-spacing: 0;
     font-size: 1rem;
   }
-  .scroll[data-size="small"] table { font-size: 0.875rem; }
+  .scroll[data-size="small"] table {
+    font-size: 0.875rem;
+  }
 
   .scroll :global(th),
   .scroll :global(td) {
@@ -82,7 +87,9 @@
     color: var(--clay-ink-muted);
     font-weight: 600;
   }
-  .scroll :global(tbody th) { color: inherit; }
+  .scroll :global(tbody th) {
+    color: inherit;
+  }
 
   /* row dividers: the same embossed groove as Divider */
   .scroll :global(tr:not(:last-child) > th),
@@ -92,7 +99,9 @@
     background-position: bottom;
     background-size: 100% 2px;
   }
-  .scroll :global(tbody tr:hover > *) { background-color: var(--clay-surface); }
+  .scroll :global(tbody tr:hover > *) {
+    background-color: var(--clay-surface);
+  }
 
   .sticky :global(thead th) {
     position: sticky;

@@ -143,10 +143,15 @@
   }
 
   @keyframes pop {
-    from { opacity: 0; transform: translateY(12px) scale(0.96); }
+    from {
+      opacity: 0;
+      transform: translateY(12px) scale(0.96);
+    }
   }
   @keyframes fade {
-    from { opacity: 0; }
+    from {
+      opacity: 0;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .dialog[open],

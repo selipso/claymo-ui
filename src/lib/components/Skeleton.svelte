@@ -72,20 +72,37 @@
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--clay-light), transparent 45%), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--clay-light), transparent 45%),
+      transparent
+    );
     transform: translateX(-100%);
     animation: wave 1.6s linear 0.5s infinite;
   }
 
   @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
   }
   @keyframes wave {
-    to { transform: translateX(100%); }
+    to {
+      transform: translateX(100%);
+    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .pulse { animation: none; }
-    .wave::after { animation: none; display: none; }
+    .pulse {
+      animation: none;
+    }
+    .wave::after {
+      animation: none;
+      display: none;
+    }
   }
 </style>

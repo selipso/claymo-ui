@@ -2,7 +2,10 @@
   import type { SVGAttributes } from "svelte/elements";
   import type { Color } from "../types";
 
-  interface Props extends Omit<SVGAttributes<SVGSVGElement>, "role" | "color" | "width" | "height" | "viewBox"> {
+  interface Props extends Omit<
+    SVGAttributes<SVGSVGElement>,
+    "role" | "color" | "width" | "height" | "viewBox"
+  > {
     variant?: "determinate" | "indeterminate";
     /** 0–100, used by `determinate`. */
     value?: number;
@@ -46,7 +49,14 @@
   style:--circ="{circumference}px"
   {...rest}
 >
-  <circle class="track" cx={size / 2} cy={size / 2} r={radius} fill="none" stroke-width={thickness} />
+  <circle
+    class="track"
+    cx={size / 2}
+    cy={size / 2}
+    r={radius}
+    fill="none"
+    stroke-width={thickness}
+  />
   <circle
     class="arc"
     cx={size / 2}
@@ -85,8 +95,12 @@
   }
 
   @keyframes spin {
-    from { transform: rotate(-90deg); }
-    to { transform: rotate(270deg); }
+    from {
+      transform: rotate(-90deg);
+    }
+    to {
+      transform: rotate(270deg);
+    }
   }
   @keyframes dash {
     0% {
@@ -103,15 +117,23 @@
     }
   }
   @media (prefers-reduced-motion: reduce) {
-    .arc { transition: none; }
-    .indeterminate { animation: none; }
+    .arc {
+      transition: none;
+    }
+    .indeterminate {
+      animation: none;
+    }
     .indeterminate .arc {
       animation: none;
       stroke-dasharray: calc(var(--circ) * 0.3) var(--circ);
     }
   }
   @media (forced-colors: active) {
-    .arc { stroke: Highlight; }
-    .track { stroke: GrayText; }
+    .arc {
+      stroke: Highlight;
+    }
+    .track {
+      stroke: GrayText;
+    }
   }
 </style>

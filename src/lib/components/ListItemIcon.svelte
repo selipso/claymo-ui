@@ -23,5 +23,8 @@
     font-size: 1.5rem;
     line-height: 0;
   }
-  .list-item-icon :global(svg) { width: 1em; height: 1em; }
+  .list-item-icon :global(svg) {
+    width: 1em;
+    height: 1em;
+  }
 </style>

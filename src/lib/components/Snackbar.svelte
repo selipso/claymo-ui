@@ -92,7 +92,9 @@
   }
 
   const motionMs = () =>
-    typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 300;
+    typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? 0
+      : 300;
   const offset = $derived(anchorOrigin.vertical === "top" ? -24 : 24);
 </script>
 
@@ -109,7 +111,11 @@
   {...rest}
 >
   {#if open}
-    <div class="wrapper" {@attach track} transition:fly={{ y: offset, duration: motionMs(), easing: cubicOut }}>
+    <div
+      class="wrapper"
+      {@attach track}
+      transition:fly={{ y: offset, duration: motionMs(), easing: cubicOut }}
+    >
       {#if children}
         {@render children()}
       {:else}
@@ -131,11 +137,25 @@
     padding: 24px;
     pointer-events: none;
   }
-  .region[data-vertical="top"] { top: 0; }
-  .region[data-vertical="bottom"] { bottom: 0; }
-  .region[data-horizontal="left"] { left: 0; justify-content: flex-start; }
-  .region[data-horizontal="right"] { right: 0; justify-content: flex-end; }
-  .region[data-horizontal="center"] { left: 0; right: 0; justify-content: center; }
+  .region[data-vertical="top"] {
+    top: 0;
+  }
+  .region[data-vertical="bottom"] {
+    bottom: 0;
+  }
+  .region[data-horizontal="left"] {
+    left: 0;
+    justify-content: flex-start;
+  }
+  .region[data-horizontal="right"] {
+    right: 0;
+    justify-content: flex-end;
+  }
+  .region[data-horizontal="center"] {
+    left: 0;
+    right: 0;
+    justify-content: center;
+  }
 
   .wrapper {
     max-width: 100%;
@@ -169,9 +189,17 @@
   }
 
   @media (max-width: 599px) {
-    .region { left: 0; right: 0; padding: 16px; }
+    .region {
+      left: 0;
+      right: 0;
+      padding: 16px;
+    }
     .wrapper,
-    .bar { width: 100%; }
-    .bar { min-width: 0; }
+    .bar {
+      width: 100%;
+    }
+    .bar {
+      min-width: 0;
+    }
   }
 </style>

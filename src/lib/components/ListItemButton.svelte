@@ -80,5 +80,7 @@
     background: var(--clay-color);
     box-shadow: var(--clay-well);
   }
-  .item.selected { font-weight: 600; }
+  .item.selected {
+    font-weight: 600;
+  }
 </style>

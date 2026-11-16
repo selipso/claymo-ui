@@ -91,11 +91,20 @@
     -webkit-tap-highlight-color: transparent;
     user-select: none;
   }
-  .icon-btn[data-size="small"] { --size: 36px; --clay-d: 4px; }
-  .icon-btn[data-size="large"] { --size: 52px; --clay-d: 6px; }
+  .icon-btn[data-size="small"] {
+    --size: 36px;
+    --clay-d: 4px;
+  }
+  .icon-btn[data-size="large"] {
+    --size: 52px;
+    --clay-d: 6px;
+  }
 
   /* inherit colour: keep a visible surface and let the text colour follow the parent */
-  .icon-btn[data-color="inherit"] { --clay-color: var(--clay-surface); color: inherit; }
+  .icon-btn[data-color="inherit"] {
+    --clay-color: var(--clay-surface);
+    color: inherit;
+  }
 
   .icon {
     display: inline-flex;
@@ -104,9 +113,16 @@
     font-size: 1.5rem;
     line-height: 0;
   }
-  .icon-btn[data-size="small"] .icon { font-size: 1.25rem; }
-  .icon-btn[data-size="large"] .icon { font-size: 1.75rem; }
-  .icon :global(svg) { width: 1em; height: 1em; }
+  .icon-btn[data-size="small"] .icon {
+    font-size: 1.25rem;
+  }
+  .icon-btn[data-size="large"] .icon {
+    font-size: 1.75rem;
+  }
+  .icon :global(svg) {
+    width: 1em;
+    height: 1em;
+  }
 
   .spinner {
     width: 18px;
@@ -118,11 +134,23 @@
     animation: spin 0.8s linear infinite;
     flex: none;
   }
-  .loading { cursor: progress; opacity: 1; }
-  .loading:disabled { opacity: 0.85; }
+  .loading {
+    cursor: progress;
+    opacity: 1;
+  }
+  .loading:disabled {
+    opacity: 0.85;
+  }
 
-  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .spinner { animation: none; border-right-color: currentColor; }
+    .spinner {
+      animation: none;
+      border-right-color: currentColor;
+    }
   }
 </style>

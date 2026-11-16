@@ -82,15 +82,22 @@
     user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
-  .head::-webkit-details-marker { display: none; }
-  .title { flex: 1 1 auto; min-width: 0; }
+  .head::-webkit-details-marker {
+    display: none;
+  }
+  .title {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
   .chevron {
     display: inline-flex;
     flex: none;
     line-height: 0;
     transition: transform var(--clay-time) var(--clay-ease);
   }
-  .accordion[open] > .head .chevron { transform: rotate(180deg); }
+  .accordion[open] > .head .chevron {
+    transform: rotate(180deg);
+  }
 
   .content {
     --clay-color: var(--clay-page);
@@ -104,6 +111,8 @@
 
   /* the panel still reports its state through the rotated chevron; only the turn animation goes */
   @media (prefers-reduced-motion: reduce) {
-    .chevron { transition: none; }
+    .chevron {
+      transition: none;
+    }
   }
 </style>

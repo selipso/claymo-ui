@@ -12,8 +12,10 @@
     select(value: string | number, event: ChangeEv): void;
   }
 
-  interface Props
-    extends Omit<HTMLInputAttributes, "color" | "size" | "type" | "checked" | "value" | "children" | "group"> {
+  interface Props extends Omit<
+    HTMLInputAttributes,
+    "color" | "size" | "type" | "checked" | "value" | "children" | "group"
+  > {
     /** Standalone use only; inside a RadioGroup the group's `value` decides. */
     checked?: boolean;
     value: string | number;
@@ -89,10 +91,19 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
-  .radio[data-size="small"] { width: 24px; height: 24px; }
-  .radio:disabled { cursor: not-allowed; }
-  .radio:hover:not(:disabled) { transform: translateY(-1px); }
-  .radio:active:not(:disabled) { transform: translateY(1px) scale(0.94); }
+  .radio[data-size="small"] {
+    width: 24px;
+    height: 24px;
+  }
+  .radio:disabled {
+    cursor: not-allowed;
+  }
+  .radio:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  .radio:active:not(:disabled) {
+    transform: translateY(1px) scale(0.94);
+  }
 
   .radio:checked {
     --clay-color: var(--c);
@@ -117,13 +128,18 @@
       opacity 120ms ease;
     pointer-events: none;
   }
-  .radio[data-size="small"]::after { width: 8px; height: 8px; }
+  .radio[data-size="small"]::after {
+    width: 8px;
+    height: 8px;
+  }
   .radio:checked::after {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .radio::after { transition: none; }
+    .radio::after {
+      transition: none;
+    }
   }
 </style>

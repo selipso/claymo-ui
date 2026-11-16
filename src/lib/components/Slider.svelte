@@ -4,11 +4,10 @@
 
   type InputEv = Event & { currentTarget: EventTarget & HTMLInputElement };
 
-  interface Props
-    extends Omit<
-      HTMLInputAttributes,
-      "color" | "size" | "type" | "value" | "min" | "max" | "step" | "children" | "aria-label" | "id"
-    > {
+  interface Props extends Omit<
+    HTMLInputAttributes,
+    "color" | "size" | "type" | "value" | "min" | "max" | "step" | "children" | "aria-label" | "id"
+  > {
     value?: number;
     min?: number;
     max?: number;
@@ -45,7 +44,9 @@
   const uid = $props.id();
   const id = $derived(idProp ?? `clay-slider-${uid}`);
 
-  const pct = $derived(max > min ? Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100)) : 0);
+  const pct = $derived(
+    max > min ? Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100)) : 0,
+  );
 
   const tickCount = $derived.by(() => {
     if (!marks || !(step > 0) || !(max > min)) return 0;
@@ -113,8 +114,12 @@
     --track: 8px;
     --hit: 36px;
   }
-  .has-bubble { --pt: 30px; }
-  .has-marks { padding-bottom: 12px; }
+  .has-bubble {
+    --pt: 30px;
+  }
+  .has-marks {
+    padding-bottom: 12px;
+  }
 
   .slider {
     --clay-color: var(--clay-surface);
@@ -133,7 +138,9 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
-  .slider:disabled { cursor: not-allowed; }
+  .slider:disabled {
+    cursor: not-allowed;
+  }
 
   /* Track: an inset well with a 2px edge ring (ring is a shadow so it does not shift the thumb). */
   .slider::-webkit-slider-runnable-track {
@@ -141,8 +148,7 @@
     border: 0;
     border-radius: 999px;
     background:
-      linear-gradient(to right, var(--c) var(--fill), transparent var(--fill)),
-      var(--clay-page);
+      linear-gradient(to right, var(--c) var(--fill), transparent var(--fill)), var(--clay-page);
     box-shadow:
       0 0 0 2px var(--clay-edge),
       inset 2px 3px 5px var(--clay-shade),
@@ -226,7 +232,9 @@
     transform: translate(-50%, 0) scale(1);
   }
   .disabled[data-label="on"] .bubble,
-  .disabled[data-label="auto"]:is(:hover, :focus-within) .bubble { opacity: 0.55; }
+  .disabled[data-label="auto"]:is(:hover, :focus-within) .bubble {
+    opacity: 0.55;
+  }
 
   /* Tick marks sit just under the track; first/last ticks line up with the thumb centre extremes. */
   .marks {
@@ -245,15 +253,25 @@
     border-radius: 1px;
     background: var(--clay-edge);
   }
-  .tick.active { background: var(--c-ink); }
-  .disabled .marks { opacity: 0.55; }
+  .tick.active {
+    background: var(--c-ink);
+  }
+  .disabled .marks {
+    opacity: 0.55;
+  }
 
   @media (prefers-reduced-motion: reduce) {
     .bubble,
     .slider::-webkit-slider-thumb,
-    .slider::-moz-range-thumb { transition: none; }
+    .slider::-moz-range-thumb {
+      transition: none;
+    }
     .slider:active::-webkit-slider-thumb,
-    .slider:active::-moz-range-thumb { transform: none; }
-    .bubble { transform: translate(-50%, 0); }
+    .slider:active::-moz-range-thumb {
+      transform: none;
+    }
+    .bubble {
+      transform: translate(-50%, 0);
+    }
   }
 </style>

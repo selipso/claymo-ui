@@ -40,7 +40,12 @@
     warning: TriangleAlert,
     error: CircleAlert,
   } as const;
-  const severityLabel = { success: "Success", info: "Info", warning: "Warning", error: "Error" } as const;
+  const severityLabel = {
+    success: "Success",
+    info: "Info",
+    warning: "Warning",
+    error: "Error",
+  } as const;
 </script>
 
 <div class="clay alert {variant} {className}" {role} data-color={severity} {...rest}>
@@ -62,7 +67,13 @@
     <div class="action">{@render action()}</div>
   {:else if onClose}
     <div class="action">
-      <button type="button" class="clay close" data-clay-interactive aria-label="Close" onclick={onClose}>
+      <button
+        type="button"
+        class="clay close"
+        data-clay-interactive
+        aria-label="Close"
+        onclick={onClose}
+      >
         <X size={18} aria-hidden="true" />
       </button>
     </div>

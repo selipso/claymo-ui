@@ -37,7 +37,9 @@
   }
 
   // Automatic activation: arrow keys move focus and select.
-  function handleKeydown(event: KeyboardEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
+  function handleKeydown(
+    event: KeyboardEvent & { currentTarget: EventTarget & HTMLButtonElement },
+  ) {
     (onkeydown as ((e: typeof event) => void) | undefined)?.(event);
     if (event.defaultPrevented) return;
 

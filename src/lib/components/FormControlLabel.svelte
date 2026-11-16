@@ -49,12 +49,22 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
-  .form-control-label[data-placement="start"] { flex-direction: row-reverse; }
-  .form-control-label[data-placement="top"] { flex-direction: column-reverse; gap: 4px; }
-  .form-control-label[data-placement="bottom"] { flex-direction: column; gap: 4px; }
+  .form-control-label[data-placement="start"] {
+    flex-direction: row-reverse;
+  }
+  .form-control-label[data-placement="top"] {
+    flex-direction: column-reverse;
+    gap: 4px;
+  }
+  .form-control-label[data-placement="bottom"] {
+    flex-direction: column;
+    gap: 4px;
+  }
   .disabled {
     color: var(--clay-ink-muted);
     cursor: not-allowed;
   }
-  .text { user-select: none; }
+  .text {
+    user-select: none;
+  }
 </style>

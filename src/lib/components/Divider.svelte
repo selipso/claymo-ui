@@ -46,7 +46,10 @@
     height: 2px;
     background: linear-gradient(to bottom, var(--shade) 50%, var(--light) 50%);
   }
-  .horizontal.inset { width: auto; margin-inline-start: 72px; }
+  .horizontal.inset {
+    width: auto;
+    margin-inline-start: 72px;
+  }
 
   .vertical {
     width: 2px;
@@ -54,6 +57,11 @@
     min-height: 1em;
     background: linear-gradient(to right, var(--shade) 50%, var(--light) 50%);
   }
-  .vertical.flex-item { height: auto; align-self: stretch; }
-  .vertical.inset { margin-block: 8px; }
+  .vertical.flex-item {
+    height: auto;
+    align-self: stretch;
+  }
+  .vertical.inset {
+    margin-block: 8px;
+  }
 </style>

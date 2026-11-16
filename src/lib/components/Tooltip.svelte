@@ -52,7 +52,8 @@
       if (!el.matches(":focus-within")) dismissed = false;
     };
     const onFocusOut = (event: FocusEvent) => {
-      if (!el.contains(event.relatedTarget as Node | null) && !el.matches(":hover")) dismissed = false;
+      if (!el.contains(event.relatedTarget as Node | null) && !el.matches(":hover"))
+        dismissed = false;
     };
     const onFocusIn = () => {
       dismissed = false;
@@ -112,18 +113,59 @@
   }
 
   /* invisible bridge so the pointer can travel from trigger to bubble (WCAG 1.4.13 hoverable) */
-  .bubble::after { content: ""; position: absolute; }
+  .bubble::after {
+    content: "";
+    position: absolute;
+  }
 
-  [data-placement="bottom"] > .bubble { top: calc(100% + 8px); left: 50%; translate: -50% 0; }
-  [data-placement="bottom"] > .bubble::after { top: -9px; left: 0; right: 0; height: 9px; }
-  [data-placement="top"] > .bubble { bottom: calc(100% + 8px); left: 50%; translate: -50% 0; }
-  [data-placement="top"] > .bubble::after { bottom: -9px; left: 0; right: 0; height: 9px; }
-  [data-placement="left"] > .bubble { right: calc(100% + 8px); top: 50%; translate: 0 -50%; }
-  [data-placement="left"] > .bubble::after { right: -9px; top: 0; bottom: 0; width: 9px; }
-  [data-placement="right"] > .bubble { left: calc(100% + 8px); top: 50%; translate: 0 -50%; }
-  [data-placement="right"] > .bubble::after { left: -9px; top: 0; bottom: 0; width: 9px; }
+  [data-placement="bottom"] > .bubble {
+    top: calc(100% + 8px);
+    left: 50%;
+    translate: -50% 0;
+  }
+  [data-placement="bottom"] > .bubble::after {
+    top: -9px;
+    left: 0;
+    right: 0;
+    height: 9px;
+  }
+  [data-placement="top"] > .bubble {
+    bottom: calc(100% + 8px);
+    left: 50%;
+    translate: -50% 0;
+  }
+  [data-placement="top"] > .bubble::after {
+    bottom: -9px;
+    left: 0;
+    right: 0;
+    height: 9px;
+  }
+  [data-placement="left"] > .bubble {
+    right: calc(100% + 8px);
+    top: 50%;
+    translate: 0 -50%;
+  }
+  [data-placement="left"] > .bubble::after {
+    right: -9px;
+    top: 0;
+    bottom: 0;
+    width: 9px;
+  }
+  [data-placement="right"] > .bubble {
+    left: calc(100% + 8px);
+    top: 50%;
+    translate: 0 -50%;
+  }
+  [data-placement="right"] > .bubble::after {
+    left: -9px;
+    top: 0;
+    bottom: 0;
+    width: 9px;
+  }
 
   @media (prefers-reduced-motion: reduce) {
-    .bubble { transition: none; }
+    .bubble {
+      transition: none;
+    }
   }
 </style>

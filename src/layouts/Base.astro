@@ -24,9 +24,22 @@ const { title } = Astro.props;
   <body>
     <!-- Must not be display:none: that disables the filter and clipPath. -->
     <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-      <filter id="clay-lit" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+      <filter
+        id="clay-lit"
+        x="-5%"
+        y="-5%"
+        width="110%"
+        height="110%"
+        color-interpolation-filters="sRGB"
+      >
         <feGaussianBlur in="SourceAlpha" stdDeviation="7" result="height"></feGaussianBlur>
-        <feDiffuseLighting in="height" surfaceScale="6" diffuseConstant="1" lighting-color="#fff" result="diffuse">
+        <feDiffuseLighting
+          in="height"
+          surfaceScale="6"
+          diffuseConstant="1"
+          lighting-color="#fff"
+          result="diffuse"
+        >
           <feDistantLight azimuth="225" elevation="55"></feDistantLight>
         </feDiffuseLighting>
         <feSpecularLighting
@@ -39,16 +52,30 @@ const { title } = Astro.props;
         >
           <feDistantLight azimuth="225" elevation="55"></feDistantLight>
         </feSpecularLighting>
-        <feComposite in="diffuse" in2="SourceGraphic" operator="arithmetic" k1="1.2" k2="0" k3="0" k4="0" result="shaded"
+        <feComposite
+          in="diffuse"
+          in2="SourceGraphic"
+          operator="arithmetic"
+          k1="1.2"
+          k2="0"
+          k3="0"
+          k4="0"
+          result="shaded"
         ></feComposite>
-        <feComposite in="shaded" in2="spec" operator="arithmetic" k1="0" k2="1" k3="0.3" k4="0" result="lit"
+        <feComposite
+          in="shaded"
+          in2="spec"
+          operator="arithmetic"
+          k1="0"
+          k2="1"
+          k3="0.3"
+          k4="0"
+          result="lit"
         ></feComposite>
         <feComposite in="lit" in2="SourceAlpha" operator="in"></feComposite>
       </filter>
       <clipPath id="clay-bulge" clipPathUnits="objectBoundingBox">
-        <path
-          d="M0.5,0.02 C0.80,0.02 0.98,0.20 0.98,0.5 C0.98,0.80 0.80,0.98 0.5,0.98 C0.20,0.98 0.02,0.80 0.02,0.5 C0.02,0.20 0.20,0.02 0.5,0.02 Z"
-        ></path>
+        <path d="M0.5,0.02 C0.80,0.02 0.98,0.20 0.98,0.5 C0.98,0.80 0.80,0.98 0.5,0.98 C0.20,0.98 0.02,0.80 0.02,0.5 C0.02,0.20 0.20,0.02 0.5,0.02 Z"></path>
       </clipPath>
     </svg>
     <slot />

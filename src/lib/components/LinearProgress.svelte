@@ -33,7 +33,12 @@
   data-color={color}
   {...rest}
 >
-  <div class="clay bar" class:indeterminate={!determinate} class:empty={determinate && pct === 0} style:--pct={pct}></div>
+  <div
+    class="clay bar"
+    class:indeterminate={!determinate}
+    class:empty={determinate && pct === 0}
+    style:--pct={pct}
+  ></div>
 </div>
 
 <style>
@@ -69,12 +74,21 @@
   }
 
   @keyframes slide {
-    from { transform: translateX(-100%); }
-    to { transform: translateX(260%); }
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(260%);
+    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .bar { transition: none; }
-    .bar.indeterminate { animation: none; transform: none; }
+    .bar {
+      transition: none;
+    }
+    .bar.indeterminate {
+      animation: none;
+      transform: none;
+    }
   }
   @media (forced-colors: active) {
     .bar {

@@ -26,5 +26,7 @@
     padding: 0;
     color: var(--clay-ink);
   }
-  .padded { padding: 8px 16px; }
+  .padded {
+    padding: 8px 16px;
+  }
 </style>

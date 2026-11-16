@@ -46,7 +46,13 @@
     box-sizing: border-box;
     color: var(--clay-ink);
   }
-  .square { --clay-radius: 0px; }
-  .flat { box-shadow: none; }
-  .outlined { border: 2px solid var(--clay-edge); }
+  .square {
+    --clay-radius: 0px;
+  }
+  .flat {
+    box-shadow: none;
+  }
+  .outlined {
+    border: 2px solid var(--clay-edge);
+  }
 </style>

@@ -42,7 +42,17 @@
     --clay-color: var(--clay-surface);
     color: inherit;
   }
-  .static { position: static; }
-  .sticky { position: sticky; top: 0; }
-  .fixed { position: fixed; top: 0; left: 0; right: 0; }
+  .static {
+    position: static;
+  }
+  .sticky {
+    position: sticky;
+    top: 0;
+  }
+  .fixed {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
 </style>

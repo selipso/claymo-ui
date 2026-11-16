@@ -7,11 +7,18 @@
   } from "svelte/elements";
   import type { Color, Size } from "../types";
 
-  interface Props
-    extends Omit<
-      HTMLInputAttributes,
-      "color" | "size" | "value" | "children" | "id" | "name" | "placeholder" | "required" | "disabled"
-    > {
+  interface Props extends Omit<
+    HTMLInputAttributes,
+    | "color"
+    | "size"
+    | "value"
+    | "children"
+    | "id"
+    | "name"
+    | "placeholder"
+    | "required"
+    | "disabled"
+  > {
     /** MUI `standard` is not supported. */
     variant?: "outlined" | "filled";
     label?: string;
@@ -132,8 +139,7 @@
         bind:value
         oninput={handleInput}
         onchange={onchange as HTMLTextareaAttributes["onchange"]}
-        {...textareaRest}
-      ></textarea>
+        {...textareaRest}></textarea>
     {:else if select}
       <select
         class="clay input"
@@ -189,19 +195,30 @@
     color: var(--clay-ink);
     font-family: var(--clay-font);
   }
-  .full-width { display: flex; width: 100%; }
+  .full-width {
+    display: flex;
+    width: 100%;
+  }
 
   .label {
     margin: 0 0 6px 4px;
     color: var(--clay-ink);
     font: 600 0.875rem/1.2 var(--clay-font);
   }
-  .field:focus-within .label { color: var(--c-ink); }
+  .field:focus-within .label {
+    color: var(--c-ink);
+  }
   .field[data-error] .label,
-  .field[data-error]:focus-within .label { color: var(--clay-error-ink); }
-  .req { color: inherit; }
+  .field[data-error]:focus-within .label {
+    color: var(--clay-error-ink);
+  }
+  .req {
+    color: inherit;
+  }
   .disabled .label,
-  .disabled .helper { opacity: 0.55; }
+  .disabled .helper {
+    opacity: 0.55;
+  }
 
   .control {
     position: relative;
@@ -240,7 +257,9 @@
     cursor: pointer;
     text-overflow: ellipsis;
   }
-  select.input:disabled { cursor: not-allowed; }
+  select.input:disabled {
+    cursor: not-allowed;
+  }
   select.input :global(option) {
     background: var(--clay-surface);
     color: var(--clay-ink);
@@ -253,8 +272,12 @@
     padding: 0 12px;
     font-size: 0.875rem;
   }
-  .field[data-size="small"] textarea.input { padding: 8px 12px; }
-  .field[data-size="small"] select.input { padding-right: 40px; }
+  .field[data-size="small"] textarea.input {
+    padding: 8px 12px;
+  }
+  .field[data-size="small"] select.input {
+    padding-right: 40px;
+  }
 
   /* filled: no full border, keep a 2px bottom edge on the surface fill. */
   .field[data-variant="filled"] .input {
@@ -264,10 +287,18 @@
   }
 
   /* Adornments sit over the input's padding. */
-  .has-start .input { padding-left: 44px; }
-  .has-end .input { padding-right: 44px; }
-  .field[data-size="small"] .has-start .input { padding-left: 38px; }
-  .field[data-size="small"] .has-end .input { padding-right: 38px; }
+  .has-start .input {
+    padding-left: 44px;
+  }
+  .has-end .input {
+    padding-right: 44px;
+  }
+  .field[data-size="small"] .has-start .input {
+    padding-left: 38px;
+  }
+  .field[data-size="small"] .has-end .input {
+    padding-right: 38px;
+  }
   .adornment {
     position: absolute;
     top: 0;
@@ -277,13 +308,28 @@
     align-items: center;
     color: var(--clay-ink-muted);
   }
-  .is-multiline .adornment { bottom: auto; height: 48px; }
-  .adornment.start { left: 14px; }
-  .adornment.end { right: 14px; }
-  .is-select .adornment.end { right: 40px; }
-  .field[data-size="small"] .adornment.start { left: 10px; }
-  .field[data-size="small"] .adornment.end { right: 10px; }
-  .field[data-size="small"] .is-select .adornment.end { right: 34px; }
+  .is-multiline .adornment {
+    bottom: auto;
+    height: 48px;
+  }
+  .adornment.start {
+    left: 14px;
+  }
+  .adornment.end {
+    right: 14px;
+  }
+  .is-select .adornment.end {
+    right: 40px;
+  }
+  .field[data-size="small"] .adornment.start {
+    left: 10px;
+  }
+  .field[data-size="small"] .adornment.end {
+    right: 10px;
+  }
+  .field[data-size="small"] .is-select .adornment.end {
+    right: 34px;
+  }
 
   .chevron {
     position: absolute;
@@ -293,19 +339,31 @@
     height: 20px;
     transform: translateY(-50%);
     background: var(--clay-ink);
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+      center / contain no-repeat;
+    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
+      center / contain no-repeat;
     pointer-events: none;
   }
-  .field[data-size="small"] .chevron { right: 10px; }
-  .disabled .chevron { opacity: 0.55; }
+  .field[data-size="small"] .chevron {
+    right: 10px;
+  }
+  .disabled .chevron {
+    opacity: 0.55;
+  }
   @media (forced-colors: active) {
-    .chevron { background: CanvasText; }
+    .chevron {
+      background: CanvasText;
+    }
   }
 
-  .input:focus { border-color: var(--c-ink); }
+  .input:focus {
+    border-color: var(--c-ink);
+  }
   .field[data-error] .input,
-  .field[data-error] .input:focus { border-color: var(--clay-error-ink); }
+  .field[data-error] .input:focus {
+    border-color: var(--clay-error-ink);
+  }
 
   /* Helper text: error adds a "!" glyph so colour is not the only cue. */
   .helper {
@@ -313,5 +371,7 @@
     color: var(--clay-ink-muted);
     font: 400 0.8125rem/1.3 var(--clay-font);
   }
-  .field[data-error] .helper { color: var(--clay-error-ink); }
+  .field[data-error] .helper {
+    color: var(--clay-error-ink);
+  }
 </style>

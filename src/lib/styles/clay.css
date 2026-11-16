@@ -40,18 +40,54 @@
   --clay-warning-ink: light-dark(#8a5a00, #f0c060);
   --clay-info-ink: light-dark(#1b6280, #7cc5e0);
 }
-:root[data-theme="light"] { color-scheme: light; }
-:root[data-theme="dark"] { color-scheme: dark; }
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
 
 /* Colour selection: components set data-color on their root. */
-[data-color="primary"]   { --c: var(--clay-primary);   --c-on: var(--clay-primary-on);   --c-ink: var(--clay-primary-ink); }
-[data-color="secondary"] { --c: var(--clay-secondary); --c-on: var(--clay-secondary-on); --c-ink: var(--clay-secondary-ink); }
-[data-color="success"]   { --c: var(--clay-success);   --c-on: var(--clay-success-on);   --c-ink: var(--clay-success-ink); }
-[data-color="error"]     { --c: var(--clay-error);     --c-on: var(--clay-error-on);     --c-ink: var(--clay-error-ink); }
-[data-color="warning"]   { --c: var(--clay-warning);   --c-on: var(--clay-warning-on);   --c-ink: var(--clay-warning-ink); }
-[data-color="info"]      { --c: var(--clay-info);      --c-on: var(--clay-info-on);      --c-ink: var(--clay-info-ink); }
-[data-color="default"]   { --c: var(--clay-surface);   --c-on: var(--clay-ink);          --c-ink: var(--clay-ink); }
-[data-color="inherit"]   { --c: transparent;           --c-on: currentColor;             --c-ink: currentColor; }
+[data-color="primary"] {
+  --c: var(--clay-primary);
+  --c-on: var(--clay-primary-on);
+  --c-ink: var(--clay-primary-ink);
+}
+[data-color="secondary"] {
+  --c: var(--clay-secondary);
+  --c-on: var(--clay-secondary-on);
+  --c-ink: var(--clay-secondary-ink);
+}
+[data-color="success"] {
+  --c: var(--clay-success);
+  --c-on: var(--clay-success-on);
+  --c-ink: var(--clay-success-ink);
+}
+[data-color="error"] {
+  --c: var(--clay-error);
+  --c-on: var(--clay-error-on);
+  --c-ink: var(--clay-error-ink);
+}
+[data-color="warning"] {
+  --c: var(--clay-warning);
+  --c-on: var(--clay-warning-on);
+  --c-ink: var(--clay-warning-ink);
+}
+[data-color="info"] {
+  --c: var(--clay-info);
+  --c-on: var(--clay-info-on);
+  --c-ink: var(--clay-info-ink);
+}
+[data-color="default"] {
+  --c: var(--clay-surface);
+  --c-on: var(--clay-ink);
+  --c-ink: var(--clay-ink);
+}
+[data-color="inherit"] {
+  --c: transparent;
+  --c-on: currentColor;
+  --c-ink: currentColor;
+}
 
 /* ------------------------------------------------------------------ *
  * The clay surface. Per element: --clay-color (fill), --clay-d (depth),
@@ -71,19 +107,27 @@
     color-mix(in oklab, var(--clay-color), black 24%),
     color-mix(in oklab, var(--clay-color), black 42%)
   );
-  --clay-drop: color-mix(in oklab, color-mix(in oklab, var(--clay-color), black 55%), transparent 50%);
-  --clay-outer: calc(var(--clay-d) * 1.2) calc(var(--clay-d) * 1.6) calc(var(--clay-d) * 3) 0 var(--clay-drop);
+  --clay-drop: color-mix(
+    in oklab,
+    color-mix(in oklab, var(--clay-color), black 55%),
+    transparent 50%
+  );
+  --clay-outer: calc(var(--clay-d) * 1.2) calc(var(--clay-d) * 1.6) calc(var(--clay-d) * 3) 0
+    var(--clay-drop);
   --clay-insets:
-    inset calc(var(--clay-d) * -1) calc(var(--clay-d) * -1) calc(var(--clay-d) * 2) 0 var(--clay-shade),
+    inset calc(var(--clay-d) * -1) calc(var(--clay-d) * -1) calc(var(--clay-d) * 2) 0
+      var(--clay-shade),
     inset var(--clay-d) var(--clay-d) calc(var(--clay-d) * 2) 0 var(--clay-light);
   --clay-raised: var(--clay-outer), var(--clay-insets);
   --clay-pressed:
     calc(var(--clay-d) * 0.4) calc(var(--clay-d) * 0.5) var(--clay-d) 0 var(--clay-drop),
     inset var(--clay-d) var(--clay-d) calc(var(--clay-d) * 1.5) 0 var(--clay-shade),
-    inset calc(var(--clay-d) * -1) calc(var(--clay-d) * -1) calc(var(--clay-d) * 1.5) 0 var(--clay-light);
+    inset calc(var(--clay-d) * -1) calc(var(--clay-d) * -1) calc(var(--clay-d) * 1.5) 0
+      var(--clay-light);
   --clay-well:
     inset var(--clay-d) var(--clay-d) calc(var(--clay-d) * 2) 0 var(--clay-shade),
-    inset calc(var(--clay-d) * -1) calc(var(--clay-d) * -1) calc(var(--clay-d) * 2) 0 var(--clay-light);
+    inset calc(var(--clay-d) * -1) calc(var(--clay-d) * -1) calc(var(--clay-d) * 2) 0
+      var(--clay-light);
 
   background: var(--clay-color);
   border-radius: var(--clay-radius);
@@ -108,7 +152,9 @@
   transform: translateY(-1px);
   --clay-d: 8px;
 }
-.clay[data-clay-interactive]:where(:not(:disabled, [aria-disabled="true"], [data-disabled])):active {
+.clay[data-clay-interactive]:where(
+    :not(:disabled, [aria-disabled="true"], [data-disabled])
+  ):active {
   transform: translateY(1px) scale(0.98);
   box-shadow: var(--clay-pressed);
 }

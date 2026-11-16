@@ -57,13 +57,34 @@
     user-select: none;
     vertical-align: middle;
   }
-  .avatar[data-size="small"] { --size: 32px; --ring: 2px; --clay-d: 3px; font-size: 0.875rem; }
-  .avatar[data-size="large"] { --size: 56px; --ring: 4px; --clay-d: 5px; font-size: 1.375rem; }
-  .rounded { --clay-radius: 14px; }
-  .square { --clay-radius: 6px; }
-  .rounded, .square { corner-shape: squircle; }
-  .avatar[data-size="small"].rounded { --clay-radius: 10px; }
-  .avatar[data-size="large"].rounded { --clay-radius: 18px; }
+  .avatar[data-size="small"] {
+    --size: 32px;
+    --ring: 2px;
+    --clay-d: 3px;
+    font-size: 0.875rem;
+  }
+  .avatar[data-size="large"] {
+    --size: 56px;
+    --ring: 4px;
+    --clay-d: 5px;
+    font-size: 1.375rem;
+  }
+  .rounded {
+    --clay-radius: 14px;
+  }
+  .square {
+    --clay-radius: 6px;
+  }
+  .rounded,
+  .square {
+    corner-shape: squircle;
+  }
+  .avatar[data-size="small"].rounded {
+    --clay-radius: 10px;
+  }
+  .avatar[data-size="large"].rounded {
+    --clay-radius: 18px;
+  }
 
   img {
     display: block;
@@ -72,5 +93,8 @@
     object-fit: cover;
     border-radius: calc(var(--clay-radius) - var(--ring));
   }
-  .avatar > :global(svg) { width: 55%; height: 55%; }
+  .avatar > :global(svg) {
+    width: 55%;
+    height: 55%;
+  }
 </style>

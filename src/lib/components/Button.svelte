@@ -100,11 +100,29 @@
     -webkit-tap-highlight-color: transparent;
     user-select: none;
   }
-  .btn[data-size="small"] { min-height: 36px; padding: 0 16px; font-size: 0.875rem; --clay-radius: 14px; --clay-d: 4px; }
-  .btn[data-size="large"] { min-height: 56px; padding: 0 36px; font-size: 1.125rem; --clay-radius: 26px; --clay-d: 8px; }
-  .full-width { display: flex; width: 100%; }
+  .btn[data-size="small"] {
+    min-height: 36px;
+    padding: 0 16px;
+    font-size: 0.875rem;
+    --clay-radius: 14px;
+    --clay-d: 4px;
+  }
+  .btn[data-size="large"] {
+    min-height: 56px;
+    padding: 0 36px;
+    font-size: 1.125rem;
+    --clay-radius: 26px;
+    --clay-d: 8px;
+  }
+  .full-width {
+    display: flex;
+    width: 100%;
+  }
 
-  .contained { --clay-color: var(--c); color: var(--c-on); }
+  .contained {
+    --clay-color: var(--c);
+    color: var(--c-on);
+  }
   .outlined {
     --clay-color: var(--clay-surface);
     color: var(--c-ink);
@@ -121,12 +139,24 @@
     box-shadow: var(--clay-raised);
   }
   /* inherit colour: let the contained variant keep its surface so text stays legible */
-  .contained[data-color="inherit"] { --clay-color: var(--clay-surface); color: inherit; }
+  .contained[data-color="inherit"] {
+    --clay-color: var(--clay-surface);
+    color: inherit;
+  }
 
-  .no-elevation { box-shadow: var(--clay-insets); }
-  .no-elevation.text { box-shadow: none; }
+  .no-elevation {
+    box-shadow: var(--clay-insets);
+  }
+  .no-elevation.text {
+    box-shadow: none;
+  }
 
-  .icon { display: inline-flex; align-items: center; font-size: 1.25em; line-height: 0; }
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    font-size: 1.25em;
+    line-height: 0;
+  }
 
   .spinner {
     width: 16px;
@@ -144,13 +174,29 @@
     margin: auto;
   }
   .loading[data-loading-position="center"] .label,
-  .loading[data-loading-position="center"] .icon { opacity: 0; }
-  .loading[data-loading-position="end"] .spinner { order: 3; }
-  .loading { cursor: progress; opacity: 1; }
-  .loading:disabled { opacity: 0.85; }
+  .loading[data-loading-position="center"] .icon {
+    opacity: 0;
+  }
+  .loading[data-loading-position="end"] .spinner {
+    order: 3;
+  }
+  .loading {
+    cursor: progress;
+    opacity: 1;
+  }
+  .loading:disabled {
+    opacity: 0.85;
+  }
 
-  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
   @media (prefers-reduced-motion: reduce) {
-    .spinner { animation: none; border-right-color: currentColor; }
+    .spinner {
+      animation: none;
+      border-right-color: currentColor;
+    }
   }
 </style>

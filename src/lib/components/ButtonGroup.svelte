@@ -64,22 +64,46 @@
     border: 0;
     vertical-align: middle;
   }
-  .group[data-size="small"] { --g-r: 14px; --clay-d: 4px; }
-  .group[data-size="large"] { --g-r: 26px; --clay-d: 8px; }
-  .vertical { flex-direction: column; }
-  .full-width { display: flex; width: 100%; }
+  .group[data-size="small"] {
+    --g-r: 14px;
+    --clay-d: 4px;
+  }
+  .group[data-size="large"] {
+    --g-r: 26px;
+    --clay-d: 8px;
+  }
+  .vertical {
+    flex-direction: column;
+  }
+  .full-width {
+    display: flex;
+    width: 100%;
+  }
   /* children dim themselves when disabled; do not dim the group a second time */
-  .group:disabled { opacity: 1; cursor: auto; }
+  .group:disabled {
+    opacity: 1;
+    cursor: auto;
+  }
 
-  .contained { --clay-color: var(--g-c); color: var(--g-on); }
-  .contained[data-color="inherit"] { --clay-color: var(--clay-surface); color: inherit; }
+  .contained {
+    --clay-color: var(--g-c);
+    color: var(--g-on);
+  }
+  .contained[data-color="inherit"] {
+    --clay-color: var(--clay-surface);
+    color: inherit;
+  }
   .outlined {
     --clay-color: var(--clay-surface);
     --g-ri: calc(var(--g-r) - 2px);
     color: var(--g-ink);
     border: 2px solid var(--g-ink);
   }
-  .text { background: transparent; box-shadow: none; color: var(--g-ink); }
+  .text {
+    background: transparent;
+    box-shadow: none;
+    color: var(--g-ink);
+  }
 
   /* ---- child Buttons: no own shadow or radius, shared colour/size ---- */
   .group :global(.btn.btn) {
@@ -96,13 +120,33 @@
     transform: none;
     color: var(--g-on);
   }
-  .group[data-size="small"] :global(.btn.btn) { min-height: 36px; padding: 0 16px; font-size: 0.875rem; }
-  .group[data-size="large"] :global(.btn.btn) { min-height: 56px; padding: 0 36px; font-size: 1.125rem; }
-  .full-width :global(.btn.btn) { flex: 1 1 0; min-width: 0; }
-  .contained :global(.btn.btn) { --clay-color: var(--g-c); color: var(--g-on); }
+  .group[data-size="small"] :global(.btn.btn) {
+    min-height: 36px;
+    padding: 0 16px;
+    font-size: 0.875rem;
+  }
+  .group[data-size="large"] :global(.btn.btn) {
+    min-height: 56px;
+    padding: 0 36px;
+    font-size: 1.125rem;
+  }
+  .full-width :global(.btn.btn) {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .contained :global(.btn.btn) {
+    --clay-color: var(--g-c);
+    color: var(--g-on);
+  }
   .outlined :global(.btn.btn),
-  .text :global(.btn.btn) { --clay-color: var(--clay-surface); color: var(--g-ink); }
-  .contained[data-color="inherit"] :global(.btn.btn) { --clay-color: var(--clay-surface); color: inherit; }
+  .text :global(.btn.btn) {
+    --clay-color: var(--clay-surface);
+    color: var(--g-ink);
+  }
+  .contained[data-color="inherit"] :global(.btn.btn) {
+    --clay-color: var(--clay-surface);
+    color: inherit;
+  }
 
   /* ends follow the shared pill; middle children stay square */
   .horizontal :global(.btn.btn:first-child) {
@@ -123,8 +167,12 @@
   }
 
   /* 2px dividers between children */
-  .horizontal :global(.btn.btn:not(:first-child)) { border-inline-start: 2px solid var(--clay-edge); }
-  .vertical :global(.btn.btn:not(:first-child)) { border-block-start: 2px solid var(--clay-edge); }
+  .horizontal :global(.btn.btn:not(:first-child)) {
+    border-inline-start: 2px solid var(--clay-edge);
+  }
+  .vertical :global(.btn.btn:not(:first-child)) {
+    border-block-start: 2px solid var(--clay-edge);
+  }
 
   /* states: tint on hover, inset on press, focus ring above neighbours */
   .contained :global(.btn.btn:is(:hover, :focus-visible):not(:disabled, [aria-disabled="true"])) {
@@ -142,5 +190,7 @@
     box-shadow: inset 2px 3px 8px var(--clay-shade);
     transform: none;
   }
-  .group :global(.btn.btn:focus-visible) { z-index: 1; }
+  .group :global(.btn.btn:focus-visible) {
+    z-index: 1;
+  }
 </style>

@@ -5,8 +5,10 @@
 
   type ChangeEv = Event & { currentTarget: EventTarget & HTMLInputElement };
 
-  interface Props
-    extends Omit<HTMLInputAttributes, "color" | "size" | "type" | "role" | "checked" | "value" | "children"> {
+  interface Props extends Omit<
+    HTMLInputAttributes,
+    "color" | "size" | "type" | "role" | "checked" | "value" | "children"
+  > {
     checked?: boolean;
     disabled?: boolean;
     required?: boolean;
@@ -89,9 +91,15 @@
     width: 44px;
     height: 26px;
   }
-  .switch:disabled { cursor: not-allowed; }
-  .switch:hover:not(:disabled) { transform: translateY(-1px); }
-  .switch:active:not(:disabled) { transform: translateY(1px) scale(0.96); }
+  .switch:disabled {
+    cursor: not-allowed;
+  }
+  .switch:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  .switch:active:not(:disabled) {
+    transform: translateY(1px) scale(0.96);
+  }
 
   .switch:checked {
     --clay-color: var(--c);
@@ -129,9 +137,13 @@
     transition: transform var(--clay-time) var(--clay-ease);
     pointer-events: none;
   }
-  .switch:checked::before { transform: translateX(var(--travel)); }
+  .switch:checked::before {
+    transform: translateX(var(--travel));
+  }
 
   @media (prefers-reduced-motion: reduce) {
-    .switch::before { transition: none; }
+    .switch::before {
+      transition: none;
+    }
   }
 </style>

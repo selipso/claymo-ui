@@ -31,40 +31,49 @@ const variants = [
 
 <Base title="claymo-ui lab: can CSS do claymorphism?">
   <main class="lab">
-    <p><a href="/">&larr; Back to app demo</a> &middot; <a href="/components/">Component gallery</a></p>
+    <p>
+      <a href="/">&larr; Back to app demo</a> &middot; <a href="/components/">Component gallery</a>
+    </p>
     <h1>Can CSS do claymorphism?</h1>
     <p class="lead">
-      The article says the effect is &ldquo;not really possible to achieve in CSS just yet&rdquo;. The shadow recipe is
-      plain CSS; the bulged silhouette needs one of three emulations. All four stages below use the same palette so
-      you can judge each technique by eye. Toggle your OS light/dark preference to check both themes.
+      The article says the effect is &ldquo;not really possible to achieve in CSS just yet&rdquo;.
+      The shadow recipe is plain CSS; the bulged silhouette needs one of three emulations. All four
+      stages below use the same palette so you can judge each technique by eye. Toggle your OS
+      light/dark preference to check both themes.
     </p>
 
     <div class="grid">
-      {
-        variants.map((v) => (
-          <section class={`panel variant-${v.id}`} aria-labelledby={`h-${v.id}`}>
-            <h2 id={`h-${v.id}`}>{v.title}</h2>
-            <div class="stage">
-              {v.id === "d" ? (
-                <>
-                  <div class="drop">
-                    <div class="clay shape btn-shape" data-inflated>Button size</div>
+      {variants.map((v) => (
+        <section class={`panel variant-${v.id}`} aria-labelledby={`h-${v.id}`}>
+          <h2 id={`h-${v.id}`}>{v.title}</h2>
+          <div class="stage">
+            {v.id === "d" ? (
+              <>
+                <div class="drop">
+                  <div class="clay shape btn-shape" data-inflated>
+                    Button size
                   </div>
-                  <div class="drop">
-                    <div class="clay shape card-shape" data-inflated>Card size</div>
+                </div>
+                <div class="drop">
+                  <div class="clay shape card-shape" data-inflated>
+                    Card size
                   </div>
-                </>
-              ) : (
-                <>
-                  <div class="clay shape btn-shape" data-inflated={v.id === "c" ? "" : undefined}>Button size</div>
-                  <div class="clay shape card-shape" data-inflated={v.id === "c" ? "" : undefined}>Card size</div>
-                </>
-              )}
-            </div>
-            <p class="caption">{v.caption}</p>
-          </section>
-        ))
-      }
+                </div>
+              </>
+            ) : (
+              <>
+                <div class="clay shape btn-shape" data-inflated={v.id === "c" ? "" : undefined}>
+                  Button size
+                </div>
+                <div class="clay shape card-shape" data-inflated={v.id === "c" ? "" : undefined}>
+                  Card size
+                </div>
+              </>
+            )}
+          </div>
+          <p class="caption">{v.caption}</p>
+        </section>
+      ))}
     </div>
 
     <section class="clay support" aria-labelledby="support-h">
@@ -72,7 +81,11 @@ const variants = [
       <table>
         <caption class="clay-sr-only">Feature support detected with CSS.supports</caption>
         <thead>
-          <tr><th scope="col">Feature</th><th scope="col">Used for</th><th scope="col">Supported</th></tr>
+          <tr>
+            <th scope="col">Feature</th>
+            <th scope="col">Used for</th>
+            <th scope="col">Supported</th>
+          </tr>
         </thead>
         <tbody id="support-rows"></tbody>
       </table>
@@ -82,7 +95,11 @@ const variants = [
   <script is:inline>
     var checks = [
       ["corner-shape: squircle", "Puffy corners (B)", ["corner-shape", "squircle"]],
-      ["color-mix(in oklab, ...)", "Derived highlight / shade colours", ["color", "color-mix(in oklab, red, blue)"]],
+      [
+        "color-mix(in oklab, ...)",
+        "Derived highlight / shade colours",
+        ["color", "color-mix(in oklab, red, blue)"],
+      ],
       ["light-dark()", "Single-block light and dark theme", ["color", "light-dark(red, blue)"]],
     ];
     var body = document.getElementById("support-rows");
@@ -107,10 +124,22 @@ const variants = [
     margin: 0 auto;
     padding: 32px 20px 64px;
   }
-  a { color: var(--clay-primary-ink); }
-  h1 { font-size: 2.25rem; line-height: 1.2; margin: 8px 0 12px; }
-  h2 { font-size: 1.25rem; margin: 0 0 16px; }
-  .lead { max-width: 70ch; color: var(--clay-ink-muted); }
+  a {
+    color: var(--clay-primary-ink);
+  }
+  h1 {
+    font-size: 2.25rem;
+    line-height: 1.2;
+    margin: 8px 0 12px;
+  }
+  h2 {
+    font-size: 1.25rem;
+    margin: 0 0 16px;
+  }
+  .lead {
+    max-width: 70ch;
+    color: var(--clay-ink-muted);
+  }
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
@@ -154,19 +183,49 @@ const variants = [
     height: 130px;
     color: var(--clay-ink);
   }
-  .variant-a .clay { corner-shape: round; }
-  .drop { filter: drop-shadow(10px 14px 14px var(--drop-color)); }
-  .variant-d { --drop-color: color-mix(in oklab, #000, transparent 55%); }
+  .variant-a .clay {
+    corner-shape: round;
+  }
+  .drop {
+    filter: drop-shadow(10px 14px 14px var(--drop-color));
+  }
+  .variant-d {
+    --drop-color: color-mix(in oklab, #000, transparent 55%);
+  }
   .variant-d .shape {
     box-shadow: none;
     clip-path: url(#clay-bulge);
     border-radius: 0;
   }
-  .variant-d .btn-shape { width: 190px; height: 84px; }
-  .variant-d .card-shape { width: 190px; height: 150px; }
-  .caption { margin: 16px 0 0; color: var(--clay-ink-muted); font-size: 0.9375rem; }
-  .support { padding: 28px; margin-top: 8px; }
-  .support :global(table) { width: 100%; border-collapse: collapse; }
-  .support :global(th), .support :global(td) { text-align: left; padding: 10px 12px; border-bottom: 2px solid var(--clay-edge); }
-  .support :global(tr:last-child th), .support :global(tr:last-child td) { border-bottom: 0; }
+  .variant-d .btn-shape {
+    width: 190px;
+    height: 84px;
+  }
+  .variant-d .card-shape {
+    width: 190px;
+    height: 150px;
+  }
+  .caption {
+    margin: 16px 0 0;
+    color: var(--clay-ink-muted);
+    font-size: 0.9375rem;
+  }
+  .support {
+    padding: 28px;
+    margin-top: 8px;
+  }
+  .support :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .support :global(th),
+  .support :global(td) {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--clay-edge);
+  }
+  .support :global(tr:last-child th),
+  .support :global(tr:last-child td) {
+    border-bottom: 0;
+  }
 </style>

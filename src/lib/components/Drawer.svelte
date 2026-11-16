@@ -104,8 +104,12 @@
     width: var(--drawer-w);
     color: var(--clay-ink);
   }
-  .left { --clay-radius: 0 28px 28px 0; }
-  .right { --clay-radius: 28px 0 0 28px; }
+  .left {
+    --clay-radius: 0 28px 28px 0;
+  }
+  .right {
+    --clay-radius: 28px 0 0 28px;
+  }
   .inner {
     box-sizing: border-box;
     min-height: 100%;
@@ -132,10 +136,20 @@
     overflow-y: auto;
     overscroll-behavior: contain;
   }
-  .temporary.left { left: 0; right: auto; }
-  .temporary.right { right: 0; left: auto; }
-  .temporary[open].left { animation: slide-left var(--clay-time) var(--clay-ease); }
-  .temporary[open].right { animation: slide-right var(--clay-time) var(--clay-ease); }
+  .temporary.left {
+    left: 0;
+    right: auto;
+  }
+  .temporary.right {
+    right: 0;
+    left: auto;
+  }
+  .temporary[open].left {
+    animation: slide-left var(--clay-time) var(--clay-ease);
+  }
+  .temporary[open].right {
+    animation: slide-right var(--clay-time) var(--clay-ease);
+  }
   .temporary::backdrop {
     background: color-mix(in oklab, #000, transparent 45%);
   }
@@ -144,13 +158,19 @@
   }
 
   @keyframes slide-left {
-    from { transform: translateX(-100%); }
+    from {
+      transform: translateX(-100%);
+    }
   }
   @keyframes slide-right {
-    from { transform: translateX(100%); }
+    from {
+      transform: translateX(100%);
+    }
   }
   @keyframes fade {
-    from { opacity: 0; }
+    from {
+      opacity: 0;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
     .temporary[open],

@@ -52,7 +52,8 @@
     get variant() {
       return variant;
     },
-    isTabbable: (v) => value === v || (!registered.includes(value as TabValue) && registered[0] === v),
+    isTabbable: (v) =>
+      value === v || (!registered.includes(value as TabValue) && registered[0] === v),
     select(event, v) {
       if (v === value) return;
       value = v;

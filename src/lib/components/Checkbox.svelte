@@ -5,8 +5,10 @@
 
   type ChangeEv = Event & { currentTarget: EventTarget & HTMLInputElement };
 
-  interface Props
-    extends Omit<HTMLInputAttributes, "color" | "size" | "type" | "checked" | "value" | "children"> {
+  interface Props extends Omit<
+    HTMLInputAttributes,
+    "color" | "size" | "type" | "checked" | "value" | "children"
+  > {
     checked?: boolean;
     /** Mixed state. Drives the DOM `indeterminate` property; the parent owns it (controlled, like MUI). */
     indeterminate?: boolean;
@@ -98,9 +100,15 @@
     height: 24px;
     --clay-radius: 8px;
   }
-  .checkbox:disabled { cursor: not-allowed; }
-  .checkbox:hover:not(:disabled) { transform: translateY(-1px); }
-  .checkbox:active:not(:disabled) { transform: translateY(1px) scale(0.94); }
+  .checkbox:disabled {
+    cursor: not-allowed;
+  }
+  .checkbox:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  .checkbox:active:not(:disabled) {
+    transform: translateY(1px) scale(0.94);
+  }
 
   .checkbox:checked,
   .checkbox:indeterminate {
@@ -154,6 +162,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .checkbox::after { transition: none; }
+    .checkbox::after {
+      transition: none;
+    }
   }
 </style>

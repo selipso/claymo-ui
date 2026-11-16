@@ -109,14 +109,21 @@
     font: 600 0.875rem/1 var(--clay-font);
     vertical-align: middle;
   }
-  .chip[data-size="small"] { --h: 28px; --clay-d: 3px; font-size: 0.8125rem; }
+  .chip[data-size="small"] {
+    --h: 28px;
+    --clay-d: 3px;
+    font-size: 0.8125rem;
+  }
 
   .outlined {
     --clay-color: var(--clay-surface);
     color: var(--c-ink);
     border: 2px solid var(--c-ink);
   }
-  .chip[data-color="inherit"] { --clay-color: var(--clay-surface); color: inherit; }
+  .chip[data-color="inherit"] {
+    --clay-color: var(--clay-surface);
+    color: inherit;
+  }
 
   .body {
     display: inline-flex;
@@ -133,10 +140,18 @@
     font: inherit;
     -webkit-tap-highlight-color: transparent;
   }
-  .chip[data-size="small"] .body { padding: 0 10px; }
-  button.body { cursor: pointer; }
-  button.body:disabled { cursor: not-allowed; }
-  .deletable .body { padding-inline-end: 6px; }
+  .chip[data-size="small"] .body {
+    padding: 0 10px;
+  }
+  button.body {
+    cursor: pointer;
+  }
+  button.body:disabled {
+    cursor: not-allowed;
+  }
+  .deletable .body {
+    padding-inline-end: 6px;
+  }
 
   .label {
     overflow: hidden;
@@ -144,10 +159,24 @@
     white-space: nowrap;
   }
 
-  .lead { display: inline-flex; align-items: center; flex: none; line-height: 0; }
-  .icon { font-size: 1.125rem; margin-inline-start: -4px; }
-  .avatar { margin-inline-start: -10px; }
-  .avatar :global(.avatar) { width: calc(var(--h) - 8px); height: calc(var(--h) - 8px); font-size: 0.75rem; }
+  .lead {
+    display: inline-flex;
+    align-items: center;
+    flex: none;
+    line-height: 0;
+  }
+  .icon {
+    font-size: 1.125rem;
+    margin-inline-start: -4px;
+  }
+  .avatar {
+    margin-inline-start: -10px;
+  }
+  .avatar :global(.avatar) {
+    width: calc(var(--h) - 8px);
+    height: calc(var(--h) - 8px);
+    font-size: 0.75rem;
+  }
 
   .remove {
     display: inline-flex;
@@ -166,7 +195,15 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
-  .chip[data-size="small"] .remove { width: 20px; height: 20px; margin-inline-end: 4px; }
-  .remove:hover:not(:disabled) { background: color-mix(in oklab, currentColor, transparent 82%); }
-  .remove:disabled { cursor: not-allowed; }
+  .chip[data-size="small"] .remove {
+    width: 20px;
+    height: 20px;
+    margin-inline-end: 4px;
+  }
+  .remove:hover:not(:disabled) {
+    background: color-mix(in oklab, currentColor, transparent 82%);
+  }
+  .remove:disabled {
+    cursor: not-allowed;
+  }
 </style>

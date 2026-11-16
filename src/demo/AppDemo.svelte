@@ -81,7 +81,9 @@
   ];
 
   function toggleFormat(f: string) {
-    activeFormats = activeFormats.includes(f) ? activeFormats.filter((x) => x !== f) : [...activeFormats, f];
+    activeFormats = activeFormats.includes(f)
+      ? activeFormats.filter((x) => x !== f)
+      : [...activeFormats, f];
   }
 
   // ---- settings form
@@ -176,7 +178,9 @@
     </Drawer>
 
     <main class="main">
-      <Typography variant="overline" as="p" color="text.secondary">Prototype · sample data · no backend</Typography>
+      <Typography variant="overline" as="p" color="text.secondary"
+        >Prototype · sample data · no backend</Typography
+      >
       <Tabs bind:value={tab} aria-label="App sections">
         <Tab value="dashboard" label="Dashboard">
           {#snippet icon()}<LayoutDashboard size={18} />{/snippet}
@@ -188,7 +192,8 @@
           <TabPanel value="dashboard">
             <div class="stack">
               <Alert severity="info" variant="standard">
-                All numbers on this screen are hard-coded sample content to show the components in a realistic layout.
+                All numbers on this screen are hard-coded sample content to show the components in a
+                realistic layout.
               </Alert>
 
               <div class="stats">
@@ -208,14 +213,23 @@
                   <CardHeader title="Progress" subheader="Sample metric" />
                   <CardContent>
                     <Typography variant="h3" as="p">64%</Typography>
-                    <LinearProgress variant="determinate" value={64} aria-label="Progress 64 percent" />
+                    <LinearProgress
+                      variant="determinate"
+                      value={64}
+                      aria-label="Progress 64 percent"
+                    />
                   </CardContent>
                 </Card>
                 <Card>
                   <CardHeader title="Sync progress" subheader="Last 30 days" />
                   <CardContent>
                     <div class="row">
-                      <CircularProgress variant="determinate" value={82} size={56} aria-label="Sync progress 82 percent" />
+                      <CircularProgress
+                        variant="determinate"
+                        value={82}
+                        size={56}
+                        aria-label="Sync progress 82 percent"
+                      />
                       <Typography variant="h4" as="p">82%</Typography>
                     </div>
                   </CardContent>
@@ -262,7 +276,9 @@
           <TabPanel value="settings">
             <div class="stack">
               {#if snackOpen}
-                <Alert severity="success" variant="outlined" onClose={() => (snackOpen = false)}>Settings saved.</Alert>
+                <Alert severity="success" variant="outlined" onClose={() => (snackOpen = false)}
+                  >Settings saved.</Alert
+                >
               {/if}
 
               <Card>
@@ -284,7 +300,9 @@
                       required
                       fullWidth
                       error={emailInvalid}
-                      helperText={emailInvalid ? "Enter a valid email address" : "Sample helper text"}
+                      helperText={emailInvalid
+                        ? "Enter a valid email address"
+                        : "Sample helper text"}
                       onblur={() => (emailTouched = true)}
                     />
                     <TextField label="Default shelf" select bind:value={defaultFormat} fullWidth>
@@ -293,7 +311,14 @@
                       <option value="wishlist">Wishlist</option>
                       <option value="archive">Archive</option>
                     </TextField>
-                    <TextField label="Bio" multiline rows={3} bind:value={bio} fullWidth variant="filled" />
+                    <TextField
+                      label="Bio"
+                      multiline
+                      rows={3}
+                      bind:value={bio}
+                      fullWidth
+                      variant="filled"
+                    />
 
                     <fieldset class="fieldset">
                       <legend>Shelf density</legend>
@@ -338,10 +363,16 @@
                         {#snippet control()}<Switch bind:checked={digest} />{/snippet}
                       </FormControlLabel>
                       <FormControlLabel label="Profile visible to others">
-                        {#snippet control()}<Switch bind:checked={publicProfile} color="secondary" />{/snippet}
+                        {#snippet control()}<Switch
+                            bind:checked={publicProfile}
+                            color="secondary"
+                          />{/snippet}
                       </FormControlLabel>
                       <FormControlLabel label="Preview features">
-                        {#snippet control()}<Switch bind:checked={betaFeatures} color="success" />{/snippet}
+                        {#snippet control()}<Switch
+                            bind:checked={betaFeatures}
+                            color="success"
+                          />{/snippet}
                       </FormControlLabel>
                       <FormControlLabel label="Disabled option" disabled>
                         {#snippet control()}<Switch checked={false} disabled />{/snippet}
@@ -352,23 +383,36 @@
                       <Typography variant="subtitle2" as="p" id="threshold-label">
                         Alert threshold: ${threshold}
                       </Typography>
-                      <Slider bind:value={threshold} min={5} max={100} step={5} valueLabelDisplay="auto" aria-label="Alert threshold in dollars" />
+                      <Slider
+                        bind:value={threshold}
+                        min={5}
+                        max={100}
+                        step={5}
+                        valueLabelDisplay="auto"
+                        aria-label="Alert threshold in dollars"
+                      />
                     </div>
 
                     <div>
                       <Typography variant="subtitle2" as="p">Collection view</Typography>
-                      <ButtonGroup variant="outlined" class="view-group" aria-label="Collection view">
-                        <Button
-                          aria-pressed={view === "grid"}
-                          onclick={() => (view = "grid")}>Grid</Button>
-                        <Button
-                          aria-pressed={view === "list"}
-                          onclick={() => (view = "list")}>List</Button>
-                        <Button
-                          aria-pressed={view === "compact"}
-                          onclick={() => (view = "compact")}>Compact</Button>
+                      <ButtonGroup
+                        variant="outlined"
+                        class="view-group"
+                        aria-label="Collection view"
+                      >
+                        <Button aria-pressed={view === "grid"} onclick={() => (view = "grid")}
+                          >Grid</Button
+                        >
+                        <Button aria-pressed={view === "list"} onclick={() => (view = "list")}
+                          >List</Button
+                        >
+                        <Button aria-pressed={view === "compact"} onclick={() => (view = "compact")}
+                          >Compact</Button
+                        >
                       </ButtonGroup>
-                      <Typography variant="caption" as="p" color="text.secondary">Selected: {view}</Typography>
+                      <Typography variant="caption" as="p" color="text.secondary"
+                        >Selected: {view}</Typography
+                      >
                     </div>
 
                     <div class="actions">
@@ -376,7 +420,12 @@
                         {#snippet startIcon()}<Save size={18} />{/snippet}
                         Save changes
                       </Button>
-                      <Button variant="text" color="default" type="reset" onclick={() => (emailTouched = false)}>Reset</Button>
+                      <Button
+                        variant="text"
+                        color="default"
+                        type="reset"
+                        onclick={() => (emailTouched = false)}>Reset</Button
+                      >
                     </div>
                   </form>
                 </CardContent>
@@ -410,31 +459,104 @@
 </Dialog>
 
 <style>
-  .shell { min-height: 100vh; }
-  .body { display: flex; gap: 24px; align-items: flex-start; padding: 24px; }
-  .perm { display: none; position: sticky; top: 88px; }
-  .main { flex: 1; min-width: 0; }
-  .menu-btn { display: inline-flex; }
-  .spacer { flex: 1; }
-  .stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; padding-top: 16px; }
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 24px; }
-  .row { display: flex; align-items: center; gap: 16px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 12px; padding: 4px 4px 20px; }
-  .form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; max-width: 640px; }
-  .fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; }
-  .fieldset legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
-  .indent { display: grid; margin-left: 24px; }
-  .bar-switch { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; cursor: pointer; }
-  .switches { display: grid; gap: 8px; }
-  .actions { display: flex; gap: 12px; align-items: center; }
-  .actions :global(.btn.text) { margin-left: 0; }
+  .shell {
+    min-height: 100vh;
+  }
+  .body {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    padding: 24px;
+  }
+  .perm {
+    display: none;
+    position: sticky;
+    top: 88px;
+  }
+  .main {
+    flex: 1;
+    min-width: 0;
+  }
+  .menu-btn {
+    display: inline-flex;
+  }
+  .spacer {
+    flex: 1;
+  }
+  .stack {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding-top: 16px;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+    gap: 24px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 4px 4px 20px;
+  }
+  .form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    max-width: 640px;
+  }
+  .fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .fieldset legend {
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding: 0;
+  }
+  .indent {
+    display: grid;
+    margin-left: 24px;
+  }
+  .bar-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .switches {
+    display: grid;
+    gap: 8px;
+  }
+  .actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .actions :global(.btn.text) {
+    margin-left: 0;
+  }
   :global(.view-group .btn.btn[aria-pressed="true"]) {
     --clay-color: var(--clay-primary);
     background: var(--clay-primary);
     color: var(--clay-primary-on);
   }
   @media (min-width: 900px) {
-    .perm { display: block; }
-    .menu-btn { display: none; }
+    .perm {
+      display: block;
+    }
+    .menu-btn {
+      display: none;
+    }
   }
 </style>

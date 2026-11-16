@@ -28,9 +28,7 @@
   }: Props = $props();
 
   const empty = $derived(
-    badgeContent === undefined ||
-      badgeContent === "" ||
-      (Number(badgeContent) === 0 && !showZero),
+    badgeContent === undefined || badgeContent === "" || (Number(badgeContent) === 0 && !showZero),
   );
   const hidden = $derived(invisible || (variant === "standard" && empty));
   const text = $derived(
@@ -41,7 +39,12 @@
 <span class="root {className}" {...rest}>
   {@render children?.()}
   {#if !hidden}
-    <span class="clay badge" class:dot={variant === "dot"} class:anchored={!!children} data-color={color}>
+    <span
+      class="clay badge"
+      class:dot={variant === "dot"}
+      class:anchored={!!children}
+      data-color={color}
+    >
       {#if variant === "standard"}{text}{/if}
     </span>
   {/if}
@@ -70,8 +73,16 @@
     white-space: nowrap;
     animation: pop 300ms var(--clay-ease);
   }
-  .badge[data-color="inherit"] { --clay-color: var(--clay-surface); color: inherit; }
-  .dot { min-width: 10px; width: 10px; height: 10px; padding: 0; }
+  .badge[data-color="inherit"] {
+    --clay-color: var(--clay-surface);
+    color: inherit;
+  }
+  .dot {
+    min-width: 10px;
+    width: 10px;
+    height: 10px;
+    padding: 0;
+  }
   .badge.anchored {
     position: absolute;
     top: 0;
@@ -79,13 +90,23 @@
     transform: translate(50%, -50%);
     z-index: 1;
   }
-  .badge.anchored.dot { transform: translate(40%, -40%); }
+  .badge.anchored.dot {
+    transform: translate(40%, -40%);
+  }
 
   @keyframes pop {
-    from { opacity: 0; scale: 0.4; }
-    to { opacity: 1; scale: 1; }
+    from {
+      opacity: 0;
+      scale: 0.4;
+    }
+    to {
+      opacity: 1;
+      scale: 1;
+    }
   }
   @media (prefers-reduced-motion: reduce) {
-    .badge { animation: none; }
+    .badge {
+      animation: none;
+    }
   }
 </style>
