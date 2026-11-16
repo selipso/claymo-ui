@@ -1,0 +1,184 @@
+@import "@fontsource/source-sans-3/400.css";
+@import "@fontsource/source-sans-3/600.css";
+
+/* ------------------------------------------------------------------ *
+ * Tokens. Every colour is light-dark(light, dark): one block, no
+ * duplicated dark theme. <html data-theme="light|dark"> overrides the
+ * system preference; with no attribute the system preference wins.
+ * ------------------------------------------------------------------ */
+:root {
+  color-scheme: light dark;
+
+  --clay-font: "Source Sans 3", system-ui, sans-serif;
+  --clay-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --clay-time: 300ms;
+
+  --clay-page: light-dark(#d4e8e6, #102629);
+  --clay-surface: light-dark(#e6f2f0, #1f4044);
+  --clay-ink: light-dark(#102629, #e8f3f2);
+  --clay-ink-muted: light-dark(#3f5a5d, #b7d0cf);
+  --clay-edge: light-dark(#5a7e80, #7aa3a5);
+  --clay-focus: light-dark(#006969, #f3ead2);
+
+  --clay-primary: #008282;
+  --clay-primary-on: #ffffff;
+  --clay-secondary: #2c6a9a;
+  --clay-secondary-on: #ffffff;
+  --clay-success: #2f7a52;
+  --clay-success-on: #ffffff;
+  --clay-error: #b5443b;
+  --clay-error-on: #ffffff;
+  --clay-warning: #e0a526;
+  --clay-warning-on: #102629;
+  --clay-info: #1f6f8b;
+  --clay-info-on: #ffffff;
+
+  --clay-primary-ink: light-dark(#006060, #55c9c5);
+  --clay-secondary-ink: light-dark(#275f8a, #8fc2ec);
+  --clay-success-ink: light-dark(#2a6e4a, #7fd0a0);
+  --clay-error-ink: light-dark(#a63b32, #f08a80);
+  --clay-warning-ink: light-dark(#8a5a00, #f0c060);
+  --clay-info-ink: light-dark(#1b6280, #7cc5e0);
+}
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+/* Colour selection: components set data-color on their root. */
+[data-color="primary"]   { --c: var(--clay-primary);   --c-on: var(--clay-primary-on);   --c-ink: var(--clay-primary-ink); }
+[data-color="secondary"] { --c: var(--clay-secondary); --c-on: var(--clay-secondary-on); --c-ink: var(--clay-secondary-ink); }
+[data-color="success"]   { --c: var(--clay-success);   --c-on: var(--clay-success-on);   --c-ink: var(--clay-success-ink); }
+[data-color="error"]     { --c: var(--clay-error);     --c-on: var(--clay-error-on);     --c-ink: var(--clay-error-ink); }
+[data-color="warning"]   { --c: var(--clay-warning);   --c-on: var(--clay-warning-on);   --c-ink: var(--clay-warning-ink); }
+[data-color="info"]      { --c: var(--clay-info);      --c-on: var(--clay-info-on);      --c-ink: var(--clay-info-ink); }
+[data-color="default"]   { --c: var(--clay-surface);   --c-on: var(--clay-ink);          --c-ink: var(--clay-ink); }
+[data-color="inherit"]   { --c: transparent;           --c-on: currentColor;             --c-ink: currentColor; }
+
+/* ------------------------------------------------------------------ *
+ * The clay surface. Per element: --clay-color (fill), --clay-d (depth),
+ * --clay-radius. Recipe from the article: one large offset outer shadow
+ * + a lighter top-left inset + a darker bottom-right inset.
+ * ------------------------------------------------------------------ */
+.clay {
+  --clay-color: var(--clay-surface);
+  --clay-d: 6px;
+  --clay-radius: 22px;
+
+  --clay-light: light-dark(
+    color-mix(in oklab, var(--clay-color), white 60%),
+    color-mix(in oklab, var(--clay-color), white 16%)
+  );
+  --clay-shade: light-dark(
+    color-mix(in oklab, var(--clay-color), black 24%),
+    color-mix(in oklab, var(--clay-color), black 42%)
+  );
+  --clay-drop: color-mix(in oklab, color-mix(in oklab, var(--clay-color), black 55%), transparent 50%);
+  --clay-outer: calc(var(--clay-d) * 1.2) calc(var(--clay-d) * 1.6) calc(var(--clay-d) * 3) 0 var(--clay-drop);
+  --clay-insets:
+    inset calc(var(--clay-d) * -1) calc(var(--clay-d) * -1) calc(var(--clay-d) * 2) 0 var(--clay-shade),
+    inset var(--clay-d) var(--clay-d) calc(var(--clay-d) * 2) 0 var(--clay-light);
+  --clay-raised: var(--clay-outer), var(--clay-insets);
+  --clay-pressed:
+    calc(var(--clay-d) * 0.4) calc(var(--clay-d) * 0.5) var(--clay-d) 0 var(--clay-drop),
+    inset var(--clay-d) var(--clay-d) calc(var(--clay-d) * 1.5) 0 var(--clay-shade),
+    inset calc(var(--clay-d) * -1) calc(var(--clay-d) * -1) calc(var(--clay-d) * 1.5) 0 var(--clay-light);
+  --clay-well:
+    inset var(--clay-d) var(--clay-d) calc(var(--clay-d) * 2) 0 var(--clay-shade),
+    inset calc(var(--clay-d) * -1) calc(var(--clay-d) * -1) calc(var(--clay-d) * 2) 0 var(--clay-light);
+
+  background: var(--clay-color);
+  border-radius: var(--clay-radius);
+  box-shadow: var(--clay-raised);
+  transition:
+    transform var(--clay-time) var(--clay-ease),
+    box-shadow var(--clay-time) var(--clay-ease),
+    background-color var(--clay-time) ease;
+}
+
+/* Puffy "squircle" corners where supported (Chromium 139+). Elsewhere the
+ * plain round border-radius still gives a complete clay look. */
+@supports (corner-shape: squircle) {
+  .clay,
+  .clay[data-inflated]::before {
+    corner-shape: squircle;
+  }
+}
+
+/* Interactive states. :where() keeps specificity low so component CSS can override. */
+.clay[data-clay-interactive]:where(:not(:disabled, [aria-disabled="true"], [data-disabled])):hover {
+  transform: translateY(-1px);
+  --clay-d: 8px;
+}
+.clay[data-clay-interactive]:where(:not(:disabled, [aria-disabled="true"], [data-disabled])):active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: var(--clay-pressed);
+}
+.clay:is(:disabled, [aria-disabled="true"], [data-disabled]) {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Never remove focus indication. */
+:focus-visible {
+  outline: 3px solid var(--clay-focus);
+  outline-offset: 3px;
+}
+
+/* Opt-in inflated dome shading via the SVG lighting filter (#clay-lit, defined in Base.astro). */
+.clay[data-inflated] {
+  position: relative;
+  isolation: isolate;
+  background: transparent;
+  box-shadow: var(--clay-outer);
+}
+.clay[data-inflated]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--clay-color);
+  filter: url(#clay-lit);
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ *
+ * Page defaults and utilities.
+ * ------------------------------------------------------------------ */
+body {
+  margin: 0;
+  background: var(--clay-page);
+  color: var(--clay-ink);
+  font: 400 1rem/1.5 var(--clay-font);
+}
+.clay-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .clay,
+  .clay * {
+    transition: none !important;
+    animation: none !important;
+  }
+  .clay[data-clay-interactive]:is(:hover, :active) {
+    transform: none;
+  }
+}
+@media (forced-colors: active) {
+  .clay {
+    border: 2px solid ButtonText;
+    box-shadow: none;
+  }
+  .clay:focus-visible {
+    outline-color: Highlight;
+  }
+}
