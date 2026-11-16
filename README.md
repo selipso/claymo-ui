@@ -126,3 +126,7 @@ Open, not acted on:
 - **Look (taste):** wells on the Settings screen read neumorphic; default Card, Paper and Chip are separated from the page by shadow only (about 1.1:1 fill contrast); the `inflated` filter shifts hue (primary turns cyan), so it is a demo, not a default.
 - **States and a11y still open:** pressed shadow is lost on text `Button`, `ListItemButton` and unselected `Tab` (only scale shows); `TextField error` without `helperText` has no non-colour cue beyond `aria-invalid`; the `Chip` delete target is 22px; forced-colors fallbacks are not complete for the Radio dot, Switch thumb and Alert bar.
 - **Brand:** the clay look is not a brand decision for Biblioplex (the documented direction is archive-room, serif wordmark, Orbital Seal). Compare against a flat parchment-and-serif treatment before reuse. Naming clearance for "Biblioplex" is not established, so the demo is not for external publication.
+
+## License
+
+[MIT](LICENSE) © 2026 claymo-ui contributors.
