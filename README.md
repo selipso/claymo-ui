@@ -1,4 +1,4 @@
-# clay-ui
+# claymo-ui
 
 Proof of concept: a claymorphic (soft, inflated, inner and outer shadow) component library with [Material UI](https://mui.com/material-ui/all-components/)-style APIs, written as Svelte 5 components on one plain-CSS foundation, with an Astro playground.
 
@@ -99,7 +99,7 @@ Prop names, values and defaults follow MUI v9 for supported props. Controlled va
 | `secondary`, `success`, `error`, `warning`, `info` fills | POC values with hues near the Orbital Seal blue, green and red, darkened so white text passes 4.5:1. Not brand-approved |
 | Documented but unused: `#193639`, `#456063`, `#789495`, `#006969` as hover, Source Serif 4, Ink `#343240`, Parchment as a surface | |
 
-The brand doc says status colours (error, success) must not be recoloured in the host application. clay-ui is its own host UI, so it defines its own status colours; a real host should override `--clay-success`, `--clay-error` and the other `--clay-<name>` tokens. Whether the clay look suits the archive-room brand is an open brand decision, not settled here.
+The brand doc says status colours (error, success) must not be recoloured in the host application. claymo-ui is its own host UI, so it defines its own status colours; a real host should override `--clay-success`, `--clay-error` and the other `--clay-<name>` tokens. Whether the clay look suits the archive-room brand is an open brand decision, not settled here.
 
 ## Verification
 
