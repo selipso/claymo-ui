@@ -4,6 +4,10 @@ Proof of concept: a claymorphic (soft, inflated, inner and outer shadow) compone
 
 Inspired by Michał Malewicz's [Claymorphism in User Interfaces](https://hype4.academy/articles/design/claymorphism-in-user-interfaces), which says the effect is "not really possible to achieve in CSS just yet". This repository tests that claim.
 
+## Claymorphism Aesthetics
+
+![Claymorphic buttons showcasing variants, colors, sizes, and states](claymo-buttons.png)
+
 ## Feasibility verdict
 
 About 90% of the look is plain CSS today and degrades gracefully. Only the article's bulged-edge silhouette needs an emulation.
