@@ -53,6 +53,6 @@
     box-shadow: none;
   }
   .outlined {
-    border: 2px solid var(--clay-edge);
+    border: var(--clay-border-width) solid var(--clay-edge);
   }
 </style>

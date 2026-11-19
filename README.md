@@ -52,6 +52,8 @@ Import `src/lib/styles/clay.css` once, then:
 - `data-clay-interactive` adds hover lift and the pressed state; focus rings are global (`:focus-visible`, 3px).
 - `data-inflated` switches the surface to the SVG lighting filter. It needs the hidden `<svg>` with `#clay-lit` from `src/layouts/Base.astro` in the document (do not use `display: none` on it).
 - Light and dark themes use one token block with `light-dark()`. `<html data-theme="light|dark">` overrides the system preference.
+- The **Gallery theme** dropdown and **Dark** switch on `/components/` let you inspect five complementary and triadic palettes across light and dark modes: **Tidal Pool** (lagoon teal & terracotta coral), **Sunset Sorbet** (electric magenta & Capri cyan), **Lunar Orbit** (ultraviolet & solar citron), **Cobalt Atelier** (Klein cobalt & marigold), and **Tropical Canopy** (malachite jade & neon orchid). Apply `data-palette="tidal|sorbet|orbit|atelier|canopy"` to a container or `<html>` to reuse a palette. `:root` provides default status tokens (`success`, `error`, `warning`, `info`), and themes override them alongside `primary` and `secondary` so each palette stays cohesive and collision-free.
+- Component borders and dividers use `--clay-border-width` (1px). Focus rings and indicator strokes stay independent so they remain visible.
 
 ## Components
 
@@ -86,7 +88,7 @@ Prop names, values and defaults follow MUI v9 for supported props. Controlled va
 - Fields, checkbox and radio edges, and slider tracks use `--clay-edge` for at least 3:1 against the page; text pairs target 4.5:1. The contrast audit used during development is described under Verification below.
 - Visible 3px focus ring everywhere; the ring is never removed.
 - `prefers-reduced-motion`: transitions and animations are disabled; hover lift and press scale are removed.
-- `forced-colors`: shadows are replaced with a 2px `ButtonText` border. Not visually exercised in this POC.
+- `forced-colors`: clay surfaces use a `ButtonText` border instead of shadows.
 - Controls are at least 48px tall at the default size (36px for `size="small"`, which is documented as dense).
 
 ## Known limits

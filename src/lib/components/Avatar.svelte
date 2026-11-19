@@ -40,7 +40,6 @@
   .avatar {
     corner-shape: round;
     --size: 40px;
-    --ring: 3px;
     --clay-d: 4px;
     --clay-radius: 999px;
     box-sizing: border-box;
@@ -50,7 +49,7 @@
     flex: none;
     width: var(--size);
     height: var(--size);
-    padding: var(--ring);
+    padding: var(--clay-border-width);
     overflow: hidden;
     color: var(--clay-ink);
     font: 600 1rem/1 var(--clay-font);
@@ -59,13 +58,11 @@
   }
   .avatar[data-size="small"] {
     --size: 32px;
-    --ring: 2px;
     --clay-d: 3px;
     font-size: 0.875rem;
   }
   .avatar[data-size="large"] {
     --size: 56px;
-    --ring: 4px;
     --clay-d: 5px;
     font-size: 1.375rem;
   }
@@ -91,7 +88,8 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: calc(var(--clay-radius) - var(--ring));
+    border-radius: calc(var(--clay-radius) - var(--clay-border-width));
+    corner-shape: inherit;
   }
   .avatar > :global(svg) {
     width: 55%;

@@ -89,7 +89,7 @@
     height: 28px;
     margin: 0;
     padding: 0;
-    border: 2px solid var(--clay-edge);
+    border: var(--clay-border-width) solid var(--clay-edge);
     box-shadow: var(--clay-well);
     vertical-align: middle;
     cursor: pointer;

@@ -37,7 +37,7 @@ const { title } = Astro.props;
           in="height"
           surfaceScale="6"
           diffuseConstant="1"
-          lighting-color="#fff"
+          lighting-color="var(--clay-highlight)"
           result="diffuse"
         >
           <feDistantLight azimuth="225" elevation="55"></feDistantLight>
@@ -47,7 +47,7 @@ const { title } = Astro.props;
           surfaceScale="7"
           specularConstant="0.6"
           specularExponent="22"
-          lighting-color="#fff"
+          lighting-color="var(--clay-highlight)"
           result="spec"
         >
           <feDistantLight azimuth="225" elevation="55"></feDistantLight>

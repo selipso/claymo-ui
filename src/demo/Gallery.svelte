@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import Download from "@lucide/svelte/icons/download";
   import Send from "@lucide/svelte/icons/send";
   import Heart from "@lucide/svelte/icons/heart";
@@ -56,6 +57,40 @@
   const sizes: Size[] = ["small", "medium", "large"];
   const severities: Severity[] = ["success", "info", "warning", "error"];
   const variants = ["contained", "outlined", "text"] as const;
+  const palettes = [
+    { id: "tidal", label: "Tidal Pool", note: "Complementary · Lagoon teal & terracotta coral" },
+    { id: "sorbet", label: "Sunset Sorbet", note: "Triadic · Electric magenta & Capri cyan" },
+    { id: "orbit", label: "Lunar Orbit", note: "Complementary · Ultraviolet & solar citron" },
+    { id: "atelier", label: "Cobalt Atelier", note: "Complementary · Klein cobalt & marigold" },
+    { id: "canopy", label: "Tropical Canopy", note: "Complementary · Malachite jade & neon orchid" },
+  ] as const;
+  type PaletteId = (typeof palettes)[number]["id"];
+  let palette = $state<PaletteId>("tidal");
+  const activePalette = $derived(palettes.find((p) => p.id === palette) ?? palettes[0]);
+  let dark = $state(false);
+
+  onMount(() => {
+    const t = document.documentElement.dataset.theme;
+    dark = t ? t === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  function setTheme(next: boolean) {
+    dark = next;
+    const t = next ? "dark" : "light";
+    document.documentElement.dataset.theme = t;
+    try {
+      localStorage.setItem("clay-theme", t);
+    } catch {
+      /* private mode: theme still applies for this session */
+    }
+  }
+
+  $effect(() => {
+    document.documentElement.dataset.palette = palette;
+    return () => {
+      delete document.documentElement.dataset.palette;
+    };
+  });
 
   let checkA = $state(true);
   let checkB = $state(false);
@@ -77,13 +112,48 @@
   }
 </script>
 
-<div class="page">
-  <p><a href="/">&larr; Back to app demo</a> &middot; <a href="/lab/">Technique lab</a></p>
-  <Typography variant="h2" as="h1" gutterBottom>Component gallery</Typography>
-  <Typography color="text.secondary" gutterBottom>
-    Every component with the MUI prop names that drive it. Hover, press, and Tab through them: hover
-    lifts, press sinks, focus draws a 3px ring.
-  </Typography>
+<main class="page" data-palette={palette}>
+  <nav aria-label="Demo pages">
+    <a href="/">&larr; App demo</a> &middot; <a href="/lab/">Technique lab</a>
+  </nav>
+  <header class="clay masthead">
+    <div class="intro">
+      <Typography variant="overline" color="primary">Claymo UI / Pattern library</Typography>
+      <h1>Component gallery</h1>
+      <Typography color="text.secondary">
+        Explore variants and states. Hover to lift, press to sink, or Tab to see keyboard focus.
+      </Typography>
+    </div>
+    <div class="palette-tools">
+      <div class="tools-top">
+        <div class="samples" aria-hidden="true">
+          {#each colors.slice(0, 6) as swatch (swatch)}
+            <span class="clay" data-color={swatch} title={swatch}></span>
+          {/each}
+        </div>
+        <FormControlLabel label="Dark" labelPlacement="start">
+          {#snippet control()}
+            <Switch
+              size="small"
+              checked={dark}
+              onChange={(_e, checked) => setTheme(checked)}
+            />
+          {/snippet}
+        </FormControlLabel>
+      </div>
+      <TextField
+        select
+        fullWidth
+        label="Gallery theme"
+        bind:value={palette}
+        helperText={activePalette.note}
+      >
+        {#each palettes as p (p.id)}
+          <option value={p.id}>{p.label}</option>
+        {/each}
+      </TextField>
+    </div>
+  </header>
 
   <div class="sections">
     <Card as="section" aria-labelledby="g-button">
@@ -432,21 +502,76 @@
       </CardActions>
     </Card>
   </div>
-</div>
-
-<Snackbar bind:open={snack} message="Snackbar from the gallery" />
-<Dialog bind:open={dialog} title="Dialog title" maxWidth="xs">
-  <p>Native dialog: focus is trapped, Escape closes, focus returns to the opener.</p>
-  {#snippet actions()}
-    <Button variant="text" onclick={() => (dialog = false)}>Close</Button>
-  {/snippet}
-</Dialog>
+  <Snackbar bind:open={snack} message="Snackbar from the gallery" />
+  <Dialog bind:open={dialog} title="Dialog title" maxWidth="xs">
+    <p>Native dialog: focus is trapped, Escape closes, focus returns to the opener.</p>
+    {#snippet actions()}
+      <Button variant="text" onclick={() => (dialog = false)}>Close</Button>
+    {/snippet}
+  </Dialog>
+</main>
 
 <style>
   .page {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 32px 20px 64px;
+    box-sizing: border-box;
+    min-height: 100dvh;
+    padding: 24px max(20px, calc((100% - 1100px) / 2)) 64px;
+    background: var(--clay-page);
+    color: var(--clay-ink);
+  }
+  .masthead {
+    --clay-d: 8px;
+    --clay-radius: 32px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 20px;
+    padding: clamp(20px, 4vw, 44px);
+    border: var(--clay-border-width) solid var(--clay-edge);
+    background: linear-gradient(
+      118deg,
+      var(--clay-surface) 38%,
+      color-mix(in oklab, var(--clay-primary) 16%, var(--clay-surface)) 70%,
+      color-mix(in oklab, var(--clay-secondary) 22%, var(--clay-surface))
+    );
+  }
+  .intro {
+    flex: 1 1 22rem;
+    max-width: 60ch;
+  }
+  h1 {
+    font-size: clamp(2.25rem, 5vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    margin: 0.12em 0 0.28em;
+  }
+  .palette-tools {
+    flex: 0 1 320px;
+    min-width: min(100%, 240px);
+    display: grid;
+    gap: 8px;
+  }
+  .tools-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .samples {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .samples span {
+    --clay-color: var(--c);
+    --clay-d: 3px;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: var(--clay-border-width) solid color-mix(in oklab, var(--c-ink), transparent 45%);
   }
   a {
     color: var(--clay-primary-ink);

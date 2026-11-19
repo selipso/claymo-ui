@@ -77,7 +77,7 @@
     height: 32px;
     margin: 0;
     padding: 0;
-    border: 2px solid var(--clay-edge);
+    border: var(--clay-border-width) solid var(--clay-edge);
     /* Keep a pill where squircle corners are supported. */
     corner-shape: round;
     box-shadow: var(--clay-well);
@@ -109,25 +109,30 @@
   /* Thumb: a small clay ball. ::before cannot reuse the track's derived shadow
      variables (they are resolved from the track colour), so it carries its own. */
   .switch::before {
-    border: 2px solid var(--clay-edge);
+    --thumb-inset: calc(4px - var(--clay-border-width));
     --td: 3px;
     --t-fill: var(--clay-surface);
     --t-light: light-dark(
-      color-mix(in oklab, var(--t-fill), white 60%),
-      color-mix(in oklab, var(--t-fill), white 16%)
+      color-mix(in oklab, var(--t-fill), var(--clay-highlight) 60%),
+      color-mix(in oklab, var(--t-fill), var(--clay-highlight) 16%)
     );
     --t-shade: light-dark(
-      color-mix(in oklab, var(--t-fill), black 24%),
-      color-mix(in oklab, var(--t-fill), black 42%)
+      color-mix(in oklab, var(--t-fill), var(--clay-shadow) 24%),
+      color-mix(in oklab, var(--t-fill), var(--clay-shadow) 42%)
     );
-    --t-drop: color-mix(in oklab, color-mix(in oklab, var(--t-fill), black 55%), transparent 50%);
+    --t-drop: color-mix(
+      in oklab,
+      color-mix(in oklab, var(--t-fill), var(--clay-shadow) 55%),
+      transparent 50%
+    );
     content: "";
     position: absolute;
-    left: 2px;
-    top: 2px;
+    left: var(--thumb-inset);
+    top: var(--thumb-inset);
     box-sizing: border-box;
     width: var(--thumb);
     height: var(--thumb);
+    border: var(--clay-border-width) solid var(--clay-edge);
     border-radius: 50%;
     background: var(--t-fill);
     box-shadow:

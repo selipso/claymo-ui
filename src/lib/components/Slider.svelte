@@ -142,7 +142,7 @@
     cursor: not-allowed;
   }
 
-  /* Track: an inset well with a 2px edge ring (ring is a shadow so it does not shift the thumb). */
+  /* The edge ring is a shadow so it does not shift the thumb. */
   .slider::-webkit-slider-runnable-track {
     height: var(--track);
     border: 0;
@@ -150,7 +150,7 @@
     background:
       linear-gradient(to right, var(--c) var(--fill), transparent var(--fill)), var(--clay-page);
     box-shadow:
-      0 0 0 2px var(--clay-edge),
+      0 0 0 var(--clay-border-width) var(--clay-edge),
       inset 2px 3px 5px var(--clay-shade),
       inset -2px -2px 4px var(--clay-light);
   }
@@ -160,7 +160,7 @@
     border-radius: 999px;
     background: var(--clay-page);
     box-shadow:
-      0 0 0 2px var(--clay-edge),
+      0 0 0 var(--clay-border-width) var(--clay-edge),
       inset 2px 3px 5px var(--clay-shade),
       inset -2px -2px 4px var(--clay-light);
   }
@@ -178,7 +178,7 @@
     width: var(--thumb);
     height: var(--thumb);
     margin-top: calc((var(--track) - var(--thumb)) / 2);
-    border: 3px solid var(--c-ink);
+    border: var(--clay-border-width) solid var(--c-ink);
     border-radius: 50%;
     background: var(--clay-color);
     box-shadow: var(--clay-raised);
@@ -188,7 +188,7 @@
     box-sizing: border-box;
     width: var(--thumb);
     height: var(--thumb);
-    border: 3px solid var(--c-ink);
+    border: var(--clay-border-width) solid var(--c-ink);
     border-radius: 50%;
     background: var(--clay-color);
     box-shadow: var(--clay-raised);

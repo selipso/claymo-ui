@@ -25,26 +25,15 @@
 />
 
 <style>
-  /* An embossed groove: darker line above a lighter line, derived from the surface token. */
   .divider {
-    --shade: light-dark(
-      color-mix(in oklab, var(--clay-surface), black 24%),
-      color-mix(in oklab, var(--clay-surface), black 42%)
-    );
-    --light: light-dark(
-      color-mix(in oklab, var(--clay-surface), white 60%),
-      color-mix(in oklab, var(--clay-surface), white 16%)
-    );
     flex: none;
     box-sizing: border-box;
     margin: 0;
     border: 0;
-    border-radius: 1px;
   }
   .horizontal {
     width: 100%;
-    height: 2px;
-    background: linear-gradient(to bottom, var(--shade) 50%, var(--light) 50%);
+    border-top: var(--clay-border-width) solid var(--clay-edge);
   }
   .horizontal.inset {
     width: auto;
@@ -52,10 +41,10 @@
   }
 
   .vertical {
-    width: 2px;
+    width: var(--clay-border-width);
     height: 100%;
     min-height: 1em;
-    background: linear-gradient(to right, var(--shade) 50%, var(--light) 50%);
+    border-left: var(--clay-border-width) solid var(--clay-edge);
   }
   .vertical.flex-item {
     height: auto;

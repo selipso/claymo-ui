@@ -46,14 +46,6 @@
     --clay-color: var(--clay-page);
     --clay-d: 5px;
     --clay-radius: 24px;
-    --shade: light-dark(
-      color-mix(in oklab, var(--clay-surface), black 24%),
-      color-mix(in oklab, var(--clay-surface), black 42%)
-    );
-    --light: light-dark(
-      color-mix(in oklab, var(--clay-surface), white 60%),
-      color-mix(in oklab, var(--clay-surface), white 16%)
-    );
     --cell-y: 14px;
     --cell-x: 16px;
     box-sizing: border-box;
@@ -69,7 +61,7 @@
 
   table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
     border-spacing: 0;
     font-size: 1rem;
   }
@@ -91,13 +83,10 @@
     color: inherit;
   }
 
-  /* row dividers: the same embossed groove as Divider */
-  .scroll :global(tr:not(:last-child) > th),
-  .scroll :global(tr:not(:last-child) > td) {
-    background-image: linear-gradient(to bottom, var(--shade) 50%, var(--light) 50%);
-    background-repeat: no-repeat;
-    background-position: bottom;
-    background-size: 100% 2px;
+  /* Use cell borders so the divider moves with a sticky header. */
+  .scroll :global(tr:not(:last-child) > :is(th, td)),
+  .scroll :global(:is(thead, tbody, tfoot):not(:last-child) > tr:last-child > :is(th, td)) {
+    border-block-end: var(--clay-border-width) solid var(--clay-edge);
   }
   .scroll :global(tbody tr:hover > *) {
     background-color: var(--clay-surface);

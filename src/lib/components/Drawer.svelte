@@ -151,7 +151,7 @@
     animation: slide-right var(--clay-time) var(--clay-ease);
   }
   .temporary::backdrop {
-    background: color-mix(in oklab, #000, transparent 45%);
+    background: var(--clay-backdrop);
   }
   .temporary[open]::backdrop {
     animation: fade var(--clay-time) ease;

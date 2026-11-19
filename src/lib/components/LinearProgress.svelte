@@ -52,7 +52,7 @@
     width: 100%;
     height: 16px;
     overflow: hidden;
-    border: 2px solid var(--clay-edge);
+    border: var(--clay-border-width) solid var(--clay-edge);
     box-shadow: var(--clay-well);
   }
   .bar {

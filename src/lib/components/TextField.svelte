@@ -5,6 +5,7 @@
     HTMLSelectAttributes,
     HTMLTextareaAttributes,
   } from "svelte/elements";
+  import ChevronDown from "@lucide/svelte/icons/chevron-down";
   import type { Color, Size } from "../types";
 
   interface Props extends Omit<
@@ -155,7 +156,7 @@
       >
         {@render children?.()}
       </select>
-      <span class="chevron" aria-hidden="true"></span>
+      <span class="chevron" aria-hidden="true"><ChevronDown size={size === "small" ? 16 : 20} strokeWidth={3} /></span>
     {:else}
       <input
         class="clay input"
@@ -239,7 +240,7 @@
     min-height: 48px;
     margin: 0;
     padding: 0 16px;
-    border: 2px solid var(--clay-edge);
+    border: var(--clay-border-width) solid var(--clay-edge);
     box-shadow: var(--clay-well);
     color: var(--clay-ink);
     font: 400 1rem/1.5 var(--clay-font);
@@ -279,10 +280,10 @@
     padding-right: 40px;
   }
 
-  /* filled: no full border, keep a 2px bottom edge on the surface fill. */
+  /* Filled fields keep only the bottom edge on the surface fill. */
   .field[data-variant="filled"] .input {
     --clay-color: var(--clay-surface);
-    border-width: 0 0 2px;
+    border-width: 0 0 var(--clay-border-width);
     border-radius: var(--clay-radius) var(--clay-radius) 8px 8px;
   }
 
@@ -335,14 +336,9 @@
     position: absolute;
     right: 14px;
     top: 50%;
-    width: 20px;
-    height: 20px;
+    display: flex;
     transform: translateY(-50%);
-    background: var(--clay-ink);
-    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
-      center / contain no-repeat;
-    mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")
-      center / contain no-repeat;
+    color: var(--clay-ink);
     pointer-events: none;
   }
   .field[data-size="small"] .chevron {
@@ -353,7 +349,7 @@
   }
   @media (forced-colors: active) {
     .chevron {
-      background: CanvasText;
+      color: CanvasText;
     }
   }
 

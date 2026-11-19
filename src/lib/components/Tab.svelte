@@ -134,7 +134,7 @@
     color: var(--clay-ink);
   }
 
-  /* Selected: pressed well, coloured text and a 4px underline pill. */
+  /* Selected: pressed well, coloured text and an underline. */
   .selected {
     background: var(--clay-page);
     --clay-color: var(--clay-page);
@@ -148,16 +148,14 @@
     content: "";
     position: absolute;
     inset-inline: 22%;
-    bottom: 5px;
-    height: 4px;
-    border-radius: 999px;
-    background: var(--c);
+    inset-block-end: 5px;
+    border-block-end: var(--clay-border-width) solid var(--c-ink);
   }
 
   @media (forced-colors: active) {
     .selected::after {
       forced-color-adjust: none;
-      background: Highlight;
+      border-color: Highlight;
     }
   }
 </style>

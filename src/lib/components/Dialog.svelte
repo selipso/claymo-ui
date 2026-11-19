@@ -117,7 +117,7 @@
     animation: pop var(--clay-time) var(--clay-ease);
   }
   .dialog::backdrop {
-    background: color-mix(in oklab, #000, transparent 45%);
+    background: var(--clay-backdrop);
   }
   .dialog[open]::backdrop {
     animation: fade var(--clay-time) ease;

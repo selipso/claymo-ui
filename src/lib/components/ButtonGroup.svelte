@@ -4,11 +4,9 @@
   import type { Color, Size } from "../types";
 
   /*
-   * Button.svelte is read-only for this slice, so it cannot read a Svelte
-   * context. Instead the group restyles its child `.btn` elements through
-   * scoped :global() selectors and re-points their --c/--c-on/--c-ink
-   * variables, so `variant`, `color` and `size` set on the group win over
-   * whatever the child Buttons were given.
+   * Scoped :global() selectors restyle child `.btn` elements and re-point
+   * their --c/--c-on/--c-ink variables, so `variant`, `color` and `size`
+   * set on the group override those on individual Buttons.
    *
    * Rendered as a <fieldset> (implicit role="group"): `disabled` then disables
    * every descendant button natively, with no per-child plumbing.
@@ -95,9 +93,9 @@
   }
   .outlined {
     --clay-color: var(--clay-surface);
-    --g-ri: calc(var(--g-r) - 2px);
+    --g-ri: calc(var(--g-r) - var(--clay-border-width));
     color: var(--g-ink);
-    border: 2px solid var(--g-ink);
+    border: var(--clay-border-width) solid var(--g-ink);
   }
   .text {
     background: transparent;
@@ -166,12 +164,12 @@
     border-end-end-radius: var(--g-ri);
   }
 
-  /* 2px dividers between children */
+  /* Dividers between children. */
   .horizontal :global(.btn.btn:not(:first-child)) {
-    border-inline-start: 2px solid var(--clay-edge);
+    border-inline-start: var(--clay-border-width) solid var(--clay-edge);
   }
   .vertical :global(.btn.btn:not(:first-child)) {
-    border-block-start: 2px solid var(--clay-edge);
+    border-block-start: var(--clay-border-width) solid var(--clay-edge);
   }
 
   /* states: tint on hover, inset on press, focus ring above neighbours */

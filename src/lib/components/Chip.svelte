@@ -118,7 +118,7 @@
   .outlined {
     --clay-color: var(--clay-surface);
     color: var(--c-ink);
-    border: 2px solid var(--c-ink);
+    border: var(--clay-border-width) solid var(--c-ink);
   }
   .chip[data-color="inherit"] {
     --clay-color: var(--clay-surface);

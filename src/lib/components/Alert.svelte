@@ -120,9 +120,7 @@
     position: absolute;
     inset-block: 14px;
     inset-inline-start: 12px;
-    width: 5px;
-    border-radius: 999px;
-    background: var(--c);
+    border-inline-start: var(--clay-border-width) solid var(--c-ink);
   }
   .standard .icon {
     color: var(--c-ink);
@@ -135,13 +133,13 @@
     color: var(--c-on);
   }
 
-  /* outlined: surface + 2px coloured border */
+  /* outlined: surface + coloured border */
   .outlined {
     --clay-color: var(--clay-surface);
     color: var(--clay-ink);
-    border: 2px solid var(--c-ink);
-    padding-block: 10px;
-    padding-inline-start: 14px;
+    border: var(--clay-border-width) solid var(--c-ink);
+    padding-block: calc(12px - var(--clay-border-width));
+    padding-inline-start: calc(16px - var(--clay-border-width));
   }
   .outlined .icon {
     color: var(--c-ink);

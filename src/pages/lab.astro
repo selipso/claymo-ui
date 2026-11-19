@@ -150,7 +150,7 @@ const variants = [
     padding: 28px;
     border-radius: 28px;
     background: var(--clay-surface);
-    border: 2px solid var(--clay-edge);
+    border: var(--clay-border-width) solid var(--clay-edge);
   }
   .stage {
     display: flex;
@@ -190,7 +190,7 @@ const variants = [
     filter: drop-shadow(10px 14px 14px var(--drop-color));
   }
   .variant-d {
-    --drop-color: color-mix(in oklab, #000, transparent 55%);
+    --drop-color: color-mix(in oklab, var(--clay-shadow), transparent 55%);
   }
   .variant-d .shape {
     box-shadow: none;
@@ -222,7 +222,7 @@ const variants = [
   .support :global(td) {
     text-align: left;
     padding: 10px 12px;
-    border-bottom: 2px solid var(--clay-edge);
+    border-bottom: var(--clay-border-width) solid var(--clay-edge);
   }
   .support :global(tr:last-child th),
   .support :global(tr:last-child td) {
