@@ -1,0 +1,39 @@
+---
+// Must render the same states as Parity.svelte; the parity test compares them.
+import { Button, Checkbox, Paper, Tabs } from "@claymo/astro";
+---
+
+<section id="parity" style="display:grid;gap:16px;padding:16px">
+  <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+    <Button>Save</Button>
+    <Button variant="outlined" color="secondary" size="small">
+      Cancel
+    </Button>
+    <Button variant="text">More</Button>
+    <Button href="/nowhere/" disabled>
+      Disabled link
+    </Button>
+    <Button loading>Saving</Button>
+    <Checkbox checked aria-label="Parity checked" />
+  </div>
+  <div style="display:flex;gap:16px">
+    <Paper elevation={2} style="padding:16px">
+      Raised
+    </Paper>
+    <Paper variant="outlined" as="aside" style="padding:16px">
+      Outlined
+    </Paper>
+  </div>
+  <Tabs
+    aria-label="Parity tabs"
+    value="one"
+    tabs={[
+      { value: "one", label: "One" },
+      { value: "two", label: "Two", disabled: true },
+      { value: "three", label: "Three" },
+    ]}
+  >
+    <p slot="one">First panel</p>
+    <p slot="three">Third panel</p>
+  </Tabs>
+</section>

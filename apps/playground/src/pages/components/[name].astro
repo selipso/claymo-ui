@@ -1,0 +1,52 @@
+---
+import { frameworks, getComponent, listComponents } from "@claymo/core/reference";
+import { Tabs } from "@claymo/astro";
+import Shell from "../../layouts/Shell.astro";
+import ReferencePanel from "../../components/ReferencePanel.astro";
+import { componentSlug } from "../../lib/nav";
+
+export function getStaticPaths() {
+  // Both bridges export the same components (the packed fixture enforces parity).
+  return listComponents("astro").map((name) => ({
+    params: { name: componentSlug(name) },
+    props: { name },
+  }));
+}
+
+const { name } = Astro.props;
+const references = frameworks.map((framework) => getComponent(framework, name));
+const tabs = frameworks.map((framework) => ({
+  value: framework,
+  label: framework === "astro" ? "Astro" : "Svelte",
+}));
+---
+
+<Shell title={name}>
+  <main class="prose">
+    <h1>{name}</h1>
+    <p>{references[0].purpose}</p>
+    <Tabs aria-label="Framework" tabs={tabs} value="astro">
+      {references.map((reference) => (
+        <Fragment slot={reference.framework}>
+          <ReferencePanel reference={reference} />
+        </Fragment>
+      ))}
+    </Tabs>
+  </main>
+</Shell>
+
+<script>
+  // Example frames report their content height (see Frame.astro); size the matching frame to fit.
+  window.addEventListener("message", (event) => {
+    const { claymoExample, height } = event.data ?? {};
+    if (
+      event.origin !== location.origin ||
+      typeof claymoExample !== "string" ||
+      typeof height !== "number"
+    )
+      return;
+    for (const frame of document.querySelectorAll<HTMLIFrameElement>("iframe[data-example]")) {
+      if (new URL(frame.src).pathname === claymoExample) frame.style.height = `${height}px`;
+    }
+  });
+</script>

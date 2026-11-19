@@ -1,0 +1,16 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"ul"> & { dense?: boolean; disablePadding?: boolean };
+const { dense = false, disablePadding = false, class: className, ...rest } = Astro.props;
+---
+
+<ul
+  {...rest}
+  class:list={["clay-list", className]}
+  data-dense={dense ? "" : undefined}
+  data-padded={!disablePadding ? "" : undefined}
+  role={rest.role ?? "list"}
+>
+  <slot />
+</ul>

@@ -1,0 +1,268 @@
+{
+  "Paper": {
+    "purpose": "A clay surface for grouping content. The root forwards native attributes such as id, class, style, aria-* and data-*. Use class or style to customize --clay-color, --clay-d or --clay-radius; use as for native semantics.",
+    "props": {
+      "as": {
+        "type": "string",
+        "enum": ["div", "section", "article", "nav", "aside", "header"],
+        "default": "div",
+        "description": "Native root element; choose a tag that matches the content."
+      },
+      "variant": {
+        "type": "string",
+        "enum": ["elevation", "outlined"],
+        "default": "elevation",
+        "description": "Outlined uses a themed border and no shadow, regardless of elevation."
+      },
+      "elevation": {
+        "type": "integer",
+        "enum": [0, 1, 2, 3],
+        "default": 1,
+        "description": "Depth: 0 is flat; 1, 2 and 3 set 6px, 10px and 16px respectively."
+      },
+      "square": {
+        "type": "boolean",
+        "default": false,
+        "description": "Use square rather than rounded corners."
+      },
+      "inflated": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enable SVG dome shading. Ignored for outlined or elevation=0; otherwise render ClayLighting once in the document."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Paper"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: surface content."],
+        "events": ["No component events; listen on the native element in a client script."],
+        "example": "<Paper as=\"section\" elevation={2} aria-labelledby=\"account-title\" style=\"padding: 1rem;\">\n  <h2 id=\"account-title\">Account</h2>\n</Paper>"
+      },
+      "svelte": {
+        "imports": ["Paper"],
+        "required": [],
+        "props": {},
+        "content": ["children: the default snippet (inline content)."],
+        "events": [
+          "Native handler props such as onclick are forwarded to the root; no component events."
+        ],
+        "example": "<Paper as=\"section\" elevation={2} aria-labelledby=\"account-title\" style=\"padding: 1rem;\">\n  <h2 id=\"account-title\">Account</h2>\n</Paper>"
+      }
+    }
+  },
+  "Button": {
+    "purpose": "Use a native button for actions or an anchor for navigation. Keep visible label text or provide an accessible name for icon-only content. Native id, class, style and aria-* attributes pass through.",
+    "props": {
+      "variant": {
+        "type": "string",
+        "enum": ["contained", "outlined", "text"],
+        "default": "contained",
+        "description": "Raised color fill, themed outline, or transparent text at rest."
+      },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "primary",
+        "description": "Semantic palette color; contained inherit uses the standard clay surface with inherited text color."
+      },
+      "size": {
+        "type": "string",
+        "enum": ["small", "medium", "large"],
+        "default": "medium",
+        "description": "Controls spacing, depth, radius and minimum height (36px, 48px or 56px)."
+      },
+      "fullWidth": {
+        "type": "boolean",
+        "default": false,
+        "description": "Fill the available width."
+      },
+      "href": {
+        "type": "string",
+        "description": "A nonempty URL renders an anchor instead of a button. Disabled or loading anchors omit href and receive aria-disabled=\"true\" and tabindex=-1; do not override these state attributes."
+      },
+      "target": { "type": "string", "description": "Link target; use only with href." },
+      "rel": { "type": "string", "description": "Link relationship; use only with href." },
+      "type": {
+        "enum": ["button", "submit", "reset", null],
+        "default": "button",
+        "description": "Native button type; omitted or null means button. Use submit or reset explicitly for the associated form. Ignored when href renders an anchor."
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disables a native button; disables navigation and removes the anchor from sequential focus when href is set."
+      },
+      "loading": {
+        "type": "boolean",
+        "default": false,
+        "description": "Shows a spinner, sets aria-busy=\"true\" and makes the control behave as disabled."
+      },
+      "loadingPosition": {
+        "type": "string",
+        "enum": ["center", "start", "end"],
+        "default": "center",
+        "description": "Spinner placement while loading. Center visually hides the label and icons without removing them."
+      },
+      "disableElevation": {
+        "type": "boolean",
+        "default": false,
+        "description": "Removes the outer shadow at rest while preserving inset shading on non-text variants."
+      },
+      "inflated": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enable SVG dome shading; render ClayLighting once in the document."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Button"],
+        "required": [],
+        "props": {},
+        "content": [
+          "Default slot: label.",
+          "start-icon: optional leading icon slot.",
+          "end-icon: optional trailing icon slot."
+        ],
+        "events": [
+          "Native click; no component script or callback prop. Removing href prevents disabled link navigation but does not block custom click logic."
+        ],
+        "example": "<Button href=\"/account\" target=\"_self\" rel=\"help\" variant=\"outlined\">\n  <span slot=\"start-icon\" aria-hidden=\"true\">←</span>\n  Account help\n</Button>"
+      },
+      "svelte": {
+        "imports": ["Button"],
+        "required": [],
+        "props": {},
+        "content": [
+          "children: label (inline content).",
+          "startIcon: optional leading icon snippet.",
+          "endIcon: optional trailing icon snippet."
+        ],
+        "events": [
+          "onclick(event): native click handler prop, not invoked while disabled or loading. Other native handler props are forwarded."
+        ],
+        "example": "<Button href=\"/account\" target=\"_self\" rel=\"help\" variant=\"outlined\">\n  {#snippet startIcon()}<span aria-hidden=\"true\">←</span>{/snippet}\n  Account help\n</Button>"
+      }
+    }
+  },
+  "Checkbox": {
+    "purpose": "A native input[type=checkbox] with clay styling. Supply an accessible name using a wrapping label, a label with for matching the input id, or aria-label. Forwards native input attributes including id, class, style, aria-* and data-*; do not supply type. Mixed state is independent of checkedness and does not determine form submission.",
+    "props": {
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "primary",
+        "description": "Semantic palette color for the checked or mixed state."
+      },
+      "size": {
+        "type": "string",
+        "enum": ["small", "medium"],
+        "default": "medium",
+        "description": "Visual box size: 24px for small, 28px for medium."
+      },
+      "checked": {
+        "type": "boolean",
+        "default": false,
+        "description": "In Astro, sets both the initial checkedness and the form reset default. In Svelte, is live state (bind:checked is supported); use defaultChecked to set a separate form reset default."
+      },
+      "defaultChecked": {
+        "type": "boolean",
+        "default": false,
+        "description": "Initial checked state when checked is omitted. Svelte also uses it as the reset default; Astro resets to the state rendered on the input."
+      },
+      "indeterminate": {
+        "type": "boolean",
+        "default": false,
+        "description": "Astro's client script sets the initial mixed state; clicking clears it and form reset restores it. In Svelte the parent owns this prop: on change and reset the client restores the current prop, not its original value."
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Native disabled state; prevents interaction and form submission of this field."
+      },
+      "required": {
+        "type": "boolean",
+        "default": false,
+        "description": "Native form validation requires the checkbox to be checked."
+      },
+      "name": {
+        "type": "string",
+        "description": "Form field name. A checked, enabled checkbox with a name contributes its value."
+      },
+      "value": {
+        "type": ["string", "number"],
+        "default": "on",
+        "description": "Native submitted value (serialized as text). Defaults to on when omitted; not the checked state."
+      },
+      "form": {
+        "type": "string",
+        "description": "Id of the associated form when the input is not nested in it."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Checkbox"],
+        "required": [],
+        "props": {},
+        "content": [],
+        "events": [
+          "Native change event on the input; attach listeners in a client script. No component callback prop."
+        ],
+        "example": "<form>\n  <label><Checkbox name=\"updates\" value=\"yes\" defaultChecked /> Email updates</label>\n  <button type=\"reset\">Reset</button>\n</form>"
+      },
+      "svelte": {
+        "imports": ["Checkbox"],
+        "required": [],
+        "props": {},
+        "content": [],
+        "events": [
+          "onchange(event): native change handler, called first.",
+          "onChange(event, checked): Svelte callback after onchange, with the input's current checkedness. Use bind:checked to track form resets as well as user changes."
+        ],
+        "example": "<script lang=\"ts\">\n  let checked = $state(true);\n</script>\n\n<form>\n  <label><Checkbox name=\"updates\" value=\"yes\" bind:checked defaultChecked /> Email updates</label>\n  <button type=\"reset\">Reset</button>\n</form>"
+      }
+    }
+  },
+  "ClayLighting": {
+    "purpose": "Defines the document-wide #clay-lit SVG filter for inflated surfaces. Render once per document only when inflated shading is used. Do not put it under display: none. It has no props, content, events or native attribute forwarding.",
+    "props": {},
+    "bridges": {
+      "astro": {
+        "imports": ["ClayLighting", "Paper"],
+        "required": [],
+        "props": {},
+        "content": [],
+        "events": [],
+        "example": "<ClayLighting />\n<Paper inflated>Inflated surface</Paper>"
+      },
+      "svelte": {
+        "imports": ["ClayLighting", "Paper"],
+        "required": [],
+        "props": {},
+        "content": [],
+        "events": [],
+        "example": "<ClayLighting />\n<Paper inflated>Inflated surface</Paper>"
+      }
+    }
+  }
+}

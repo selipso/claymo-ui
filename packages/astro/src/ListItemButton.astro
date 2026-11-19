@@ -1,0 +1,39 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { nativeAction, type NativeActionOptions } from "@claymo/core/actions";
+
+type Props = Omit<HTMLAttributes<"button">, keyof NativeActionOptions> &
+  Pick<HTMLAttributes<"a">, "target" | "rel"> &
+  NativeActionOptions & {
+    selected?: boolean;
+    dense?: boolean;
+    disableGutters?: boolean;
+  };
+const {
+  selected = false,
+  dense = false,
+  disableGutters = false,
+  href,
+  type,
+  disabled,
+  class: className,
+  onclick,
+  ...rest
+} = Astro.props;
+const action = nativeAction({ href, type, disabled });
+const Tag = action.tag;
+---
+
+<Tag
+  {...rest}
+  {...action.attrs}
+  class:list={["clay clay-list-item-button", className]}
+  data-selected={selected ? "" : undefined}
+  data-dense={dense ? "" : undefined}
+  data-gutters={!disableGutters ? "" : undefined}
+  data-clay-interactive
+  aria-current={rest["aria-current"] ?? (selected ? (href ? "page" : "true") : undefined)}
+  onclick={disabled ? undefined : onclick}
+>
+  <slot />
+</Tag>

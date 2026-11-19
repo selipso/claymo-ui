@@ -1,0 +1,77 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { RadioGroupOption } from "@claymo/core/input";
+import FormControlLabel from "./FormControlLabel.astro";
+import Radio from "./Radio.astro";
+import { instanceId } from "./ids.ts";
+
+type Value = string | number;
+
+type Props = Omit<HTMLAttributes<"fieldset">, "role" | "disabled" | "name" | "form"> & {
+  row?: boolean;
+  disabled?: boolean;
+} & (
+    | {
+        options: readonly RadioGroupOption[];
+        name?: string;
+        value?: Value;
+        defaultValue?: Value;
+        required?: boolean;
+        form?: string;
+      }
+    | {
+        options?: never;
+        name?: never;
+        value?: never;
+        defaultValue?: never;
+        required?: never;
+        form?: never;
+      }
+  );
+
+const {
+  options,
+  name,
+  value,
+  defaultValue,
+  required,
+  form,
+  disabled = false,
+  row = false,
+  class: className,
+  ...rest
+} = Astro.props;
+// Slots have no context. Only data-driven radios inherit group name, defaults and form props.
+const groupName = options
+  ? (name ?? (rest.id ? `clay-radio-${rest.id}` : instanceId("clay-radio")))
+  : undefined;
+const initial = value ?? defaultValue;
+---
+
+<fieldset
+  aria-required={required || undefined}
+  {...rest}
+  role="radiogroup"
+  class:list={["clay-radio-group", className]}
+  data-row={row || undefined}
+  {disabled}
+>
+  {options ? (
+    options.map((option) => (
+      <FormControlLabel label={option.label}>
+        <Radio
+          name={groupName}
+          value={option.value}
+          checked={initial !== undefined && String(option.value) === String(initial)}
+          disabled={option.disabled}
+          color={option.color}
+          size={option.size}
+          {required}
+          {form}
+        />
+      </FormControlLabel>
+    ))
+  ) : (
+    <slot />
+  )}
+</fieldset>

@@ -1,0 +1,150 @@
+---
+import Page from "../layouts/Page.astro";
+import {
+  Accordion,
+  Alert,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Drawer,
+  FormControlLabel,
+  LinearProgress,
+  RadioGroup,
+  Slider,
+  Snackbar,
+  Switch,
+  Tab,
+  TabPanel,
+  Table,
+  Tabs,
+  TextField,
+  Tooltip,
+} from "@claymo/astro";
+---
+
+<Page title="Astro migration">
+  <form id="preferences">
+    <TextField id="mail" type="email" name="mail" label="Email" required />
+    <TextField
+      id="shelf"
+      name="shelf"
+      label="Shelf"
+      select
+      defaultValue="paper"
+      options={[
+        { value: "ebook", label: "E-book" },
+        { value: "paper", label: "Paper" },
+      ]}
+    />
+    <RadioGroup
+      name="plan"
+      aria-label="Plan"
+      defaultValue="pro"
+      options={[
+        { value: "basic", label: "Basic" },
+        { value: "pro", label: "Pro" },
+      ]}
+    />
+    <FormControlLabel label="Alerts">
+      <Switch slot="control" name="alerts" defaultChecked />
+    </FormControlLabel>
+    <Slider
+      id="volume"
+      name="volume"
+      aria-label="Volume"
+      defaultValue={25}
+      step={25}
+      marks
+      valueLabelDisplay="on"
+    />
+    <Button type="submit">Save preferences</Button>
+    <Button type="reset">Reset preferences</Button>
+  </form>
+  <output id="saved" aria-label="Saved preferences"></output>
+
+  <Accordion>
+    <span slot="summary">Details</span>
+    <p>Native disclosure content</p>
+  </Accordion>
+  <Accordion disabled>
+    <span slot="summary">Locked details</span>
+    <p>Unavailable disclosure content</p>
+  </Accordion>
+  <Card as="article">
+    <CardContent>
+      <h2>Activity</h2>
+      <Badge badgeContent={120} max={99}>
+        Inbox
+      </Badge>
+      <LinearProgress variant="determinate" value={40} aria-label="Import progress" />
+      <Table label="Results" stickyHeader style="max-height: 110px">
+        <thead>
+          <tr>
+            <th scope="col">Result</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Ready</td>
+          </tr>
+          {[1, 2, 3, 4, 5, 6].map((row) => (
+            <tr>
+              <td>Result {row}</td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </CardContent>
+  </Card>
+
+  <Chip label="Draft" clickable deletable />
+  <Alert dismissible>Saved message</Alert>
+  <Tooltip title="Extra information">
+    <Button>More info</Button>
+  </Tooltip>
+  <Button commandfor="settings-drawer" command="show-modal">
+    Open drawer
+  </Button>
+  <Drawer id="settings-drawer" aria-label="Settings drawer">
+    <Button commandfor="settings-drawer" command="close">
+      Close drawer
+    </Button>
+  </Drawer>
+  <Button commandfor="saved-snackbar" command="--clay-show">
+    Show notice
+  </Button>
+  <Snackbar id="saved-snackbar" message="Preferences saved" autoHideDuration={null} />
+
+  <Tabs id="migration-tabs" aria-label="Migration tabs" value="2">
+    <Tab tabsId="migration-tabs" value="2" label="Overview" selected />
+    <Tab tabsId="migration-tabs" value={2} label="Stats" />
+    <Fragment slot="panels">
+      <TabPanel tabsId="migration-tabs" value="2" selected>
+        Overview panel
+      </TabPanel>
+      <TabPanel tabsId="migration-tabs" value={2}>
+        Stats panel
+      </TabPanel>
+    </Fragment>
+  </Tabs>
+  <output id="tab-selection"></output>
+</Page>
+
+<script>
+  import { TABS_CHANGE_EVENT, type TabsChangeEvent } from "@claymo/core/behavior/tabs";
+
+  document.querySelector("#migration-tabs")!.addEventListener(TABS_CHANGE_EVENT, (event) => {
+    const { value } = (event as TabsChangeEvent).detail;
+    document.querySelector("#tab-selection")!.textContent = `${typeof value}:${value}`;
+  });
+
+  const form = document.querySelector<HTMLFormElement>("#preferences")!;
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    document.querySelector("#saved")!.textContent = new URLSearchParams(
+      Array.from(new FormData(form), ([key, value]) => [key, String(value)]),
+    ).toString();
+  });
+</script>

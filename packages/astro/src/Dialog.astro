@@ -1,0 +1,52 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { dialogRecipe, type DialogMaxWidth } from "@claymo/core";
+
+/**
+ * Open with a native invoker, no script needed: `<button commandfor={id} command="show-modal">`.
+ * Escape and backdrop clicks fire a cancelable `clay-request-close` event; preventDefault() keeps it open.
+ * Slots: default (content), `actions`.
+ */
+type Props = Omit<HTMLAttributes<"dialog">, "open" | "title"> & {
+  id: string;
+  /** Opens modally once the page script runs (a server-rendered `open` dialog would be non-modal). */
+  open?: boolean;
+  title?: string;
+  fullWidth?: boolean;
+  maxWidth?: DialogMaxWidth;
+};
+
+const { id, open, title, fullWidth, maxWidth, class: className, ...rest } = Astro.props;
+const recipe = dialogRecipe({ idBase: id, hasTitle: !!title, fullWidth, maxWidth });
+---
+
+<dialog
+  id={id}
+  {...recipe.attrs}
+  class:list={[recipe.className, className]}
+  data-clay-dialog
+  data-clay-open={open ? "" : undefined}
+  {...rest}
+>
+  <div class="clay-dialog__panel">
+    {title && (
+      <h2 id={recipe.titleId} class="clay-dialog__title">
+        {title}
+      </h2>
+    )}
+    <div class="clay-dialog__content">
+      <slot />
+    </div>
+    {Astro.slots.has("actions") && (
+      <div class="clay-dialog__actions">
+        <slot name="actions" />
+      </div>
+    )}
+  </div>
+</dialog>
+
+<script>
+  import { upgradeDialogs } from "@claymo/core/behavior/dialog";
+  import { onEveryPage } from "./lifecycle.ts";
+  onEveryPage(upgradeDialogs);
+</script>

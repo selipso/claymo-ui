@@ -1,0 +1,28 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { tabIds, tabRecipe, type TabValue } from "@claymo/core";
+
+interface Props extends Omit<HTMLAttributes<"button">, "role" | "value"> {
+  tabsId: string;
+  value: TabValue;
+  label: string;
+  selected?: boolean;
+}
+
+const { tabsId, value, label, selected, disabled, class: className, ...rest } = Astro.props;
+const recipe = tabRecipe({
+  ids: tabIds(tabsId),
+  value,
+  selected: selected ? value : undefined,
+  enabled: selected && !disabled ? [value] : [],
+});
+---
+
+<button {...rest} {...recipe.attrs} class:list={[recipe.className, className]} {disabled}>
+  {Astro.slots.has("icon") && (
+    <span class="clay-tab__icon">
+      <slot name="icon" />
+    </span>
+  )}
+  <span class="clay-tab__label">{label}</span>
+</button>

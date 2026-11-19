@@ -1,0 +1,364 @@
+{
+  "Avatar": {
+    "purpose": "Show a profile photo, initials, or an icon. The root span forwards native attributes. Without a photo or after a load failure, Avatar shows supplied fallback content, then the first character of alt, then a decorative profile icon.",
+    "props": {
+      "src": { "type": "string", "description": "Image URL." },
+      "srcSet": {
+        "type": "string",
+        "description": "Native responsive image candidates (passed to srcset)."
+      },
+      "sizes": {
+        "type": "string",
+        "description": "Native responsive image size hints for srcSet."
+      },
+      "alt": {
+        "type": "string",
+        "default": "",
+        "description": "Name the image or automatic initial when it conveys information; leave empty beside redundant text."
+      },
+      "variant": {
+        "type": "string",
+        "enum": ["circular", "rounded", "square"],
+        "default": "circular"
+      },
+      "size": {
+        "type": "string",
+        "enum": ["small", "medium", "large"],
+        "default": "medium",
+        "description": "Clay addition: maps to 32px, 40px, or 56px."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Avatar"],
+        "required": [],
+        "props": {},
+        "content": [
+          "Default slot: optional initials or icon. A small client script reveals the fallback on an image error; no framework island is needed."
+        ],
+        "events": ["No component events. Listen for native events on the rendered DOM if needed."],
+        "example": "<Avatar alt=\"Ada Lovelace\" size=\"small\" />"
+      },
+      "svelte": {
+        "imports": ["Avatar"],
+        "required": [],
+        "props": {},
+        "content": [
+          "children: optional fallback initials or icon.",
+          "Changes to src, srcSet, or sizes try the new image source after a failure."
+        ],
+        "events": ["Native handler props are forwarded to the root; no component events."],
+        "example": "<Avatar alt=\"Ada Lovelace\" size=\"small\" />"
+      }
+    }
+  },
+  "Badge": {
+    "purpose": "Attach a count, dot, or short label to inline content, or show it on its own. Give an interactive child an accessible name that includes the meaning of the badge (e.g. 120 unread messages). Native attributes pass to the wrapper.",
+    "props": {
+      "badgeContent": {
+        "type": ["string", "number"],
+        "description": "Scalar standard badge label. Empty strings are hidden. Number labels above max display max followed by '+'; string labels are not capped."
+      },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "primary",
+        "description": "Clay defaults to primary rather than MUI's default color."
+      },
+      "max": { "type": "number", "default": 99, "description": "Maximum displayed numeric count." },
+      "showZero": {
+        "type": "boolean",
+        "default": false,
+        "description": "Show a zero label in the standard variant."
+      },
+      "invisible": {
+        "type": "boolean",
+        "default": false,
+        "description": "Hide the indicator; keep the wrapped content visible."
+      },
+      "variant": {
+        "type": "string",
+        "enum": ["standard", "dot"],
+        "default": "standard",
+        "description": "A dot does not need a label."
+      },
+      "anchorOrigin": {
+        "type": "object",
+        "default": { "vertical": "top", "horizontal": "right" },
+        "properties": {
+          "vertical": { "type": "string", "enum": ["top", "bottom"], "default": "top" },
+          "horizontal": { "type": "string", "enum": ["left", "right"], "default": "right" }
+        },
+        "description": "Corner of the wrapped content to anchor to. Ignored without wrapped content."
+      },
+      "overlap": {
+        "type": "string",
+        "enum": ["rectangular", "circular"],
+        "default": "rectangular",
+        "description": "Use circular to inset the indicator for a rounded target such as Avatar."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Badge"],
+        "required": [],
+        "props": {},
+        "content": [
+          "Default slot: content the badge is attached to.",
+          "badge-content: optional inline markup instead of the scalar badgeContent in the standard variant."
+        ],
+        "events": ["No component events or client script."],
+        "example": "<Badge badgeContent={120} color=\"error\">\n  <button type=\"button\" aria-label=\"Inbox, 120 unread messages\">Inbox</button>\n</Badge>"
+      },
+      "svelte": {
+        "imports": ["Badge"],
+        "required": [],
+        "props": {},
+        "content": [
+          "children: content the badge is attached to.",
+          "badgeContent may be a snippet instead of a string or number. The dot variant ignores it."
+        ],
+        "events": ["Native handler props are forwarded to the root; no component events."],
+        "example": "<Badge badgeContent={120} color=\"error\">\n  <button type=\"button\" aria-label=\"Inbox, 120 unread messages\">Inbox</button>\n</Badge>"
+      }
+    }
+  },
+  "CircularProgress": {
+    "purpose": "Render a circular progressbar. Use determinate when progress can be measured; otherwise omit a value. Native SVG attributes pass to the root, except the controlled viewBox and progress state.",
+    "props": {
+      "aria-label": {
+        "type": "string",
+        "description": "Accessible name of the operation being measured."
+      },
+      "variant": {
+        "type": "string",
+        "enum": ["determinate", "indeterminate"],
+        "default": "indeterminate"
+      },
+      "min": {
+        "type": "number",
+        "default": 0,
+        "description": "Minimum on the determinate scale. A nonfinite or nonincreasing scale falls back to 0–100."
+      },
+      "max": {
+        "type": "number",
+        "default": 100,
+        "description": "Maximum on the determinate scale."
+      },
+      "value": {
+        "type": "number",
+        "description": "Determinate value, clamped to the min–max interval. Defaults to min."
+      },
+      "size": {
+        "type": ["number", "string"],
+        "default": 40,
+        "description": "Diameter in CSS pixels or a CSS length string."
+      },
+      "thickness": {
+        "type": "number",
+        "default": 4,
+        "description": "Stroke width in SVG units. Numeric size uses a matching viewBox; lengths use a 40-unit viewBox."
+      },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "primary"
+      },
+      "disableShrink": {
+        "type": "boolean",
+        "default": false,
+        "description": "Keep the rotating arc at a fixed length when indeterminate."
+      },
+      "enableTrackSlot": {
+        "type": "boolean",
+        "default": true,
+        "description": "Show the underlying ring. Clay keeps it visible by default."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["CircularProgress"],
+        "required": ["aria-label"],
+        "props": {},
+        "content": [],
+        "events": ["No component events or client script."],
+        "example": "<CircularProgress variant=\"determinate\" max={8} value={3} aria-label=\"Imports complete\" />"
+      },
+      "svelte": {
+        "imports": ["CircularProgress"],
+        "required": ["aria-label"],
+        "props": {},
+        "content": [],
+        "events": ["Native handler props are forwarded to the root; no component events."],
+        "example": "<CircularProgress variant=\"determinate\" max={8} value={3} aria-label=\"Imports complete\" />"
+      }
+    }
+  },
+  "LinearProgress": {
+    "purpose": "Render a horizontal progressbar. Use determinate for measured tasks, buffer for a measure and its buffered amount, or indeterminate or query for a wait without a known amount. Native div attributes pass to the root except the controlled progress state.",
+    "props": {
+      "aria-label": {
+        "type": "string",
+        "description": "Accessible name of the operation being measured."
+      },
+      "variant": {
+        "type": "string",
+        "enum": ["determinate", "indeterminate", "buffer", "query"],
+        "default": "indeterminate"
+      },
+      "min": {
+        "type": "number",
+        "default": 0,
+        "description": "Minimum of the determinate or buffered scale. A nonfinite or nonincreasing scale falls back to 0–100."
+      },
+      "max": {
+        "type": "number",
+        "default": 100,
+        "description": "Maximum of the determinate or buffered scale."
+      },
+      "value": {
+        "type": "number",
+        "description": "Completed amount in the determinate and buffer variants. Clamped to the min–max interval; defaults to min."
+      },
+      "valueBuffer": {
+        "type": "number",
+        "description": "Buffered amount in the buffer variant. Clamped between the completed amount and max; defaults to the completed amount."
+      },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "primary"
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["LinearProgress"],
+        "required": ["aria-label"],
+        "props": {},
+        "content": [],
+        "events": ["No component events or client script."],
+        "example": "<LinearProgress variant=\"buffer\" value={35} valueBuffer={70} aria-label=\"Download progress\" />"
+      },
+      "svelte": {
+        "imports": ["LinearProgress"],
+        "required": ["aria-label"],
+        "props": {},
+        "content": [],
+        "events": ["Native handler props are forwarded to the root; no component events."],
+        "example": "<LinearProgress variant=\"buffer\" value={35} valueBuffer={70} aria-label=\"Download progress\" />"
+      }
+    }
+  },
+  "Skeleton": {
+    "purpose": "Show a decorative placeholder while content loads. Hidden from assistive technology; if needed describe loading on the surrounding region, not the Skeleton. Native attributes pass to the root span.",
+    "props": {
+      "variant": {
+        "type": "string",
+        "enum": ["text", "rectangular", "rounded", "circular"],
+        "default": "text"
+      },
+      "width": {
+        "type": ["number", "string"],
+        "description": "Width in CSS pixels or a CSS length string. A circle mirrors the other side if omitted and defaults to 40px when both sides are omitted."
+      },
+      "height": {
+        "type": ["number", "string"],
+        "description": "Height in CSS pixels or a CSS length string. A circle mirrors the other side if omitted and defaults to 40px when both sides are omitted."
+      },
+      "animation": {
+        "enum": ["pulse", "wave", false],
+        "default": "pulse",
+        "description": "Animation style; use false for a static placeholder. Respects reduced-motion preferences."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Skeleton"],
+        "required": [],
+        "props": {},
+        "content": [],
+        "events": ["No component events or client script."],
+        "example": "<Skeleton variant=\"rounded\" width=\"100%\" height={80} animation=\"wave\" />"
+      },
+      "svelte": {
+        "imports": ["Skeleton"],
+        "required": [],
+        "props": {},
+        "content": [],
+        "events": ["Native handler props are forwarded to the root; no component events."],
+        "example": "<Skeleton variant=\"rounded\" width=\"100%\" height={80} animation=\"wave\" />"
+      }
+    }
+  },
+  "Table": {
+    "purpose": "Lay out data in a native HTML table inside a keyboard-focusable scrolling region. Use scope on row and column headers where appropriate. Native root attributes such as class and style target the scrolling wrapper.",
+    "props": {
+      "label": {
+        "type": "string",
+        "description": "Required accessible name of the scroll region (Clay addition)."
+      },
+      "size": {
+        "type": "string",
+        "enum": ["small", "medium"],
+        "default": "medium",
+        "description": "Controls cell spacing and font size."
+      },
+      "padding": {
+        "type": "string",
+        "enum": ["normal", "none", "checkbox"],
+        "default": "normal",
+        "description": "Use size-based cell padding, no padding, or compact padding suitable for checkboxes."
+      },
+      "stickyHeader": {
+        "type": "boolean",
+        "default": false,
+        "description": "Pin the native thead while the wrapper scrolls. Set max-height on the wrapper to enable vertical scrolling."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Table"],
+        "required": ["label"],
+        "props": {},
+        "content": ["Default slot: native table content, e.g. caption, thead, tbody, and tfoot."],
+        "events": ["No component events or client script."],
+        "example": "<Table label=\"Stock inventory\" size=\"small\" stickyHeader style=\"max-height: 18rem;\">\n  <thead><tr><th scope=\"col\">Item</th><th scope=\"col\">Count</th></tr></thead>\n  <tbody><tr><th scope=\"row\">Notebook</th><td>14</td></tr></tbody>\n</Table>"
+      },
+      "svelte": {
+        "imports": ["Table"],
+        "required": ["label"],
+        "props": {},
+        "content": ["children: native table content, e.g. caption, thead, tbody, and tfoot."],
+        "events": ["Native handler props are forwarded to the scroll region; no component events."],
+        "example": "<Table label=\"Stock inventory\" size=\"small\" stickyHeader style=\"max-height: 18rem;\">\n  <thead><tr><th scope=\"col\">Item</th><th scope=\"col\">Count</th></tr></thead>\n  <tbody><tr><th scope=\"row\">Notebook</th><td>14</td></tr></tbody>\n</Table>"
+      }
+    }
+  }
+}

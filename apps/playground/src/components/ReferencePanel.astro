@@ -1,0 +1,101 @@
+---
+import { Code } from "astro:components";
+import type { ComponentReference } from "@claymo/core/reference";
+import { Table } from "@claymo/astro";
+import { componentSlug } from "../lib/nav";
+import { propDefault, propType } from "../lib/prop-schema";
+
+interface Props {
+  reference: ComponentReference;
+}
+const { reference } = Astro.props;
+const { framework, name, props, content, events, example } = reference;
+const required = new Set(props.required);
+const rows = Object.entries(props.properties).map(([prop, schema]) => ({
+  prop: required.has(prop) ? `${prop} (required)` : prop,
+  type: propType(schema),
+  defaultValue: propDefault(schema),
+  description: typeof schema.description === "string" ? schema.description : "",
+}));
+---
+
+<section class="reference-panel">
+  <h2>Live example</h2>
+  <iframe
+    class="reference-panel__frame"
+    src={`/examples/${framework}/${componentSlug(name)}/`}
+    title={`${name} example, ${framework}`}
+    loading="lazy"
+    data-example
+  ></iframe>
+
+  <h2>Source</h2>
+  <Code code={example} lang={framework} wrap />
+
+  <h2>Props</h2>
+  {rows.length === 0 ? (
+    <p>No component-specific props; native attributes pass through.</p>
+  ) : (
+    <Table label={`${name} props, ${framework}`} size="small">
+      <thead>
+        <tr>
+          <th scope="col">Prop</th>
+          <th scope="col">Type</th>
+          <th scope="col">Default</th>
+          <th scope="col">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((row) => (
+          <tr>
+            <th scope="row">
+              <code>{row.prop}</code>
+            </th>
+            <td>
+              <code>{row.type}</code>
+            </td>
+            <td>{row.defaultValue && <code>{row.defaultValue}</code>}</td>
+            <td>{row.description}</td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+  )}
+
+  {content.length > 0 && (
+    <>
+      <h2>Content</h2>
+      <ul>
+        {content.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    </>
+  )}
+
+  {events.length > 0 && (
+    <>
+      <h2>Events</h2>
+      <ul>
+        {events.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    </>
+  )}
+</section>
+
+<style>
+  .reference-panel__frame {
+    display: block;
+    width: 100%;
+    min-height: 120px;
+    border: var(--clay-border-width, 1px) solid var(--clay-edge);
+    border-radius: 24px;
+    background: var(--clay-page);
+  }
+
+  .reference-panel h2 {
+    font-size: 1.25rem;
+  }
+</style>

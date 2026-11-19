@@ -1,0 +1,17 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { AppBarOptions } from "@claymo/core/surfaces";
+
+type Props = Omit<HTMLAttributes<"header">, "color"> & AppBarOptions;
+
+const { position = "sticky", color = "primary", class: className, ...rest } = Astro.props;
+---
+
+<header
+  class:list={["clay clay-app-bar", className]}
+  data-position={position}
+  data-color={color}
+  {...rest}
+>
+  <slot />
+</header>

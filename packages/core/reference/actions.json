@@ -1,0 +1,468 @@
+{
+  "Alert": {
+    "purpose": "An inline status message with an optional icon and action. Defaults to role=alert; use role=status for less urgent messages. Severity is announced in text as well as shown visually.",
+    "props": {
+      "severity": {
+        "type": "string",
+        "enum": ["success", "info", "warning", "error"],
+        "default": "success",
+        "description": "Chooses the default icon, spoken severity label, and palette color."
+      },
+      "color": {
+        "type": "string",
+        "enum": ["success", "info", "warning", "error"],
+        "description": "Palette override; defaults to severity and does not change the icon or spoken label."
+      },
+      "variant": {
+        "type": "string",
+        "enum": ["standard", "filled", "outlined"],
+        "default": "standard"
+      },
+      "role": { "type": "string", "default": "alert" },
+      "closeText": {
+        "type": "string",
+        "default": "Close",
+        "description": "Accessible name of the default close button."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Alert"],
+        "required": [],
+        "props": {
+          "dismissible": {
+            "type": "boolean",
+            "default": false,
+            "description": "Show the default close button when no action slot is supplied."
+          },
+          "icon": {
+            "type": "boolean",
+            "enum": [false],
+            "description": "Use false to hide the icon."
+          }
+        },
+        "content": [
+          "Default slot: message.",
+          "icon: replaces the severity icon.",
+          "action: replaces the close button."
+        ],
+        "events": [
+          "clay-close: a bubbling, cancelable CustomEvent<{ originalEvent: MouseEvent }> on the alert. The alert is hidden unless a listener calls preventDefault()."
+        ],
+        "example": "<Alert severity=\"info\" variant=\"outlined\" role=\"status\" dismissible>Changes have been synced.</Alert>"
+      },
+      "svelte": {
+        "imports": ["Alert"],
+        "required": [],
+        "props": {},
+        "content": [
+          "children: message.",
+          "icon: optional snippet replacing the severity icon, or false to hide it.",
+          "action: snippet replacing the close button."
+        ],
+        "events": [
+          "onClose(event: MouseEvent): providing this callback shows the default close button unless action is set. The caller owns visibility; the callback does not hide the alert automatically."
+        ],
+        "example": "<script>\n  let visible = $state(true);\n</script>\n\n{#if visible}\n  <Alert severity=\"info\" variant=\"outlined\" role=\"status\" onClose={() => (visible = false)}>Changes have been synced.</Alert>\n{/if}"
+      }
+    }
+  },
+  "Chip": {
+    "purpose": "A compact label with optional avatar, icon, action and removal control. When clickable and removable, the label button and remove button are native siblings, never nested.",
+    "props": {
+      "label": {
+        "type": "string",
+        "description": "Visible label; also used to name the remove button."
+      },
+      "variant": { "type": "string", "enum": ["filled", "outlined"], "default": "filled" },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "default"
+      },
+      "size": { "type": "string", "enum": ["small", "medium"], "default": "medium" },
+      "clickable": {
+        "type": "boolean",
+        "default": false,
+        "description": "Render the label as a button."
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disable both the label and remove buttons when present."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Chip"],
+        "required": ["label"],
+        "props": {
+          "deletable": {
+            "type": "boolean",
+            "default": false,
+            "description": "Show a remove button."
+          }
+        },
+        "content": [
+          "avatar: optional leading avatar.",
+          "icon: optional leading icon.",
+          "delete-icon: replaces the remove glyph."
+        ],
+        "events": [
+          "The body dispatches a native click when clickable. Listen on .clay-chip__body for label activation only.",
+          "clay-delete: a bubbling, cancelable CustomEvent<{ label: string, originalEvent: MouseEvent | KeyboardEvent }> dispatched on the chip by the remove button or by Backspace/Delete on either button. The chip is hidden unless a listener calls preventDefault()."
+        ],
+        "example": "<Chip label=\"Design systems\" variant=\"outlined\" color=\"secondary\" deletable />"
+      },
+      "svelte": {
+        "imports": ["Chip"],
+        "required": ["label"],
+        "props": {},
+        "content": [
+          "avatar and icon: optional leading snippets.",
+          "deleteIcon: snippet replacing the remove glyph."
+        ],
+        "events": [
+          "onclick(event: MouseEvent): activates the label and implies a clickable native button even if clickable is omitted.",
+          "onDelete(event: MouseEvent | KeyboardEvent): providing this callback shows the remove button. Removal is requested by clicking it or pressing Backspace/Delete on either button. The caller owns visibility."
+        ],
+        "example": "<script>\n  let visible = $state(true);\n</script>\n\n{#if visible}\n  <Chip label=\"Design systems\" variant=\"outlined\" color=\"secondary\" onDelete={() => (visible = false)} />\n{/if}"
+      }
+    }
+  },
+  "ButtonGroup": {
+    "purpose": "A fieldset of related Buttons with shared variant, color and size styling. Give the group a name using aria-label, aria-labelledby or a legend; buttons retain native focus and activation.",
+    "props": {
+      "variant": {
+        "type": "string",
+        "enum": ["contained", "outlined", "text"],
+        "default": "contained"
+      },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "primary"
+      },
+      "size": { "type": "string", "enum": ["small", "medium", "large"], "default": "medium" },
+      "orientation": {
+        "type": "string",
+        "enum": ["horizontal", "vertical"],
+        "default": "horizontal"
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disables native buttons through the fieldset. Links are not form controls; pass disabled to linked Buttons separately."
+      },
+      "fullWidth": {
+        "type": "boolean",
+        "default": false,
+        "description": "Expand the group to its container width."
+      },
+      "disableElevation": {
+        "type": "boolean",
+        "default": false,
+        "description": "Remove the group's outer shadow while retaining inset shading on contained and outlined groups."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["ButtonGroup", "Button"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: Button children."],
+        "events": ["No component events; listen to native events on the buttons or fieldset."],
+        "example": "<ButtonGroup aria-label=\"Editor history\" variant=\"outlined\" color=\"secondary\" size=\"small\">\n  <Button>Undo</Button>\n  <Button>Redo</Button>\n</ButtonGroup>"
+      },
+      "svelte": {
+        "imports": ["ButtonGroup", "Button"],
+        "required": [],
+        "props": {},
+        "content": ["children: Button children."],
+        "events": ["No component events; native handlers are forwarded to the fieldset."],
+        "example": "<ButtonGroup aria-label=\"Editor history\" variant=\"outlined\" color=\"secondary\" size=\"small\">\n  <Button>Undo</Button>\n  <Button>Redo</Button>\n</ButtonGroup>"
+      }
+    }
+  },
+  "IconButton": {
+    "purpose": "An accessible icon-only action or link. Supply an aria-label even when the icon is replaced by a loading indicator.",
+    "props": {
+      "aria-label": {
+        "type": "string",
+        "description": "Accessible name such as Search or Settings."
+      },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "default"
+      },
+      "size": { "type": "string", "enum": ["small", "medium", "large"], "default": "medium" },
+      "edge": {
+        "enum": [false, "start", "end"],
+        "default": false,
+        "description": "Use a negative logical margin to align the specified edge."
+      },
+      "disabled": { "type": "boolean", "default": false },
+      "loading": {
+        "enum": [true, false, null],
+        "default": false,
+        "description": "Replace the icon with a progress indicator, set aria-busy and disable activation."
+      },
+      "inflated": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enable dome shading; render ClayLighting once in the document."
+      },
+      "href": {
+        "type": "string",
+        "description": "A nonempty URL renders an anchor. A disabled or loading anchor omits href and leaves the tab order."
+      },
+      "target": { "type": "string", "description": "Native link target; use with href." },
+      "rel": { "type": "string", "description": "Native link relationship; use with href." },
+      "type": {
+        "enum": ["button", "submit", "reset", null],
+        "default": "button",
+        "description": "Native button type, ignored for a link."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["IconButton"],
+        "required": ["aria-label"],
+        "props": {},
+        "content": [
+          "Default slot: the icon.",
+          "loading-indicator: optional replacement for the accessible spinner; provide its accessible name."
+        ],
+        "events": [
+          "Native click. Removing href prevents disabled link navigation but does not suppress custom DOM click listeners."
+        ],
+        "example": "<IconButton aria-label=\"Search docs\" href=\"/search\">\n  <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><circle cx=\"10\" cy=\"10\" r=\"6\" /><path d=\"m14 14 5 5\" /></svg>\n</IconButton>"
+      },
+      "svelte": {
+        "imports": ["IconButton"],
+        "required": ["aria-label"],
+        "props": {},
+        "content": [
+          "children: the icon.",
+          "loadingIndicator: optional snippet replacing the accessible spinner; provide its accessible name."
+        ],
+        "events": [
+          "onclick(event: MouseEvent): native click, not invoked while disabled or loading."
+        ],
+        "example": "<IconButton aria-label=\"Search docs\" href=\"/search\">\n  <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><circle cx=\"10\" cy=\"10\" r=\"6\" /><path d=\"m14 14 5 5\" /></svg>\n</IconButton>"
+      }
+    }
+  },
+  "List": {
+    "purpose": "A semantic unordered list of ListItems. Dense spacing also reduces the height of descendant ListItemButtons.",
+    "props": {
+      "dense": {
+        "type": "boolean",
+        "default": false,
+        "description": "Use tighter gaps and compact action rows."
+      },
+      "disablePadding": {
+        "type": "boolean",
+        "default": false,
+        "description": "Remove the list's outer block padding."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["List", "ListItem", "ListItemText"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: ListItem children."],
+        "events": ["No component events; native list attributes are forwarded."],
+        "example": "<List aria-label=\"Available plans\" dense>\n  <ListItem><ListItemText primary=\"Starter\" /></ListItem>\n  <ListItem><ListItemText primary=\"Pro\" /></ListItem>\n</List>"
+      },
+      "svelte": {
+        "imports": ["List", "ListItem", "ListItemText"],
+        "required": [],
+        "props": {},
+        "content": ["children: ListItem children."],
+        "events": ["No component events; native list attributes and handlers are forwarded."],
+        "example": "<List aria-label=\"Available plans\" dense>\n  <ListItem><ListItemText primary=\"Starter\" /></ListItem>\n  <ListItem><ListItemText primary=\"Pro\" /></ListItem>\n</List>"
+      }
+    }
+  },
+  "ListItem": {
+    "purpose": "A native li row. Use ListItemButton inside it for row activation. An optional separate trailing action need not be nested inside the primary button or link.",
+    "props": {
+      "disablePadding": {
+        "type": "boolean",
+        "default": false,
+        "description": "Remove row padding; useful when wrapping a ListItemButton that supplies its own padding."
+      },
+      "disableGutters": {
+        "type": "boolean",
+        "default": false,
+        "description": "Remove only horizontal padding."
+      },
+      "divider": {
+        "type": "boolean",
+        "default": false,
+        "description": "Draw a divider below the row."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["List", "ListItem", "ListItemText", "Button"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: row content.", "secondary-action: optional trailing action."],
+        "events": ["No component events; use native listeners."],
+        "example": "<List aria-label=\"Contacts\">\n  <ListItem divider>\n    <ListItemText primary=\"Ada Lovelace\" />\n    <Button slot=\"secondary-action\" size=\"small\" href=\"/contacts/ada\">Edit</Button>\n  </ListItem>\n</List>"
+      },
+      "svelte": {
+        "imports": ["List", "ListItem", "ListItemText", "Button"],
+        "required": [],
+        "props": {},
+        "content": ["children: row content.", "secondaryAction: optional trailing action snippet."],
+        "events": ["No component events; native handlers are forwarded."],
+        "example": "<List aria-label=\"Contacts\">\n  <ListItem divider>\n    {#snippet secondaryAction()}<Button size=\"small\" href=\"/contacts/ada\">Edit</Button>{/snippet}\n    <ListItemText primary=\"Ada Lovelace\" />\n  </ListItem>\n</List>"
+      }
+    }
+  },
+  "ListItemButton": {
+    "purpose": "The full-width interactive part of a ListItem. Use an href for navigation or a native button for actions; keep any secondary control next to, not inside, it.",
+    "props": {
+      "selected": {
+        "type": "boolean",
+        "default": false,
+        "description": "Style the current item and default aria-current to page for a link or true for a button."
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disable the button or omit href and remove a link from the tab order."
+      },
+      "dense": {
+        "type": "boolean",
+        "default": false,
+        "description": "Use compact row height even outside a dense List."
+      },
+      "disableGutters": {
+        "type": "boolean",
+        "default": false,
+        "description": "Remove horizontal padding."
+      },
+      "href": { "type": "string", "description": "A nonempty URL renders a native anchor." },
+      "target": { "type": "string", "description": "Native link target; use with href." },
+      "rel": { "type": "string", "description": "Native link relationship; use with href." },
+      "type": {
+        "enum": ["button", "submit", "reset", null],
+        "default": "button",
+        "description": "Native button type, ignored for a link."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["List", "ListItem", "ListItemButton", "ListItemText"],
+        "required": [],
+        "props": {},
+        "content": [
+          "Default slot: non-interactive row content; use ListItemIcon and ListItemText for alignment."
+        ],
+        "events": [
+          "Native click. Removing href prevents disabled link navigation but does not suppress custom DOM click listeners."
+        ],
+        "example": "<List aria-label=\"Settings pages\">\n  <ListItem disablePadding>\n    <ListItemButton href=\"/settings/profile\" selected><ListItemText primary=\"Profile\" /></ListItemButton>\n  </ListItem>\n</List>"
+      },
+      "svelte": {
+        "imports": ["List", "ListItem", "ListItemButton", "ListItemText"],
+        "required": [],
+        "props": {},
+        "content": [
+          "children: non-interactive row content; use ListItemIcon and ListItemText for alignment."
+        ],
+        "events": ["onclick(event: MouseEvent): native click, not invoked while disabled."],
+        "example": "<List aria-label=\"Settings pages\">\n  <ListItem disablePadding>\n    <ListItemButton href=\"/settings/profile\" selected><ListItemText primary=\"Profile\" /></ListItemButton>\n  </ListItem>\n</List>"
+      }
+    }
+  },
+  "ListItemIcon": {
+    "purpose": "Give leading icons a shared width so list labels line up. Use aria-hidden for decorative icons beside visible text.",
+    "props": {},
+    "bridges": {
+      "astro": {
+        "imports": ["List", "ListItem", "ListItemIcon", "ListItemText"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: icon, typically inline SVG."],
+        "events": ["No component events."],
+        "example": "<List aria-label=\"Favorites\">\n  <ListItem>\n    <ListItemIcon aria-hidden=\"true\">★</ListItemIcon>\n    <ListItemText primary=\"Starred reports\" />\n  </ListItem>\n</List>"
+      },
+      "svelte": {
+        "imports": ["List", "ListItem", "ListItemIcon", "ListItemText"],
+        "required": [],
+        "props": {},
+        "content": ["children: icon, typically inline SVG."],
+        "events": ["No component events."],
+        "example": "<List aria-label=\"Favorites\">\n  <ListItem>\n    <ListItemIcon aria-hidden=\"true\">★</ListItemIcon>\n    <ListItemText primary=\"Starred reports\" />\n  </ListItem>\n</List>"
+      }
+    }
+  },
+  "ListItemText": {
+    "purpose": "Give a list row primary text and an optional secondary line. The phrasing-content root is valid inside a native button or link.",
+    "props": {
+      "primary": {
+        "type": "string",
+        "description": "The main label. Falls back to the default content when omitted."
+      },
+      "secondary": { "type": "string", "description": "An optional detail line." }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["List", "ListItem", "ListItemText"],
+        "required": [],
+        "props": {},
+        "content": [
+          "Default slot: fallback primary content.",
+          "primary and secondary: named slots override the corresponding string props."
+        ],
+        "events": ["No component events."],
+        "example": "<List aria-label=\"Invoices\">\n  <ListItem>\n    <ListItemText secondary=\"Paid by card\"><strong slot=\"primary\">September invoice</strong></ListItemText>\n  </ListItem>\n</List>"
+      },
+      "svelte": {
+        "imports": ["List", "ListItem", "ListItemText"],
+        "required": [],
+        "props": {},
+        "content": [
+          "children: fallback primary content.",
+          "primary and secondary also accept snippets for custom content."
+        ],
+        "events": ["No component events."],
+        "example": "<List aria-label=\"Invoices\">\n  <ListItem>\n    <ListItemText secondary=\"Paid by card\">\n      {#snippet primary()}<strong>September invoice</strong>{/snippet}\n    </ListItemText>\n  </ListItem>\n</List>"
+      }
+    }
+  }
+}

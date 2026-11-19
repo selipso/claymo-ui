@@ -1,0 +1,56 @@
+{
+  "name": "@claymo/astro",
+  "version": "0.1.0",
+  "description": "Astro bridge for the Claymo claymorphic design system: server-rendered HTML, scripts only for interactive components.",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./integration": {
+      "types": "./src/integration.d.ts",
+      "default": "./src/integration.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src"
+  ],
+  "keywords": [
+    "astro-component",
+    "withastro",
+    "astro-integration"
+  ],
+  "scripts": {
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@claymo/core": "0.1.0"
+  },
+  "peerDependencies": {
+    "@astrojs/svelte": "^9.0.0",
+    "astro": ">=5.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@astrojs/svelte": "^9.1.6",
+    "astro": "^7.4.12",
+    "svelte": "^5.57.3"
+  },
+  "peerDependenciesMeta": {
+    "@astrojs/svelte": {
+      "optional": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/selipso/claymo-ui.git",
+    "directory": "packages/astro"
+  },
+  "homepage": "https://github.com/selipso/claymo-ui#readme",
+  "bugs": {
+    "url": "https://github.com/selipso/claymo-ui/issues"
+  }
+}

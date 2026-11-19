@@ -1,0 +1,31 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { tableDefaults, type TableOptions } from "@claymo/core/display";
+
+type Props = Omit<HTMLAttributes<"div">, keyof TableOptions | "role" | "tabindex" | "aria-label"> &
+  TableOptions;
+
+const {
+  size = tableDefaults.size,
+  padding = tableDefaults.padding,
+  stickyHeader,
+  label,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<div
+  class:list={["clay clay-table", className]}
+  data-sticky-header={stickyHeader ? "" : undefined}
+  data-size={size}
+  data-padding={padding}
+  {...rest}
+  role="region"
+  tabindex="0"
+  aria-label={label}
+>
+  <table class="clay-table__table">
+    <slot />
+  </table>
+</div>

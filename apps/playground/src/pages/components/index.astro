@@ -1,0 +1,56 @@
+---
+import { getComponent, listComponents } from "@claymo/core/reference";
+import Shell from "../../layouts/Shell.astro";
+import { componentHref } from "../../lib/nav";
+
+const components = listComponents("astro").map((name) => ({
+  name,
+  href: componentHref(name),
+  purpose: getComponent("astro", name).purpose,
+}));
+---
+
+<Shell title="Components">
+  <main class="prose">
+    <h1>Components</h1>
+    <p>
+      Every component exists in <code>@claymo/astro</code> and <code>@claymo/svelte</code> with the
+      same name and props. Each page shows a live example, its source, props, content and events for
+      both frameworks. The same data is what the MCP server gives coding agents.
+    </p>
+    <ul class="component-list">
+      {components.map(({ name, href, purpose }) => (
+        <li>
+          <a href={href}>{name}</a>
+          <span>{purpose}</span>
+        </li>
+      ))}
+    </ul>
+  </main>
+</Shell>
+
+<style>
+  .component-list {
+    display: grid;
+    gap: 12px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .component-list li {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .component-list a {
+    font-weight: 600;
+  }
+
+  @media (max-width: 599px) {
+    .component-list li {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2px;
+    }
+  }
+</style>

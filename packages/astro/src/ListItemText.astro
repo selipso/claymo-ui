@@ -1,0 +1,20 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"span"> & { primary?: string; secondary?: string };
+const { primary, secondary, class: className, ...rest } = Astro.props;
+const hasPrimarySlot = Astro.slots.has("primary");
+---
+
+<span {...rest} class:list={["clay-list-item-text", className]}>
+  {(primary || hasPrimarySlot || Astro.slots.has("default")) && (
+    <span class="clay-list-item-text__primary">
+      {hasPrimarySlot ? <slot name="primary" /> : primary || <slot />}
+    </span>
+  )}
+  {(secondary || Astro.slots.has("secondary")) && (
+    <span class="clay-list-item-text__secondary">
+      <slot name="secondary">{secondary}</slot>
+    </span>
+  )}
+</span>

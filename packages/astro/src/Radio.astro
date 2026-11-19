@@ -1,0 +1,30 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { Color, Size } from "@claymo/core";
+
+type Props = Omit<HTMLAttributes<"input">, "type" | "size" | "color" | "checked" | "value"> & {
+  value: string | number;
+  checked?: boolean;
+  defaultChecked?: boolean;
+  color?: Color;
+  size?: Exclude<Size, "large">;
+};
+
+const {
+  checked,
+  defaultChecked,
+  color = "primary",
+  size = "medium",
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<input
+  {...rest}
+  type="radio"
+  class:list={["clay", "clay-radio", className]}
+  data-color={color}
+  data-size={size}
+  checked={checked ?? defaultChecked}
+/>

@@ -1,0 +1,27 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"label"> & {
+  label?: string;
+  labelPlacement?: "end" | "start" | "top" | "bottom";
+  disabled?: boolean;
+};
+
+const { label, labelPlacement = "end", disabled = false, class: className, ...rest } = Astro.props;
+---
+
+<fieldset class="clay-form-control-label-frame" {disabled}>
+  <label
+    {...rest}
+    class:list={["clay-form-control-label", className]}
+    data-placement={labelPlacement}
+    data-disabled={disabled || undefined}
+  >
+    <slot name="control">
+      <slot />
+    </slot>
+    <span class="clay-form-control-label__text">
+      <slot name="label">{label}</slot>
+    </span>
+  </label>
+</fieldset>

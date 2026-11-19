@@ -1,0 +1,27 @@
+---
+import { THEME_STORAGE } from "../lib/theme";
+---
+
+<script is:inline define:vars={{ keys: THEME_STORAGE }}>
+  // Runs before first paint, after every ClientRouter swap (which replaces the <html> attributes),
+  // and when another document, such as an example frame, changes the stored theme.
+  function applyTheme() {
+    var root = document.documentElement;
+    try {
+      var mode = localStorage.getItem(keys.mode);
+      var palette = localStorage.getItem(keys.palette);
+      if (mode === "light" || mode === "dark") root.dataset.theme = mode;
+      else delete root.dataset.theme;
+      if (palette && palette !== "default") root.dataset.palette = palette;
+      else delete root.dataset.palette;
+    } catch (error) {
+      // Storage unavailable: keep the system theme.
+    }
+  }
+  applyTheme();
+  if (!window.clayThemeListening) {
+    window.clayThemeListening = true;
+    document.addEventListener("astro:after-swap", applyTheme);
+    window.addEventListener("storage", applyTheme);
+  }
+</script>

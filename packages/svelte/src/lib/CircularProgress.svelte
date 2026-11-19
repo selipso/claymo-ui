@@ -1,0 +1,83 @@
+<script lang="ts">
+  import type { SVGAttributes } from "svelte/elements";
+  import {
+    circularProgress,
+    circularProgressDefaults,
+    progressDefaults,
+    type CircularProgressOptions,
+  } from "@claymo/core/display";
+
+  interface Props
+    extends
+      Omit<
+        SVGAttributes<SVGSVGElement>,
+        | keyof CircularProgressOptions
+        | "role"
+        | "width"
+        | "height"
+        | "viewBox"
+        | "aria-valuemin"
+        | "aria-valuemax"
+        | "aria-valuenow"
+      >,
+      CircularProgressOptions {
+    "aria-label": string;
+  }
+
+  let {
+    variant = progressDefaults.variant,
+    min,
+    max,
+    value,
+    size,
+    thickness,
+    disableShrink,
+    enableTrackSlot = circularProgressDefaults.enableTrackSlot,
+    color = progressDefaults.color,
+    "aria-label": ariaLabel,
+    class: className = "",
+    ...rest
+  }: Props = $props();
+
+  const geometry = $derived(circularProgress({ variant, min, max, value, size, thickness }));
+</script>
+
+<svg
+  class="clay-circular-progress {className}"
+  data-variant={variant}
+  data-disable-shrink={disableShrink ? "" : undefined}
+  role="progressbar"
+  aria-label={ariaLabel}
+  aria-valuemin={geometry.range?.min}
+  aria-valuemax={geometry.range?.max}
+  aria-valuenow={geometry.range?.now}
+  data-color={color}
+  width={geometry.width}
+  height={geometry.width}
+  viewBox="0 0 {geometry.diameter} {geometry.diameter}"
+  {...rest}
+>
+  {#if enableTrackSlot}
+    <circle
+      class="clay-circular-progress__track"
+      cx={geometry.center}
+      cy={geometry.center}
+      r={geometry.radius}
+      fill="none"
+      stroke-width={geometry.stroke}
+    />
+  {/if}
+  <circle
+    class="clay-circular-progress__arc"
+    data-empty={geometry.range?.fraction === 0 ? "" : undefined}
+    cx={geometry.center}
+    cy={geometry.center}
+    r={geometry.radius}
+    fill="none"
+    stroke-width={geometry.stroke}
+    stroke-linecap="round"
+    stroke-dasharray={geometry.range ? geometry.circumference : undefined}
+    stroke-dashoffset={geometry.dashOffset}
+    style:--clay-circular-progress-circ="{geometry.circumference}px"
+  />
+</svg>

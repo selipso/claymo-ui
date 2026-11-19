@@ -1,0 +1,50 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { TooltipPlacement } from "@claymo/core/overlays";
+
+/**
+ * Omit `open` for hover/focus behavior. Set `data-clay-open` to "true" or "false" from a client
+ * script to override visibility, or remove it to restore hover/focus behavior. Listen for cancelable
+ * `clay-request-open` and `clay-request-close` events ({ reason: "leave" | "escapeKeyDown" } on close).
+ * Slots: default (one focusable trigger), `content` (noninteractive content that replaces `title`).
+ */
+type Props = Omit<HTMLAttributes<"span">, "title"> & {
+  title?: string;
+  placement?: TooltipPlacement;
+  arrow?: boolean;
+  open?: boolean;
+};
+
+const {
+  title,
+  placement = "bottom",
+  arrow = false,
+  open,
+  id,
+  class: className,
+  ...rest
+} = Astro.props;
+const hasContent = Astro.slots.has("content") || !!title;
+---
+
+<span
+  id={id}
+  class:list={["clay-tooltip", className]}
+  data-placement={placement}
+  data-arrow={arrow ? "" : undefined}
+  data-clay-tooltip
+  data-clay-tooltip-content={hasContent ? "" : undefined}
+  data-clay-open={open === undefined ? undefined : String(open)}
+  {...rest}
+>
+  <slot />
+  <span id={id ? `${id}-tip` : undefined} role="tooltip" class="clay clay-tooltip__bubble">
+    <slot name="content">{title}</slot>
+  </span>
+</span>
+
+<script>
+  import { upgradeTooltips } from "@claymo/core/behavior/overlays";
+  import { onEveryPage } from "./lifecycle.ts";
+  onEveryPage(upgradeTooltips);
+</script>

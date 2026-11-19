@@ -1,0 +1,207 @@
+{
+  "Drawer": {
+    "purpose": "Present navigation or supplementary content. A temporary drawer is a native modal dialog with focus containment and restoration; permanent and persistent drawers are nonmodal asides. Provide an accessible name and include an explicit close control in a temporary drawer.",
+    "props": {
+      "variant": {
+        "type": "string",
+        "enum": ["temporary", "permanent", "persistent"],
+        "default": "temporary",
+        "description": "Temporary opens above the page; permanent is always visible; persistent remains in the page layout when open."
+      },
+      "anchor": {
+        "type": "string",
+        "enum": ["left", "right", "top", "bottom"],
+        "default": "left",
+        "description": "Physical edge for temporary drawers. For in-flow variants, place the drawer in the layout yourself; the anchor sets its edge shape."
+      },
+      "width": {
+        "type": "number",
+        "default": 280,
+        "description": "Preferred width in pixels for left and right drawers. Top and bottom drawers fill the available width."
+      },
+      "open": {
+        "type": "boolean",
+        "default": false,
+        "description": "Visibility of a temporary or persistent drawer. Ignored by the permanent variant."
+      },
+      "hideBackdrop": {
+        "type": "boolean",
+        "default": false,
+        "description": "Make a temporary drawer's backdrop transparent without changing its modality or backdrop-click behavior."
+      },
+      "aria-label": { "type": "string", "description": "Accessible name for the drawer." }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Drawer"],
+        "required": ["aria-label"],
+        "props": {
+          "id": {
+            "type": "string",
+            "description": "Required for native button invokers. Use commandfor with command=\"show-modal\" or command=\"close\" on a temporary drawer."
+          },
+          "open": {
+            "type": "boolean",
+            "default": false,
+            "description": "Initial visibility; temporary drawers open modally on upgrade. After rendering use native dialog commands or showModal()/close() for temporary drawers, or toggle hidden for persistent drawers."
+          }
+        },
+        "content": [
+          "Default slot: drawer content.",
+          "actions: optional controls below the content."
+        ],
+        "events": [
+          "Temporary drawers fire a cancelable clay-request-close on Escape or a backdrop click. Listen on the drawer; event.detail.reason is escapeKeyDown or backdropClick. preventDefault() keeps it open.",
+          "Native command=\"close\" and close() are explicit closes, not requests; listen to the native close event if needed."
+        ],
+        "example": "<button type=\"button\" commandfor=\"main-drawer\" command=\"show-modal\">Open navigation</button>\n<Drawer id=\"main-drawer\" aria-label=\"Main navigation\">\n  <nav><a href=\"/\">Home</a></nav>\n  <button slot=\"actions\" type=\"button\" commandfor=\"main-drawer\" command=\"close\">Close</button>\n</Drawer>\n<script>\n  document.getElementById('main-drawer')?.addEventListener('clay-request-close', (event) => {\n    if ((event as CustomEvent).detail.reason === 'backdropClick') event.preventDefault();\n  });\n</script>"
+      },
+      "svelte": {
+        "imports": ["Drawer"],
+        "required": ["aria-label"],
+        "props": {},
+        "content": ["children: drawer content.", "actions: optional controls below the content."],
+        "events": [
+          "Use bind:open to share state. Without onClose the temporary drawer closes itself on Escape or backdrop click.",
+          "onClose(event, reason): when supplied, the parent decides whether to set open=false. Reasons: escapeKeyDown, backdropClick."
+        ],
+        "example": "<script lang=\"ts\">\n  let open = $state(false);\n</script>\n<button type=\"button\" onclick={() => (open = true)}>Open navigation</button>\n<Drawer aria-label=\"Main navigation\" bind:open>\n  <nav><a href=\"/\">Home</a></nav>\n  {#snippet actions()}<button type=\"button\" onclick={() => (open = false)}>Close</button>{/snippet}\n</Drawer>"
+      }
+    }
+  },
+  "Snackbar": {
+    "purpose": "Show a brief nonmodal notification in a persistent polite live region. Display text plus an optional action, or replace the entire message bar with custom content.",
+    "props": {
+      "open": {
+        "type": "boolean",
+        "default": false,
+        "description": "Whether the notification is visible."
+      },
+      "message": { "type": "string", "description": "Text in the default message bar." },
+      "autoHideDuration": {
+        "type": ["number", "null"],
+        "default": 4000,
+        "description": "Milliseconds before requesting a timeout close; null disables the timer. Hover, focus inside, and window blur pause the timer."
+      },
+      "resumeHideDuration": {
+        "type": "number",
+        "description": "Milliseconds to wait on resume. Defaults to the full autoHideDuration."
+      },
+      "disableWindowBlurListener": {
+        "type": "boolean",
+        "default": false,
+        "description": "Do not pause the auto-hide timer on window blur. Hover and focus still pause it."
+      },
+      "anchorOrigin": {
+        "type": "object",
+        "properties": {
+          "vertical": { "type": "string", "enum": ["top", "bottom"] },
+          "horizontal": { "type": "string", "enum": ["left", "center", "right"] }
+        },
+        "required": ["vertical", "horizontal"],
+        "default": { "vertical": "bottom", "horizontal": "center" },
+        "description": "Position relative to the viewport; narrow layouts are full width with margins."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Snackbar"],
+        "required": [],
+        "props": {
+          "id": {
+            "type": "string",
+            "description": "Use a unique id with commandfor to target the notification."
+          },
+          "open": {
+            "type": "boolean",
+            "default": false,
+            "description": "Initial visibility. Use button commands --clay-show / --clay-hide with commandfor, or add/remove data-clay-open in a client script."
+          }
+        },
+        "content": [
+          "Default slot: replaces the message bar if supplied.",
+          "action: optional content beside message in the default bar."
+        ],
+        "events": [
+          "Cancelable, non-bubbling clay-request-close on the snackbar root with event.detail.reason: timeout, escapeKeyDown or clickaway. Listen on the snackbar itself; preventDefault() keeps it open.",
+          "--clay-hide or removing data-clay-open closes explicitly without firing a request."
+        ],
+        "example": "<button type=\"button\" commandfor=\"saved\" command=\"--clay-show\">Save settings</button>\n<Snackbar id=\"saved\" message=\"Settings saved\" autoHideDuration={4000}>\n  <button slot=\"action\" type=\"button\" commandfor=\"saved\" command=\"--clay-hide\">Dismiss</button>\n</Snackbar>\n<script>\n  document.getElementById('saved')?.addEventListener('clay-request-close', (event) => {\n    if ((event as CustomEvent).detail.reason === 'clickaway') event.preventDefault();\n  });\n</script>"
+      },
+      "svelte": {
+        "imports": ["Snackbar"],
+        "required": [],
+        "props": {},
+        "content": [
+          "children: replaces the message bar if supplied.",
+          "action: optional snippet beside message in the default bar."
+        ],
+        "events": [
+          "Use bind:open to share state. onClose(event, reason) handles timeout (event is null), escapeKeyDown and clickaway. Without onClose the notification closes itself; with onClose the parent decides whether to set open=false."
+        ],
+        "example": "<script lang=\"ts\">\n  let open = $state(false);\n</script>\n<button type=\"button\" onclick={() => (open = true)}>Save settings</button>\n<Snackbar bind:open message=\"Settings saved\">\n  {#snippet action()}<button type=\"button\" onclick={() => (open = false)}>Dismiss</button>{/snippet}\n</Snackbar>"
+      }
+    }
+  },
+  "Tooltip": {
+    "purpose": "Describe one focusable trigger with short, noninteractive content on hover or focus. The tooltip augments the trigger's accessible name, remains open when the pointer moves onto it, and can be dismissed with Escape without moving focus.",
+    "props": {
+      "title": {
+        "type": "string",
+        "description": "Description text. An empty title with no content slot/snippet suppresses the tooltip."
+      },
+      "placement": {
+        "type": "string",
+        "enum": ["top", "bottom", "left", "right"],
+        "default": "bottom",
+        "description": "Side of the trigger on which to place the tooltip."
+      },
+      "arrow": {
+        "type": "boolean",
+        "default": false,
+        "description": "Show an arrow pointing to the trigger."
+      },
+      "open": {
+        "type": "boolean",
+        "description": "Explicitly control visibility. Omit for hover and focus activation."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Tooltip"],
+        "required": [],
+        "props": {
+          "id": {
+            "type": "string",
+            "description": "Native wrapper id. If set, the bubble id is the wrapper id plus -tip."
+          },
+          "open": {
+            "type": "boolean",
+            "description": "Initial override. In a client script, set data-clay-open to true or false (strings) to take control; remove the attribute to return to automatic hover/focus."
+          }
+        },
+        "content": [
+          "Default slot: one focusable trigger element. The component adds its tooltip id to aria-describedby without replacing existing ids.",
+          "content: optional noninteractive HTML replacing title."
+        ],
+        "events": [
+          "Cancelable, non-bubbling clay-request-open and clay-request-close on the tooltip root for user interactions; listen on the tooltip itself, so an enclosing Dialog's listener never sees them. Close includes event.detail.reason (leave or escapeKeyDown). Escape is handled only while focus or the pointer is on the tooltip. preventDefault() vetoes the automatic state change; in controlled mode, update data-clay-open yourself."
+        ],
+        "example": "<Tooltip id=\"save-tip\" placement=\"top\" arrow>\n  <button type=\"button\">Save</button>\n  <span slot=\"content\">Keeps your current settings</span>\n</Tooltip>"
+      },
+      "svelte": {
+        "imports": ["Tooltip"],
+        "required": [],
+        "props": {},
+        "content": [
+          "children: one focusable trigger element, described by the tooltip.",
+          "content: optional noninteractive snippet replacing title."
+        ],
+        "events": [
+          "onOpen(event) and onClose(event, reason) report requests from hover, focus, pointer/focus leave, or Escape. In controlled mode update open yourself; in automatic mode these are notifications."
+        ],
+        "example": "<Tooltip placement=\"top\" arrow>\n  <button type=\"button\">Save</button>\n  {#snippet content()}Keeps your current settings{/snippet}\n</Tooltip>"
+      }
+    }
+  }
+}

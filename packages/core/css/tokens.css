@@ -1,0 +1,230 @@
+/* ------------------------------------------------------------------ *
+ * Tokens. Every colour is light-dark(light, dark): one block, no
+ * duplicated dark theme. <html data-theme="light|dark"> overrides the
+ * system preference; with no attribute the system preference wins.
+ * ------------------------------------------------------------------ */
+:root {
+  color-scheme: light dark;
+
+  --clay-font: "Source Sans 3", system-ui, sans-serif;
+  --clay-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --clay-time: 300ms;
+  --clay-border-width: 1px;
+  --clay-highlight: white;
+  --clay-shadow: black;
+
+  --clay-page: light-dark(#d4e8e6, #102629);
+  --clay-surface: light-dark(#e6f2f0, #1f4044);
+  --clay-ink: light-dark(#102629, #e8f3f2);
+  --clay-ink-muted: light-dark(#3f5a5d, #b7d0cf);
+  --clay-edge: light-dark(#5a7e80, #7aa3a5);
+  --clay-focus: light-dark(#006969, #f3ead2);
+
+  --clay-primary: #008282;
+  --clay-primary-on: #ffffff;
+  --clay-secondary: #2c6a9a;
+  --clay-secondary-on: #ffffff;
+  --clay-success: #2f7a52;
+  --clay-success-on: #ffffff;
+  --clay-error: #b5443b;
+  --clay-error-on: #ffffff;
+  --clay-warning: #e0a526;
+  --clay-warning-on: #102629;
+  --clay-info: #1f6f8b;
+  --clay-info-on: #ffffff;
+
+  --clay-primary-ink: light-dark(#006060, #55c9c5);
+  --clay-secondary-ink: light-dark(#275f8a, #8fc2ec);
+  --clay-success-ink: light-dark(#2a6e4a, #7fd0a0);
+  --clay-error-ink: light-dark(#a63b32, #f08a80);
+  --clay-warning-ink: light-dark(#8a5a00, #f0c060);
+  --clay-info-ink: light-dark(#1b6280, #7cc5e0);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+:root,
+::backdrop {
+  --clay-backdrop: rgb(0 0 0 / 55%);
+}
+
+/* ------------------------------------------------------------------ *
+ * Aesthetic palettes. :root defines default status tokens; palettes
+ * override primary, secondary, and status tokens together so each
+ * theme forms a holistic, collision-free light/dark palette.
+ * ------------------------------------------------------------------ */
+[data-palette="tidal"] {
+  --clay-page: light-dark(#c8ebe7, #0a1e22);
+  --clay-surface: light-dark(#f0fcfb, #16363c);
+  --clay-ink: light-dark(#0b2528, #eaf9f8);
+  --clay-ink-muted: light-dark(#315457, #b2d5d7);
+  --clay-edge: light-dark(#4d787c, #70a2a7);
+  --clay-focus: light-dark(#005f66, #7ef5f0);
+  --clay-primary: light-dark(#007f8a, #18c5cf);
+  --clay-primary-on: light-dark(#ffffff, #032427);
+  --clay-primary-ink: light-dark(#005f67, #63e8ef);
+  --clay-secondary: light-dark(#b5443b, #f08a80);
+  --clay-secondary-on: light-dark(#ffffff, #2b0906);
+  --clay-secondary-ink: light-dark(#9e352d, #ffb4ac);
+  --clay-success: light-dark(#1e7d4d, #4ade88);
+  --clay-success-on: light-dark(#ffffff, #042612);
+  --clay-success-ink: light-dark(#17663e, #7ef0ad);
+  --clay-error: light-dark(#d93814, #ff5938);
+  --clay-error-on: light-dark(#ffffff, #290500);
+  --clay-error-ink: light-dark(#b32b0c, #ff9e8a);
+  --clay-warning: light-dark(#e6a800, #ffc533);
+  --clay-warning-on: light-dark(#241800, #261a00);
+  --clay-warning-ink: light-dark(#825b00, #ffd66b);
+  --clay-info: light-dark(#1c5ec7, #6ba6ff);
+  --clay-info-on: light-dark(#ffffff, #051938);
+  --clay-info-ink: light-dark(#164ca3, #a3c8ff);
+}
+[data-palette="sorbet"] {
+  --clay-page: light-dark(#ffe1c4, #230f1a);
+  --clay-surface: light-dark(#fff5eb, #3a1c2d);
+  --clay-ink: light-dark(#2e1120, #fff0eb);
+  --clay-ink-muted: light-dark(#693b4f, #e8bfd0);
+  --clay-edge: light-dark(#905c71, #b8849a);
+  --clay-focus: light-dark(#b50091, #ff85ef);
+  --clay-primary: light-dark(#db00b0, #ff2ee6);
+  --clay-primary-on: light-dark(#ffffff, #2b0025);
+  --clay-primary-ink: light-dark(#b50091, #ff85ef);
+  --clay-secondary: light-dark(#007ab8, #24d6ff);
+  --clay-secondary-on: light-dark(#ffffff, #00222b);
+  --clay-secondary-ink: light-dark(#005e8f, #7ce6ff);
+  --clay-success: light-dark(#168250, #3ee08e);
+  --clay-success-on: light-dark(#ffffff, #032614);
+  --clay-success-ink: light-dark(#106940, #80f5b8);
+  --clay-error: light-dark(#d93814, #ff6642);
+  --clay-error-on: light-dark(#ffffff, #290600);
+  --clay-error-ink: light-dark(#b0290b, #ffa18c);
+  --clay-warning: light-dark(#f0a000, #ffbe2e);
+  --clay-warning-on: light-dark(#291800, #291a00);
+  --clay-warning-ink: light-dark(#875500, #ffd475);
+  --clay-info: light-dark(#4b3ec9, #948aff);
+  --clay-info-on: light-dark(#ffffff, #110b38);
+  --clay-info-ink: light-dark(#3c30ab, #beb8ff);
+}
+[data-palette="orbit"] {
+  --clay-page: light-dark(#e2dfff, #120e26);
+  --clay-surface: light-dark(#f5f3ff, #231c44);
+  --clay-ink: light-dark(#1c143a, #f4f0ff);
+  --clay-ink-muted: light-dark(#4a406f, #c9c1e8);
+  --clay-edge: light-dark(#706498, #9186bc);
+  --clay-focus: light-dark(#4a1eb5, #dbf73e);
+  --clay-primary: light-dark(#5b28de, #9c7dff);
+  --clay-primary-on: light-dark(#ffffff, #160838);
+  --clay-primary-ink: light-dark(#491cc2, #c8b5ff);
+  --clay-secondary: light-dark(#a8cf00, #daf734);
+  --clay-secondary-on: light-dark(#1b2400, #1c2600);
+  --clay-secondary-ink: light-dark(#495c00, #e5fc68);
+  --clay-success: light-dark(#0a825c, #2ee5a8);
+  --clay-success-on: light-dark(#ffffff, #02261a);
+  --clay-success-ink: light-dark(#076648, #7af7cc);
+  --clay-error: light-dark(#d42646, #ff5c7a);
+  --clay-error-on: light-dark(#ffffff, #2e030c);
+  --clay-error-ink: light-dark(#ab1b36, #ffa1b3);
+  --clay-warning: light-dark(#eb9800, #ffb52e);
+  --clay-warning-on: light-dark(#261600, #261700);
+  --clay-warning-ink: light-dark(#855200, #ffd17a);
+  --clay-info: light-dark(#0074a8, #38c7ff);
+  --clay-info-on: light-dark(#ffffff, #002130);
+  --clay-info-ink: light-dark(#005b85, #85dcff);
+}
+[data-palette="atelier"] {
+  --clay-page: light-dark(#d6e5ff, #0b1529);
+  --clay-surface: light-dark(#f2f7ff, #17294a);
+  --clay-ink: light-dark(#0e1e3b, #edf4ff);
+  --clay-ink-muted: light-dark(#384e76, #b8cce8);
+  --clay-edge: light-dark(#5974a2, #7793bf);
+  --clay-focus: light-dark(#1143b2, #ffc436);
+  --clay-primary: light-dark(#144fd1, #5c96ff);
+  --clay-primary-on: light-dark(#ffffff, #051533);
+  --clay-primary-ink: light-dark(#0f40ad, #9ec2ff);
+  --clay-secondary: light-dark(#e87700, #ff9224);
+  --clay-secondary-on: light-dark(#241000, #291200);
+  --clay-secondary-ink: light-dark(#944900, #ffba75);
+  --clay-success: light-dark(#12804c, #38de8b);
+  --clay-success-on: light-dark(#ffffff, #032614);
+  --clay-success-ink: light-dark(#0d633a, #7cf2b5);
+  --clay-error: light-dark(#c91e2c, #ff5c6a);
+  --clay-error-on: light-dark(#ffffff, #2e0308);
+  --clay-error-ink: light-dark(#a31521, #ffa3ab);
+  --clay-warning: light-dark(#e6be00, #ffe033);
+  --clay-warning-on: light-dark(#241d00, #262000);
+  --clay-warning-ink: light-dark(#755f00, #ffeb7a);
+  --clay-info: light-dark(#007799, #2ed3f5);
+  --clay-info-on: light-dark(#ffffff, #00232b);
+  --clay-info-ink: light-dark(#005d78, #80e6fc);
+}
+[data-palette="canopy"] {
+  --clay-page: light-dark(#cbf0e2, #081e17);
+  --clay-surface: light-dark(#eefcf6, #13362a);
+  --clay-ink: light-dark(#0b261c, #e8fbf3);
+  --clay-ink-muted: light-dark(#2f5748, #b0dbcb);
+  --clay-edge: light-dark(#4c7d6a, #6ca38f);
+  --clay-focus: light-dark(#00664b, #4ef2c3);
+  --clay-primary: light-dark(#007a5a, #1ad9a6);
+  --clay-primary-on: light-dark(#ffffff, #02241b);
+  --clay-primary-ink: light-dark(#005e45, #6bf5cf);
+  --clay-secondary: light-dark(#c9149f, #ff5ce0);
+  --clay-secondary-on: light-dark(#ffffff, #2e0226);
+  --clay-secondary-ink: light-dark(#9e0d7c, #ffa8ef);
+  --clay-success: light-dark(#68bd00, #a6f52c);
+  --clay-success-on: light-dark(#142600, #182600);
+  --clay-success-ink: light-dark(#3c6e00, #c5fa73);
+  --clay-error: light-dark(#d1261f, #ff6157);
+  --clay-error-on: light-dark(#ffffff, #2b0502);
+  --clay-error-ink: light-dark(#a81b15, #ffa6a1);
+  --clay-warning: light-dark(#eb9e00, #ffbe2e);
+  --clay-warning-on: light-dark(#261800, #261900);
+  --clay-warning-ink: light-dark(#825600, #ffd475);
+  --clay-info: light-dark(#0d65bd, #5caeff);
+  --clay-info-on: light-dark(#ffffff, #041a33);
+  --clay-info-ink: light-dark(#0a4f96, #9eccff);
+}
+
+/* Colour selection: components set data-color on their root. */
+[data-color="primary"] {
+  --c: var(--clay-primary);
+  --c-on: var(--clay-primary-on);
+  --c-ink: var(--clay-primary-ink);
+}
+[data-color="secondary"] {
+  --c: var(--clay-secondary);
+  --c-on: var(--clay-secondary-on);
+  --c-ink: var(--clay-secondary-ink);
+}
+[data-color="success"] {
+  --c: var(--clay-success);
+  --c-on: var(--clay-success-on);
+  --c-ink: var(--clay-success-ink);
+}
+[data-color="error"] {
+  --c: var(--clay-error);
+  --c-on: var(--clay-error-on);
+  --c-ink: var(--clay-error-ink);
+}
+[data-color="warning"] {
+  --c: var(--clay-warning);
+  --c-on: var(--clay-warning-on);
+  --c-ink: var(--clay-warning-ink);
+}
+[data-color="info"] {
+  --c: var(--clay-info);
+  --c-on: var(--clay-info-on);
+  --c-ink: var(--clay-info-ink);
+}
+[data-color="default"] {
+  --c: var(--clay-surface);
+  --c-on: var(--clay-ink);
+  --c-ink: var(--clay-ink);
+}
+[data-color="inherit"] {
+  --c: transparent;
+  --c-on: currentColor;
+  --c-ink: currentColor;
+}

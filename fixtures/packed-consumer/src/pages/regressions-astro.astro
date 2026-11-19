@@ -1,0 +1,72 @@
+---
+import Page from "../layouts/Page.astro";
+import { Button, Dialog, Tab, TabPanel, Tabs, Tooltip } from "@claymo/astro";
+
+const tabs = [
+  { value: "a", label: "Alpha" },
+  { value: "b", label: "Bravo" },
+];
+---
+
+<Page title="Astro regressions">
+  {["First copy", "Second copy"].map((name) => (
+    <section aria-label={name}>
+      <Tabs aria-label="Details" value="a" tabs={tabs}>
+        <p slot="a">Alpha body</p>
+        <p slot="b">Bravo body</p>
+      </Tabs>
+    </section>
+  ))}
+
+  <!-- Composed tabs whose initial selection comes only from the children. -->
+  <Tabs id="composed" aria-label="Composed">
+    <Tab tabsId="composed" value="first" label="First" />
+    <Tab tabsId="composed" value="second" label="Second" selected />
+    <Fragment slot="panels">
+      <TabPanel tabsId="composed" value="first">
+        First panel
+      </TabPanel>
+      <TabPanel tabsId="composed" value="second" selected>
+        Second panel
+      </TabPanel>
+    </Fragment>
+  </Tabs>
+
+  <Button
+    href="/nowhere/"
+    disabled
+    onclick="document.getElementById('link-clicks').textContent = 'clicked'"
+  >
+    Disabled link
+  </Button>
+  <output id="link-clicks">none</output>
+
+  <Tooltip title="Pinned tip" open>
+    <button type="button">Pinned</button>
+  </Tooltip>
+  <Button id="open-plain" commandfor="plain-dialog" command="show-modal">
+    Open plain dialog
+  </Button>
+  <Dialog id="plain-dialog" title="Plain dialog">
+    <button type="button">Plain action</button>
+  </Dialog>
+
+  <Button id="open-tip" commandfor="tip-dialog" command="show-modal">
+    Open tip dialog
+  </Button>
+  <Dialog id="tip-dialog" title="Tip dialog">
+    <button type="button">First action</button>
+    <Tooltip title="Inner tip">
+      <button type="button">Inner action</button>
+    </Tooltip>
+  </Dialog>
+  <output id="dialog-requests">0</output>
+</Page>
+
+<script>
+  const requests = document.getElementById("dialog-requests")!;
+  // Typed through HTMLElementEventMap: no cast needed for event.detail.
+  document.getElementById("tip-dialog")!.addEventListener("clay-request-close", (event) => {
+    requests.textContent = `${Number(requests.textContent) + 1}:${event.detail.reason}`;
+  });
+</script>

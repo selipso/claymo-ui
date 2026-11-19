@@ -1,0 +1,23 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { DividerOptions } from "@claymo/core/surfaces";
+
+type Props = HTMLAttributes<"hr"> & DividerOptions;
+
+const {
+  orientation = "horizontal",
+  flexItem = false,
+  variant = "fullWidth",
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<hr
+  class:list={["clay-divider", className]}
+  data-orientation={orientation}
+  data-variant={variant}
+  data-flex-item={flexItem ? "" : undefined}
+  aria-orientation={orientation}
+  {...rest}
+/>

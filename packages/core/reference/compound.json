@@ -1,0 +1,208 @@
+{
+  "Tabs": {
+    "purpose": "Render a horizontal tablist and its associated panels. Left and Right (RTL-aware), Home and End move focus and activate a tab, skipping disabled tabs.",
+    "props": {
+      "aria-label": {
+        "type": "string",
+        "description": "Accessible name of the tablist."
+      },
+      "variant": {
+        "type": "string",
+        "enum": ["standard", "fullWidth"],
+        "default": "standard",
+        "description": "Use natural tab widths or distribute tabs across the available width."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Tabs"],
+        "required": ["aria-label"],
+        "props": {
+          "id": {
+            "type": "string",
+            "description": "Root ID and base for generated tab and panel IDs. Defaults to a unique per-instance ID, so repeated tablists with the same label never collide. Required in composed mode: pass the same value as tabsId to each Tab and TabPanel."
+          },
+          "tabs": {
+            "type": "array",
+            "description": "Optional data-driven mode. Use distinct string values and name each panel slot after its value. Omit tabs to compose Tab and TabPanel children.",
+            "items": {
+              "type": "object",
+              "required": ["value", "label"],
+              "properties": {
+                "value": { "type": "string" },
+                "label": { "type": "string", "description": "Visible text of the tab." },
+                "disabled": { "type": "boolean", "default": false }
+              }
+            }
+          },
+          "value": {
+            "type": ["string", "number"],
+            "description": "Initially selected tab, matched to the value of a Tab or data item. Browser interactions manage selection after rendering."
+          }
+        },
+        "content": [
+          "With tabs: one named slot per tab value. Without tabs: default slot contains Tab components, and the panels slot contains TabPanel components. In composed mode pass an explicit id and use it as tabsId on each child."
+        ],
+        "events": [
+          "clay-change: bubbling CustomEvent<{ value: string | number }> on the Tabs root after a user changes the selection; event.detail.value preserves the Tab's value type."
+        ],
+        "example": "---\nconst tabs = [{ value: 'profile', label: 'Profile' }, { value: 'security', label: 'Security' }];\n---\n<Tabs id=\"account-tabs\" aria-label=\"Account\" value=\"profile\" tabs={tabs}>\n  <p slot=\"profile\">Profile settings</p>\n  <p slot=\"security\">Security settings</p>\n</Tabs>\n<p>Selected tab: <output id=\"account-selected\">profile</output></p>\n<script>\n  import { TABS_CHANGE_EVENT, type TabsChangeEvent } from '@claymo/core/behavior/tabs';\n  const selected = document.getElementById('account-selected')!;\n  document.getElementById('account-tabs')!.addEventListener(TABS_CHANGE_EVENT, (event) => {\n    selected.textContent = String((event as TabsChangeEvent).detail.value);\n  });\n</script>"
+      },
+      "svelte": {
+        "imports": ["Tabs", "Tab", "TabPanel"],
+        "required": ["aria-label"],
+        "props": {
+          "value": {
+            "type": ["string", "number"],
+            "description": "Selected tab value. Supports bind:value; when omitted, no tab starts selected."
+          },
+          "onChange": {
+            "description": "Optional callback (event: Event, value: string | number) => void. Called when the user selects a different tab, not for parent-driven value changes."
+          }
+        },
+        "content": [
+          "children: render Tab components inside the tablist.",
+          "panels: a Svelte snippet containing TabPanel components, rendered after the tablist."
+        ],
+        "events": ["onChange(event, value): selection callback for user changes only."],
+        "example": "<script lang=\"ts\">\n  let selected = $state<string | number>('profile');\n  let changes = $state(0);\n</script>\n<Tabs aria-label=\"Account\" bind:value={selected} onChange={() => changes++}>\n  <Tab value=\"profile\" label=\"Profile\" />\n  <Tab value=\"security\" label=\"Security\" />\n  {#snippet panels()}\n    <TabPanel value=\"profile\"><p>Profile settings</p></TabPanel>\n    <TabPanel value=\"security\"><p>Security settings</p></TabPanel>\n  {/snippet}\n</Tabs>\n<p>Selected tab: {selected}. User changes: {changes}.</p>"
+      }
+    }
+  },
+  "Tab": {
+    "purpose": "Render a tab button inside Tabs. Pair it with a TabPanel of the same value.",
+    "props": {
+      "label": { "type": "string", "description": "Visible text of the tab." },
+      "value": {
+        "type": ["string", "number"],
+        "description": "Selection key. Match a TabPanel value exactly, including type: 2 and \"2\" are different tabs."
+      },
+      "disabled": { "type": "boolean", "default": false }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Tabs", "Tab", "TabPanel"],
+        "required": ["label", "value", "tabsId"],
+        "props": {
+          "tabsId": { "type": "string", "description": "Match the parent Tabs id." },
+          "selected": {
+            "type": "boolean",
+            "default": false,
+            "description": "Set on the tab matching Tabs.value for first paint. The browser controller then manages selection."
+          }
+        },
+        "content": ["icon: optional named slot before the label."],
+        "events": ["Listen for clay-change on Tabs, not on each Tab."],
+        "example": "---\nconst tabsId = 'settings-tabs';\n---\n<Tabs id={tabsId} aria-label=\"Settings\" value=\"preferences\">\n  <Tab tabsId={tabsId} value=\"preferences\" label=\"Preferences\" selected />\n  <Tab tabsId={tabsId} value=\"billing\" label=\"Billing\" />\n  <Fragment slot=\"panels\">\n    <TabPanel tabsId={tabsId} value=\"preferences\" selected>Choose your preferences.</TabPanel>\n    <TabPanel tabsId={tabsId} value=\"billing\">Manage billing.</TabPanel>\n  </Fragment>\n</Tabs>"
+      },
+      "svelte": {
+        "imports": ["Tabs", "Tab", "TabPanel"],
+        "required": ["label", "value"],
+        "props": {},
+        "content": [
+          "icon: an optional Svelte snippet rendered before the label. No default children."
+        ],
+        "events": [
+          "onclick and onkeydown: native button handlers run before selection or keyboard navigation respectively. Calling event.preventDefault() skips that built-in behavior."
+        ],
+        "example": "<Tabs aria-label=\"Settings\" value=\"preferences\">\n  <Tab value=\"preferences\" label=\"Preferences\">\n    {#snippet icon()}<span aria-hidden=\"true\">⚙</span>{/snippet}\n  </Tab>\n  {#snippet panels()}\n    <TabPanel value=\"preferences\"><p>Choose your preferences.</p></TabPanel>\n  {/snippet}\n</Tabs>"
+      }
+    }
+  },
+  "TabPanel": {
+    "purpose": "Render the content for a matching Tab. Unselected panels stay mounted but hidden.",
+    "props": {
+      "value": {
+        "type": ["string", "number"],
+        "description": "Match the corresponding Tab value exactly."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Tabs", "Tab", "TabPanel"],
+        "required": ["value", "tabsId"],
+        "props": {
+          "tabsId": { "type": "string", "description": "Match the parent Tabs id." },
+          "selected": {
+            "type": "boolean",
+            "default": false,
+            "description": "Show this panel at first paint when its value matches Tabs.value."
+          }
+        },
+        "content": ["default slot: panel content. Put the panel in Tabs' panels slot."],
+        "events": [],
+        "example": "---\nconst tabsId = 'report-tabs';\n---\n<Tabs id={tabsId} aria-label=\"Reports\" value={1}>\n  <Tab tabsId={tabsId} value={1} label=\"Summary\" selected />\n  <TabPanel slot=\"panels\" tabsId={tabsId} value={1} selected>Report summary</TabPanel>\n</Tabs>"
+      },
+      "svelte": {
+        "imports": ["Tabs", "Tab", "TabPanel"],
+        "required": ["value"],
+        "props": {},
+        "content": ["children: panel content."],
+        "events": [],
+        "example": "<Tabs aria-label=\"Reports\" value={1}>\n  <Tab value={1} label=\"Summary\" />\n  {#snippet panels()}\n    <TabPanel value={1}><p>Report summary</p></TabPanel>\n  {/snippet}\n</Tabs>"
+      }
+    }
+  },
+  "Dialog": {
+    "purpose": "Render a native modal dialog with focus trapping and an inert background. Use title or supply an accessible name with aria-label or aria-labelledby.",
+    "props": {
+      "title": {
+        "type": "string",
+        "description": "Optional visible heading used as the dialog's accessible name."
+      },
+      "open": {
+        "type": "boolean",
+        "default": false,
+        "description": "Svelte: live modal state, supports bind:open. Astro: request initial modal opening once the client script runs."
+      },
+      "fullWidth": {
+        "type": "boolean",
+        "default": false,
+        "description": "Fill the available width up to maxWidth."
+      },
+      "maxWidth": {
+        "type": "string",
+        "enum": ["xs", "sm", "md"],
+        "default": "sm",
+        "description": "Maximum width: xs = 320px, sm = 444px, md = 600px, each capped by the viewport."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Dialog"],
+        "required": ["id"],
+        "props": {
+          "id": {
+            "type": "string",
+            "description": "Unique dialog ID. Native buttons target it with commandfor and command=\"show-modal\" or command=\"close\"."
+          }
+        },
+        "content": [
+          "default slot: dialog body.",
+          "actions: optional named slot for buttons and other actions."
+        ],
+        "events": [
+          "clay-request-close: cancelable, non-bubbling CustomEvent on the dialog for Escape or backdrop clicks. event.detail.reason is escapeKeyDown or backdropClick. Call event.preventDefault() to keep the dialog open; a native close command does not send this request."
+        ],
+        "example": "---\nconst dialogId = 'account-help';\n---\n<button type=\"button\" commandfor={dialogId} command=\"show-modal\">Open help</button>\n<Dialog id={dialogId} title=\"Account help\">\n  <p>Choose Close or press Escape to dismiss this dialog.</p>\n  <button type=\"button\" slot=\"actions\" commandfor={dialogId} command=\"close\">Close</button>\n</Dialog>\n<script>\n  import { DIALOG_REQUEST_CLOSE_EVENT, type DialogRequestCloseEvent } from '@claymo/core/behavior/dialog';\n  document.getElementById('account-help')!.addEventListener(DIALOG_REQUEST_CLOSE_EVENT, (event) => {\n    if ((event as DialogRequestCloseEvent).detail.reason === 'backdropClick') event.preventDefault();\n  });\n</script>"
+      },
+      "svelte": {
+        "imports": ["Dialog"],
+        "required": [],
+        "props": {
+          "onClose": {
+            "description": "Optional callback (event: Event, reason: 'escapeKeyDown' | 'backdropClick') => void. For Escape and backdrop requests, set open to false to accept, or leave it unchanged to reject. Without the callback the dialog closes itself."
+          }
+        },
+        "content": [
+          "children: dialog body.",
+          "actions: optional Svelte snippet for buttons and other actions."
+        ],
+        "events": [
+          "onClose(event, reason): handles Escape and backdrop close requests. If the browser already closed the dialog (for example via a form with method=\"dialog\"), the binding is resynced and an installed callback receives escapeKeyDown even if Escape did not cause the close."
+        ],
+        "example": "<script>\n  let open = $state(false);\n</script>\n<button type=\"button\" onclick={() => (open = true)}>Open help</button>\n<Dialog bind:open title=\"Account help\" onClose={(_event, reason) => {\n  if (reason === 'escapeKeyDown') open = false;\n}}>\n  <p>Choose Close or press Escape to dismiss this dialog.</p>\n  {#snippet actions()}\n    <button type=\"button\" onclick={() => (open = false)}>Close</button>\n  {/snippet}\n</Dialog>"
+      }
+    }
+  }
+}

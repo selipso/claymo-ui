@@ -1,0 +1,13 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { cardElevation, type CardOptions } from "@claymo/core/surfaces";
+import Paper from "./Paper.astro";
+
+type Props = HTMLAttributes<"div"> & CardOptions;
+
+const { elevation, raised, class: className, ...rest } = Astro.props;
+---
+
+<Paper elevation={cardElevation(elevation, raised)} class:list={["clay-card", className]} {...rest}>
+  <slot />
+</Paper>

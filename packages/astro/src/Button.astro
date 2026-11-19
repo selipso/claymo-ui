@@ -1,0 +1,63 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { buttonRecipe, type ButtonOptions } from "@claymo/core";
+
+/** Slots: default (label), `start-icon`, `end-icon`. No client script: disabled links render without href. */
+type Props = Omit<HTMLAttributes<"button">, keyof ButtonOptions> &
+  Pick<HTMLAttributes<"a">, "target" | "rel"> &
+  ButtonOptions;
+
+const {
+  variant,
+  color,
+  size,
+  disabled,
+  fullWidth,
+  href,
+  type,
+  loading,
+  loadingPosition,
+  disableElevation,
+  inflated,
+  class: className,
+  onclick,
+  ...rest
+} = Astro.props;
+
+const recipe = buttonRecipe({
+  variant,
+  color,
+  size,
+  disabled,
+  fullWidth,
+  href,
+  type,
+  loading,
+  loadingPosition,
+  disableElevation,
+  inflated,
+});
+const Tag = recipe.tag;
+---
+
+<Tag
+  {...recipe.attrs}
+  class:list={[recipe.className, className]}
+  {...rest}
+  onclick={recipe.inert ? undefined : onclick}
+>
+  {loading && <span class="clay-button__spinner" role="progressbar" aria-label="Loading" />}
+  {Astro.slots.has("start-icon") && (
+    <span class="clay-button__icon">
+      <slot name="start-icon" />
+    </span>
+  )}
+  <span class="clay-button__label">
+    <slot />
+  </span>
+  {Astro.slots.has("end-icon") && (
+    <span class="clay-button__icon">
+      <slot name="end-icon" />
+    </span>
+  )}
+</Tag>

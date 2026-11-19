@@ -1,0 +1,32 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { Color, Size } from "@claymo/core";
+
+type Props = Omit<HTMLInputAttrs, "type" | "size" | "color" | "role" | "checked" | "value"> & {
+  checked?: boolean;
+  defaultChecked?: boolean;
+  value?: string | number;
+  color?: Color;
+  size?: Exclude<Size, "large">;
+};
+type HTMLInputAttrs = HTMLAttributes<"input">;
+
+const {
+  checked,
+  defaultChecked,
+  color = "primary",
+  size = "medium",
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<input
+  {...rest}
+  type="checkbox"
+  role="switch"
+  class:list={["clay", "clay-switch", className]}
+  data-color={color}
+  data-size={size}
+  checked={checked ?? defaultChecked}
+/>

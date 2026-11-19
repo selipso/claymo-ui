@@ -1,0 +1,84 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { Severity } from "@claymo/core";
+import {
+  actionIconAttrs,
+  alertIcons,
+  closeIconPath,
+  type AlertVariant,
+} from "@claymo/core/actions";
+
+/** Slots: default (message), `icon` and `action`. A custom action replaces the close control. */
+type Props = Omit<HTMLAttributes<"div">, "color"> & {
+  severity?: Severity;
+  color?: Severity;
+  variant?: AlertVariant;
+  icon?: false;
+  /** Show a close button; cancel its clay-close event to keep the alert visible. */
+  dismissible?: boolean;
+  closeText?: string;
+};
+
+const {
+  severity = "success",
+  color = severity,
+  variant = "standard",
+  icon,
+  dismissible = false,
+  closeText = "Close",
+  role = "alert",
+  class: className,
+  ...rest
+} = Astro.props;
+const defaultIcon = alertIcons[severity];
+const hasAction = Astro.slots.has("action");
+const showClose = dismissible && !hasAction;
+---
+
+<div
+  {...rest}
+  class:list={["clay clay-alert", className]}
+  {role}
+  data-color={color}
+  data-variant={variant}
+  data-clay-alert-close={showClose ? "" : undefined}
+>
+  {icon !== false && (
+    <span class="clay-alert__icon" aria-hidden="true">
+      <slot name="icon">
+        <svg {...actionIconAttrs} width="22" height="22">
+          <path d={defaultIcon.path} />
+        </svg>
+      </slot>
+    </span>
+  )}
+  <div class="clay-alert__message">
+    <span class="clay-sr-only">{defaultIcon.label}: </span>
+    <slot />
+  </div>
+  {hasAction && (
+    <div class="clay-alert__action">
+      <slot name="action" />
+    </div>
+  )}
+  {showClose && (
+    <div class="clay-alert__action">
+      <button
+        type="button"
+        class="clay clay-alert__close"
+        data-clay-interactive
+        aria-label={closeText}
+      >
+        <svg {...actionIconAttrs} width="18" height="18">
+          <path d={closeIconPath} />
+        </svg>
+      </button>
+    </div>
+  )}
+</div>
+
+<script>
+  import { upgradeAlerts } from "@claymo/core/behavior/actions";
+  import { onEveryPage } from "./lifecycle.ts";
+  onEveryPage(upgradeAlerts);
+</script>

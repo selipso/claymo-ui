@@ -1,0 +1,23 @@
+{
+  "name": "claymo-packed-consumer",
+  "private": true,
+  "type": "module",
+  "description": "Installs the packed @claymo tarballs (see scripts/test-packed.mjs); never run in place.",
+  "scripts": {
+    "check": "astro check && svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
+    "build": "astro build",
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@astrojs/svelte": "^9.1.6",
+    "astro": "^7.4.12",
+    "svelte": "^5.57.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@playwright/test": "^1.65.1",
+    "svelte-check": "^4.7.8",
+    "typescript": "^6.0.3"
+  }
+}

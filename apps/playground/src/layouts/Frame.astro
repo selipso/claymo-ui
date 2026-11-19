@@ -1,0 +1,45 @@
+---
+import { ClayLighting } from "@claymo/astro";
+import ThemeScript from "../components/ThemeScript.astro";
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>{title}</title>
+    <link rel="icon" href="data:," />
+    <ThemeScript />
+  </head>
+  <body class="example-frame">
+    <ClayLighting />
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  body.example-frame {
+    padding: 24px;
+  }
+</style>
+
+<script>
+  // Reports the content height to the reference page, which sizes this frame to fit. The body, not
+  // the document, is measured: the document is never shorter than the frame, so it could not shrink.
+  const report = () =>
+    parent.postMessage(
+      {
+        claymoExample: location.pathname,
+        height: Math.ceil(document.body.getBoundingClientRect().height),
+      },
+      location.origin,
+    );
+  new ResizeObserver(report).observe(document.body);
+</script>

@@ -1,0 +1,79 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { Color } from "@claymo/core";
+import {
+  actionIconAttrs,
+  closeIconPath,
+  type ChipSize,
+  type ChipVariant,
+} from "@claymo/core/actions";
+
+/** Slots: `avatar`, `icon` and `delete-icon`. The label prop supplies the visible text. */
+type Props = Omit<HTMLAttributes<"span">, "color"> & {
+  label: string;
+  variant?: ChipVariant;
+  color?: Color;
+  size?: ChipSize;
+  clickable?: boolean;
+  disabled?: boolean;
+  /** Show a remove button; cancel its clay-delete event to keep the chip visible. */
+  deletable?: boolean;
+};
+
+const {
+  label,
+  variant = "filled",
+  color = "default",
+  size = "medium",
+  clickable = false,
+  disabled = false,
+  deletable = false,
+  onclick,
+  class: className,
+  ...rest
+} = Astro.props;
+const interactive = clickable || !!onclick;
+const Body = interactive ? "button" : "span";
+const bodyAttrs = interactive ? { type: "button" as const, disabled, onclick } : {};
+---
+
+<span
+  {...rest}
+  class:list={["clay clay-chip", className]}
+  data-variant={variant}
+  data-deletable={deletable ? "" : undefined}
+  data-color={color}
+  data-size={size}
+  data-clay-interactive={interactive ? "" : undefined}
+  data-disabled={disabled ? "" : undefined}
+  data-clay-chip-delete={deletable ? label : undefined}
+>
+  <Body class="clay-chip__body" {...bodyAttrs}>
+    {Astro.slots.has("avatar") && (
+      <span class="clay-chip__lead clay-chip__avatar">
+        <slot name="avatar" />
+      </span>
+    )}
+    {Astro.slots.has("icon") && (
+      <span class="clay-chip__lead clay-chip__icon">
+        <slot name="icon" />
+      </span>
+    )}
+    <span class="clay-chip__label">{label}</span>
+  </Body>
+  {deletable && (
+    <button type="button" class="clay-chip__remove" aria-label={`Remove ${label}`} {disabled}>
+      <slot name="delete-icon">
+        <svg {...actionIconAttrs} width="14" height="14" stroke-width="2.5">
+          <path d={closeIconPath} />
+        </svg>
+      </slot>
+    </button>
+  )}
+</span>
+
+<script>
+  import { upgradeChips } from "@claymo/core/behavior/actions";
+  import { onEveryPage } from "./lifecycle.ts";
+  onEveryPage(upgradeChips);
+</script>

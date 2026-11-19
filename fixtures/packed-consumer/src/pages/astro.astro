@@ -1,0 +1,91 @@
+---
+import Page from "../layouts/Page.astro";
+import Parity from "../components/Parity.astro";
+import { Button, Checkbox, Dialog, Tabs } from "@claymo/astro";
+---
+
+<Page title="Astro bridge">
+  <Parity />
+
+  <section>
+    <h2>Tabs</h2>
+    <Tabs
+      aria-label="Account"
+      value="profile"
+      tabs={[
+        { value: "profile", label: "Profile" },
+        { value: "security", label: "Security" },
+        { value: "danger", label: "Danger", disabled: true },
+        { value: "billing", label: "Billing" },
+      ]}
+    >
+      <p slot="profile">Profile panel</p>
+      <p slot="security">Security panel</p>
+      <p slot="danger">Danger panel</p>
+      <p slot="billing">Billing panel</p>
+    </Tabs>
+    <Tabs
+      aria-label="Billing settings"
+      value="plan"
+      tabs={[
+        { value: "plan", label: "Plan" },
+        { value: "invoices", label: "Invoices" },
+      ]}
+    >
+      <p slot="plan">Plan panel</p>
+      <p slot="invoices">Invoices panel</p>
+    </Tabs>
+    <p>
+      Changes: <output id="tab-changes">0</output>
+    </p>
+  </section>
+
+  <form id="form" method="get" action="/astro/">
+    <label>
+      <Checkbox name="terms" value="yes" /> Accept terms
+    </label>
+    <label>
+      <Checkbox name="mixed" value="yes" indeterminate /> Mixed
+    </label>
+    <Button type="submit">Submit</Button>
+    <Button type="reset" variant="outlined">
+      Reset
+    </Button>
+  </form>
+
+  <section>
+    <Button id="open" commandfor="locked" command="show-modal">
+      Open dialog
+    </Button>
+    <Dialog id="locked" title="Locked dialog">
+      <p>Escape and backdrop requests are rejected.</p>
+      <Button slot="actions" commandfor="locked" command="close">
+        Close
+      </Button>
+    </Dialog>
+    <p>
+      Rejected: <output id="rejections"></output>
+    </p>
+  </section>
+</Page>
+
+<script>
+  import {
+    DIALOG_REQUEST_CLOSE_EVENT,
+    type DialogRequestCloseEvent,
+  } from "@claymo/core/behavior/dialog";
+  import { TABS_CHANGE_EVENT } from "@claymo/core/behavior/tabs";
+
+  const changes = document.getElementById("tab-changes")!;
+  for (const tabs of document.querySelectorAll("[data-clay-tabs]")) {
+    tabs.addEventListener(TABS_CHANGE_EVENT, () => {
+      changes.textContent = String(Number(changes.textContent) + 1);
+    });
+  }
+
+  const rejections = document.getElementById("rejections")!;
+  document.getElementById("locked")!.addEventListener(DIALOG_REQUEST_CLOSE_EVENT, (event) => {
+    event.preventDefault();
+    rejections.textContent += `${(event as DialogRequestCloseEvent).detail.reason} `;
+  });
+</script>

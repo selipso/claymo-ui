@@ -1,0 +1,75 @@
+.clay-dialog {
+  --clay-radius: 32px;
+  --clay-d: 10px;
+  --clay-dialog-width: 444px;
+  box-sizing: border-box;
+  width: fit-content;
+  min-width: min(280px, calc(100% - 32px));
+  max-width: min(var(--clay-dialog-width), calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  color: var(--clay-ink);
+}
+.clay-dialog[data-max-width="xs"] {
+  --clay-dialog-width: 320px;
+}
+.clay-dialog[data-max-width="md"] {
+  --clay-dialog-width: 600px;
+}
+.clay-dialog[data-full-width] {
+  width: 100%;
+}
+.clay-dialog[open] {
+  animation: clay-dialog-pop var(--clay-time) var(--clay-ease);
+}
+.clay-dialog::backdrop {
+  background: var(--clay-backdrop);
+}
+.clay-dialog[open]::backdrop {
+  animation: clay-fade var(--clay-time) ease;
+}
+
+.clay-dialog__title {
+  margin: 0;
+  padding: 24px 24px 8px;
+  font: 600 1.25rem/1.3 var(--clay-font);
+}
+.clay-dialog__content {
+  padding: 8px 24px;
+}
+.clay-dialog__panel > .clay-dialog__content:first-child {
+  padding-top: 24px;
+}
+.clay-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 24px 24px;
+}
+
+@keyframes clay-dialog-pop {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.96);
+  }
+}
+@keyframes clay-fade {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clay-dialog[open],
+  .clay-dialog[open]::backdrop {
+    animation: none;
+  }
+}
+
+/* Scroll lock while any modal dialog is open. */
+body:has(dialog[open]) {
+  overflow: hidden;
+}

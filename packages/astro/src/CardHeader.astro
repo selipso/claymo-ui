@@ -1,0 +1,44 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = Omit<HTMLAttributes<"div">, "title"> & {
+  title?: string;
+  subheader?: string;
+  disableTypography?: boolean;
+};
+
+const { title, subheader, disableTypography = false, class: className, ...rest } = Astro.props;
+const hasTitle = title !== undefined || Astro.slots.has("title");
+const hasSubheader = subheader !== undefined || Astro.slots.has("subheader");
+---
+
+<div class:list={["clay-card-header", className]} {...rest}>
+  {Astro.slots.has("avatar") && (
+    <div class="clay-card-header__avatar">
+      <slot name="avatar" />
+    </div>
+  )}
+  <div class="clay-card-header__text">
+    {hasTitle &&
+      (disableTypography ? (
+        <slot name="title">{title}</slot>
+      ) : (
+        <div class="clay-card-header__title">
+          <slot name="title">{title}</slot>
+        </div>
+      ))}
+    {hasSubheader &&
+      (disableTypography ? (
+        <slot name="subheader">{subheader}</slot>
+      ) : (
+        <div class="clay-card-header__subheader">
+          <slot name="subheader">{subheader}</slot>
+        </div>
+      ))}
+  </div>
+  {Astro.slots.has("action") && (
+    <div class="clay-card-header__action">
+      <slot name="action" />
+    </div>
+  )}
+</div>

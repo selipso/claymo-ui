@@ -1,0 +1,14 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { paperRecipe, type PaperOptions } from "@claymo/core";
+
+type Props = HTMLAttributes<"div"> & PaperOptions;
+
+const { elevation, variant, square, inflated, as, class: className, ...rest } = Astro.props;
+const recipe = paperRecipe({ elevation, variant, square, inflated, as });
+const Tag = recipe.tag;
+---
+
+<Tag {...recipe.attrs} class:list={[recipe.className, className]} {...rest}>
+  <slot />
+</Tag>

@@ -1,0 +1,20 @@
+{
+  "name": "claymo-packed-sveltekit",
+  "private": true,
+  "type": "module",
+  "description": "SvelteKit app built from claymo-mcp get_setup output (see scripts/test-packed.mjs); never run in place.",
+  "scripts": {
+    "check": "svelte-kit sync && svelte-check --fail-on-warnings",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@sveltejs/adapter-static": "^4.0.1",
+    "@sveltejs/kit": "^3.4.0",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "svelte": "^5.57.3",
+    "svelte-check": "^4.7.8",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.8"
+  }
+}

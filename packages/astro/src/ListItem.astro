@@ -1,0 +1,31 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"li"> & {
+  disablePadding?: boolean;
+  disableGutters?: boolean;
+  divider?: boolean;
+};
+const {
+  disablePadding = false,
+  disableGutters = false,
+  divider = false,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<li
+  {...rest}
+  class:list={["clay-list-item", className]}
+  data-padded={!disablePadding ? "" : undefined}
+  data-gutters={!disableGutters ? "" : undefined}
+  data-divider={divider ? "" : undefined}
+>
+  <slot />
+  {Astro.slots.has("secondary-action") && (
+    <span class="clay-list-item__secondary-action">
+      <slot name="secondary-action" />
+    </span>
+  )}
+</li>

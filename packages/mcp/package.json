@@ -1,0 +1,45 @@
+{
+  "name": "@claymo/mcp",
+  "version": "0.1.0",
+  "description": "Read-only MCP server that lets coding agents pick a Claymo theme and implement Claymo components.",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "bin": {
+    "claymo-mcp": "src/bin.js"
+  },
+  "exports": {
+    ".": "./src/server.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "!src/**/*.test.js"
+  ],
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "check": "tsc -p tsconfig.json",
+    "test": "node --test \"src/**/*.test.js\""
+  },
+  "dependencies": {
+    "@claymo/core": "0.1.0",
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/selipso/claymo-ui.git",
+    "directory": "packages/mcp"
+  },
+  "homepage": "https://github.com/selipso/claymo-ui#readme",
+  "bugs": {
+    "url": "https://github.com/selipso/claymo-ui/issues"
+  }
+}
