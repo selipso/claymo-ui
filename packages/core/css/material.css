@@ -2,11 +2,13 @@
  * The clay surface. Per element: --clay-color (fill), --clay-d (depth),
  * --clay-radius. Recipe from the article: one large offset outer shadow
  * + a lighter top-left inset + a darker bottom-right inset.
+ * --clay-elevation scales only the outer shadow; hover raises it (motion.css).
  * ------------------------------------------------------------------ */
 .clay {
   --clay-color: var(--clay-surface);
   --clay-d: 6px;
   --clay-radius: 22px;
+  --clay-elevation: 1;
 
   --clay-light: light-dark(
     color-mix(in oklab, var(--clay-color), var(--clay-highlight) 60%),
@@ -21,18 +23,24 @@
     color-mix(in oklab, var(--clay-color), var(--clay-shadow) 55%),
     transparent 50%
   );
-  --clay-outer: calc(var(--clay-d) * 1.2) calc(var(--clay-d) * 1.6) calc(var(--clay-d) * 3) 0
-    var(--clay-drop);
+  --clay-lift: calc(var(--clay-d) * var(--clay-elevation));
+  --clay-outer: calc(var(--clay-lift) * 1.2) calc(var(--clay-lift) * 1.6) calc(var(--clay-lift) * 3)
+    0 var(--clay-drop);
   --clay-insets:
     inset calc(var(--clay-d) * -1) calc(var(--clay-d) * -1) calc(var(--clay-d) * 2) 0
       var(--clay-shade),
     inset var(--clay-d) var(--clay-d) calc(var(--clay-d) * 2) 0 var(--clay-light);
   --clay-raised: var(--clay-outer), var(--clay-insets);
+  /* Same three layers as raised (outer, inset, inset), so the press interpolates smoothly. */
+  --clay-press-drop: calc(var(--clay-d) * var(--clay-motion-press-drop));
+  --clay-press-sink: calc(var(--clay-d) * var(--clay-motion-press-sink));
   --clay-pressed:
-    calc(var(--clay-d) * 0.4) calc(var(--clay-d) * 0.5) var(--clay-d) 0 var(--clay-drop),
-    inset var(--clay-d) var(--clay-d) calc(var(--clay-d) * 1.5) 0 var(--clay-shade),
-    inset calc(var(--clay-d) * -1) calc(var(--clay-d) * -1) calc(var(--clay-d) * 1.5) 0
-      var(--clay-light);
+    var(--clay-press-drop) calc(var(--clay-press-drop) * 1.25) calc(var(--clay-press-drop) * 2.5) 0
+      var(--clay-drop),
+    inset var(--clay-press-sink) var(--clay-press-sink) calc(var(--clay-press-sink) * 1.5) 0
+      var(--clay-shade),
+    inset calc(var(--clay-press-sink) * -1) calc(var(--clay-press-sink) * -1)
+      calc(var(--clay-press-sink) * 1.5) 0 var(--clay-light);
   --clay-well:
     inset var(--clay-d) var(--clay-d) calc(var(--clay-d) * 2) 0 var(--clay-shade),
     inset calc(var(--clay-d) * -1) calc(var(--clay-d) * -1) calc(var(--clay-d) * 2) 0
@@ -43,14 +51,16 @@
   box-shadow: var(--clay-raised);
 }
 
-/* Interpolating the layered shadows repaints them on every frame. Apply depth changes
- * immediately while keeping the lift and color feedback for users who allow motion. */
-@media (prefers-reduced-motion: no-preference) {
-  .clay {
-    transition:
-      transform var(--clay-time) var(--clay-ease),
-      background-color var(--clay-time) ease;
-  }
+/* Color changes (variants, themes) ease on every surface. Interactive surfaces and
+ * controls also ease transform and shadow, so hover and press never pop. */
+.clay {
+  transition: background-color var(--clay-motion-duration) var(--clay-motion-easing);
+}
+.clay[data-clay-interactive],
+:is(.clay-checkbox, .clay-radio, .clay-switch) {
+  transition-property: transform, box-shadow, background-color, border-color, color;
+  transition-duration: var(--clay-motion-duration);
+  transition-timing-function: var(--clay-motion-easing);
 }
 
 /* Puffy "squircle" corners where supported (Chromium 139+). Elsewhere the
@@ -63,15 +73,34 @@
 }
 
 /* Interactive states. :where() keeps specificity low so component CSS can override. */
-.clay[data-clay-interactive]:where(:not(:disabled, [aria-disabled="true"], [data-disabled])):hover {
-  transform: translateY(-1px);
-  --clay-d: 8px;
+:is(.clay[data-clay-interactive], .clay-checkbox, .clay-radio, .clay-switch):where(
+    :not(:disabled, [aria-disabled="true"], [data-disabled])
+  ):hover {
+  --clay-elevation: var(--clay-motion-hover-elevation);
 }
 .clay[data-clay-interactive]:where(
     :not(:disabled, [aria-disabled="true"], [data-disabled])
   ):active {
-  transform: translateY(1px) scale(0.98);
   box-shadow: var(--clay-pressed);
+}
+/* Into a press quickly; the release eases back at the normal duration. */
+:is(.clay[data-clay-interactive], .clay-checkbox, .clay-radio, .clay-switch):where(
+    :not(:disabled, [aria-disabled="true"], [data-disabled])
+  ):active {
+  transition-duration: var(--clay-motion-duration-press);
+}
+@media (prefers-reduced-motion: no-preference) {
+  :is(.clay[data-clay-interactive], .clay-checkbox, .clay-radio, .clay-switch):where(
+      :not(:disabled, [aria-disabled="true"], [data-disabled])
+    ):hover {
+    transform: translateY(var(--clay-motion-hover-y)) scale(var(--clay-motion-hover-scale));
+  }
+  :is(.clay[data-clay-interactive], .clay-checkbox, .clay-radio, .clay-switch):where(
+      :not(:disabled, [aria-disabled="true"], [data-disabled])
+    ):active {
+    transform: translateY(var(--clay-motion-press-y))
+      scale(var(--clay-motion-press-scale-x), var(--clay-motion-press-scale-y));
+  }
 }
 .clay:is(:disabled, [aria-disabled="true"], [data-disabled]) {
   opacity: 0.55;
@@ -115,11 +144,6 @@
   border: 0;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .clay[data-clay-interactive]:is(:hover, :active) {
-    transform: none;
-  }
-}
 @media (forced-colors: active) {
   .clay {
     border: var(--clay-border-width) solid ButtonText;

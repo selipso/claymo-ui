@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
 import { dialogRecipe, type DialogMaxWidth } from "@claymo/core";
 
 /**
@@ -14,9 +15,11 @@ type Props = Omit<HTMLAttributes<"dialog">, "open" | "title"> & {
   title?: string;
   fullWidth?: boolean;
   maxWidth?: DialogMaxWidth;
+  /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+  motion?: MotionPreset;
 };
 
-const { id, open, title, fullWidth, maxWidth, class: className, ...rest } = Astro.props;
+const { id, open, title, fullWidth, maxWidth, motion, class: className, ...rest } = Astro.props;
 const recipe = dialogRecipe({ idBase: id, hasTitle: !!title, fullWidth, maxWidth });
 ---
 
@@ -26,6 +29,7 @@ const recipe = dialogRecipe({ idBase: id, hasTitle: !!title, fullWidth, maxWidth
   class:list={[recipe.className, className]}
   data-clay-dialog
   data-clay-open={open ? "" : undefined}
+  data-motion={motion}
   {...rest}
 >
   <div class="clay-dialog__panel">

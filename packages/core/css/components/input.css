@@ -257,7 +257,7 @@ select.clay-text-field__input option {
   border-radius: 50%;
   background: var(--clay-color);
   box-shadow: var(--clay-raised);
-  transition: transform var(--clay-time) var(--clay-ease);
+  transition: transform var(--clay-motion-duration) var(--clay-motion-easing);
 }
 .clay-slider__input::-moz-range-thumb {
   box-sizing: border-box;
@@ -267,15 +267,17 @@ select.clay-text-field__input option {
   border-radius: 50%;
   background: var(--clay-color);
   box-shadow: var(--clay-raised);
-  transition: transform var(--clay-time) var(--clay-ease);
+  transition: transform var(--clay-motion-duration) var(--clay-motion-easing);
 }
 .clay-slider__input:not(:disabled):active::-webkit-slider-thumb {
-  transform: scale(0.94);
+  transform: scale(var(--clay-motion-press-scale-x), var(--clay-motion-press-scale-y));
   box-shadow: var(--clay-pressed);
+  transition-duration: var(--clay-motion-duration-press);
 }
 .clay-slider__input:not(:disabled):active::-moz-range-thumb {
-  transform: scale(0.94);
+  transform: scale(var(--clay-motion-press-scale-x), var(--clay-motion-press-scale-y));
   box-shadow: var(--clay-pressed);
+  transition-duration: var(--clay-motion-duration-press);
 }
 .clay-slider__bubble {
   --clay-color: var(--c);
@@ -293,10 +295,11 @@ select.clay-text-field__input option {
   text-align: center;
   white-space: nowrap;
   opacity: 0;
-  transform: translate(var(--clay-slider-center), 6px) scale(0.8);
-  transition:
-    opacity 150ms ease,
-    transform var(--clay-time) var(--clay-ease);
+  transform: translate(var(--clay-slider-center), calc(var(--clay-motion-enter-y) * 0.5))
+    scale(var(--clay-motion-enter-scale));
+  transition-property: opacity, transform;
+  transition-duration: var(--clay-motion-duration);
+  transition-timing-function: var(--clay-motion-easing);
   pointer-events: none;
 }
 .clay-slider[data-label="on"] .clay-slider__bubble,
@@ -351,14 +354,6 @@ select.clay-text-field__input option {
 :is(.clay-switch, .clay-radio):disabled {
   cursor: not-allowed;
 }
-@media (prefers-reduced-motion: no-preference) {
-  :is(.clay-switch, .clay-radio):hover:not(:disabled) {
-    transform: translateY(-1px);
-  }
-  :is(.clay-switch, .clay-radio):active:not(:disabled) {
-    transform: translateY(1px) scale(0.96);
-  }
-}
 :is(.clay-switch, .clay-radio):checked {
   --clay-color: var(--c);
   border-color: var(--c-ink);
@@ -408,7 +403,7 @@ select.clay-text-field__input option {
     calc(var(--td) * 1.2) calc(var(--td) * 1.6) calc(var(--td) * 3) 0 var(--t-drop),
     inset calc(var(--td) * -1) calc(var(--td) * -1) calc(var(--td) * 2) 0 var(--t-shade),
     inset var(--td) var(--td) calc(var(--td) * 2) 0 var(--t-light);
-  transition: transform var(--clay-time) var(--clay-ease);
+  transition: transform var(--clay-motion-duration) var(--clay-motion-easing);
   pointer-events: none;
 }
 .clay-switch:checked::before {
@@ -437,10 +432,10 @@ select.clay-text-field__input option {
   border-radius: 50%;
   background: var(--c-on);
   opacity: 0;
-  transform: translate(-50%, -50%) scale(0);
-  transition:
-    transform var(--clay-time) var(--clay-ease),
-    opacity 120ms ease;
+  transform: translate(-50%, -50%) scale(0.6);
+  transition-property: transform, opacity;
+  transition-duration: var(--clay-motion-duration);
+  transition-timing-function: var(--clay-motion-easing);
   pointer-events: none;
 }
 .clay-radio[data-size="small"]::after {
@@ -503,25 +498,6 @@ select.clay-text-field__input option {
   gap: 8px 24px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .clay-slider__input::-webkit-slider-thumb {
-    transition: none;
-  }
-  .clay-slider__input::-moz-range-thumb {
-    transition: none;
-  }
-  .clay-slider__input:not(:disabled):active::-webkit-slider-thumb {
-    transform: none;
-  }
-  .clay-slider__input:not(:disabled):active::-moz-range-thumb {
-    transform: none;
-  }
-  .clay-slider__bubble,
-  .clay-switch::before,
-  .clay-radio::after {
-    transition: none;
-  }
-}
 @media (forced-colors: active) {
   .clay-text-field__chevron {
     color: CanvasText;

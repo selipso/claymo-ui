@@ -93,6 +93,20 @@ test("lists the same importable catalog for both bridges, each with a purpose", 
   assert.ok(astro.every((c) => c.purpose.length > 0));
 });
 
+test("list_themes describes motion presets, and animated components take a motion prop", async () => {
+  const client = await connect({ framework: "astro" });
+  const { motion } = json(await client.callTool({ name: "list_themes", arguments: {} }));
+  assert.equal(motion.attribute, "data-motion");
+  assert.equal(motion.default, "subtle");
+  assert.ok(motion.presets["lift-push"].description.length > 0);
+  assert.ok(motion.tokens["--clay-motion-duration"]);
+  const [button, card] = json(
+    await client.callTool({ name: "get_components", arguments: { names: ["Button", "Card"] } }),
+  );
+  assert.deepEqual(button.props.properties.motion.enum, Object.keys(motion.presets));
+  assert.equal(card.props.properties.motion, undefined);
+});
+
 test("one get_components call returns every requested component, in order", async () => {
   const client = await connect();
   const components = json(

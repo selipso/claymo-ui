@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import type { HTMLInputAttributes } from "svelte/elements";
-  import type { Color, Size } from "@claymo/core";
+  import type { Color, MotionPreset, Size } from "@claymo/core";
   import { sliderMarks, sliderPercent, sliderValue } from "@claymo/core/input";
 
   type InputEv = Event & { currentTarget: EventTarget & HTMLInputElement };
@@ -25,6 +25,8 @@
     /** Required: a slider has no visible text label of its own. */
     "aria-label": string;
     onChange?: (event: InputEv, value: number) => void;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
   }
 
   let {
@@ -41,6 +43,7 @@
     id: idProp,
     onChange,
     oninput,
+    motion,
     class: className = "",
     ...rest
   }: Props = $props();
@@ -73,6 +76,7 @@
   data-color={color}
   data-size={size}
   data-label={valueLabelDisplay}
+  data-motion={motion}
   style:--clay-slider-percent={pct}
 >
   {#if valueLabelDisplay !== "off"}

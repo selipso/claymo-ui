@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { HTMLFieldsetAttributes } from "svelte/elements";
-  import type { Color, Size } from "@claymo/core";
+  import type { Color, MotionPreset, Size } from "@claymo/core";
   import type { ButtonGroupOrientation, ButtonVariant } from "@claymo/core/actions";
 
   interface Props extends Omit<HTMLFieldsetAttributes, "color" | "disabled"> {
@@ -12,6 +12,8 @@
     disabled?: boolean;
     fullWidth?: boolean;
     disableElevation?: boolean;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
     children?: Snippet;
   }
 
@@ -23,6 +25,7 @@
     disabled = false,
     fullWidth = false,
     disableElevation = false,
+    motion,
     class: className = "",
     children,
     ...rest
@@ -37,6 +40,7 @@
   data-no-elevation={disableElevation ? "" : undefined}
   data-color={color}
   data-size={size}
+  data-motion={motion}
   {disabled}
   {...rest}
 >

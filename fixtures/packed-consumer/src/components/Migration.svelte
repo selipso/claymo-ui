@@ -112,6 +112,11 @@
 <Button onclick={() => (snackbar = true)}>Show notice</Button>
 <Snackbar bind:open={snackbar} message="Preferences saved" autoHideDuration={null} />
 
+<Button motion="lift-push">Push key</Button>
+<Switch motion="lift" aria-label="Lifted switch" />
+<div class="clay-motion-expand-contract"><Button>Grow</Button></div>
+<div data-motion="squish"><Button motion="none">Still</Button></div>
+
 <Tabs
   aria-label="Migration tabs"
   value="2"

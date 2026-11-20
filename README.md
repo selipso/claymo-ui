@@ -30,6 +30,7 @@ Open <http://localhost:4321> for the docs, component previews, and demos.
 - [Getting started](docs/getting-started.md) — playground, Astro, and SvelteKit setup
 - [Frameworks](docs/frameworks.md) — component conventions and MUI mappings
 - [Theming](docs/theming.md) — CSS-only usage, palettes, and overrides
+- [Motion](docs/motion.md) — motion presets, the `motion` prop, and tokens
 - [MCP](docs/mcp.md) — client setup, tools, and the programmatic API
 - [Accessibility](docs/accessibility.md) — behavior, limits, and verification coverage
 - [Runbook](docs/RUNBOOK.md) — release verification and publishing

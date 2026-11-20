@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
 import { tabIds, tabRecipe, type TabValue } from "@claymo/core";
 
 interface Props extends Omit<HTMLAttributes<"button">, "role" | "value"> {
@@ -7,9 +8,11 @@ interface Props extends Omit<HTMLAttributes<"button">, "role" | "value"> {
   value: TabValue;
   label: string;
   selected?: boolean;
+  /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+  motion?: MotionPreset;
 }
 
-const { tabsId, value, label, selected, disabled, class: className, ...rest } = Astro.props;
+const { tabsId, value, label, selected, disabled, motion, class: className, ...rest } = Astro.props;
 const recipe = tabRecipe({
   ids: tabIds(tabsId),
   value,
@@ -18,7 +21,13 @@ const recipe = tabRecipe({
 });
 ---
 
-<button {...rest} {...recipe.attrs} class:list={[recipe.className, className]} {disabled}>
+<button
+  data-motion={motion}
+  {...rest}
+  {...recipe.attrs}
+  class:list={[recipe.className, className]}
+  {disabled}
+>
   {Astro.slots.has("icon") && (
     <span class="clay-tab__icon">
       <slot name="icon" />

@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
+  import type { MotionPreset } from "@claymo/core";
   import { nativeAction } from "@claymo/core/actions";
 
   interface Props extends HTMLButtonAttributes, Pick<HTMLAnchorAttributes, "target" | "rel"> {
@@ -10,6 +11,8 @@
     disableGutters?: boolean;
     /** Renders an <a>; a selected link row gets aria-current="page". */
     href?: string;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
     children?: Snippet;
   }
 
@@ -20,6 +23,7 @@
     disableGutters = false,
     href,
     type = "button",
+    motion,
     class: className = "",
     children,
     onclick,
@@ -46,6 +50,7 @@
   data-dense={dense ? "" : undefined}
   data-gutters={!disableGutters ? "" : undefined}
   data-clay-interactive
+  data-motion={motion}
   aria-current={rest["aria-current"] ?? (selected ? (href ? "page" : "true") : undefined)}
   onclick={handleClick}
 >

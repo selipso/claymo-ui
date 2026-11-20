@@ -3,6 +3,7 @@ export type Mode = "system" | "light" | "dark";
 export const frameworks: readonly Framework[];
 export const modes: readonly Mode[];
 export const palettes: readonly string[];
+export const motionPresets: readonly string[];
 export function listComponents(framework: Framework): string[];
 
 export interface ComponentReference {
@@ -60,5 +61,15 @@ export const theme: {
   palette: { attribute: string; target: string; default: string };
   palettes: Record<string, { label: string; description: string }>;
   componentColor: string;
+  motion: {
+    attribute: string;
+    class: string;
+    target: string;
+    default: string;
+    reducedMotion: string;
+    components: string[];
+    presets: Record<string, { label: string; recommended: boolean; description: string }>;
+    tokens: Record<string, string>;
+  };
   overrides: { surface: string[]; brand: string; geometry: string[]; geometryTarget: string };
 };

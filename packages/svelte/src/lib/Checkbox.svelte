@@ -2,6 +2,7 @@
   import { getContext, untrack } from "svelte";
   import type { HTMLInputAttributes } from "svelte/elements";
   import { checkboxRecipe, type CheckboxOptions } from "@claymo/core";
+  import type { MotionPreset } from "@claymo/core";
   import { bindIndeterminate } from "@claymo/core/behavior/checkbox";
 
   type ChangeEv = Event & { currentTarget: EventTarget & HTMLInputElement };
@@ -15,6 +16,8 @@
     indeterminate?: boolean;
     value?: string | number;
     onChange?: (event: ChangeEv, checked: boolean) => void;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
   }
 
   let {
@@ -25,6 +28,7 @@
     size,
     onChange,
     onchange,
+    motion,
     class: className,
     ...rest
   }: Props = $props();
@@ -55,6 +59,7 @@
   type="checkbox"
   {...recipe.attrs}
   class={[recipe.className, className]}
+  data-motion={motion}
   disabled={disabled || !!form?.disabled}
   bind:checked
   onchange={handleChange}

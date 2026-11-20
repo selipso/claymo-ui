@@ -8,7 +8,7 @@
     type ChipSize,
     type ChipVariant,
   } from "@claymo/core/actions";
-  import type { Color } from "@claymo/core";
+  import type { Color, MotionPreset } from "@claymo/core";
 
   /*
    * A <button> cannot contain another <button>, so the chip root is a <span>
@@ -27,6 +27,8 @@
     onDelete?: (event: MouseEvent | KeyboardEvent) => void;
     clickable?: boolean;
     disabled?: boolean;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
   }
 
   let {
@@ -40,6 +42,7 @@
     onDelete,
     clickable = false,
     disabled = false,
+    motion,
     class: className = "",
     onclick,
     ...rest
@@ -74,6 +77,7 @@
   data-size={size}
   data-clay-interactive={interactive ? "" : undefined}
   data-disabled={disabled ? "" : undefined}
+  data-motion={motion}
   {...rest}
 >
   {#if interactive}

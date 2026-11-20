@@ -281,11 +281,7 @@
   display: inline-flex;
   flex: none;
   line-height: 0;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .clay-accordion__chevron {
-    transition: transform var(--clay-time) var(--clay-ease);
-  }
+  transition: transform var(--clay-motion-duration) var(--clay-motion-easing);
 }
 .clay-accordion[open] > .clay-accordion__summary > .clay-accordion__chevron {
   transform: rotate(180deg);

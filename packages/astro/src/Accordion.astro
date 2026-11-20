@@ -1,10 +1,15 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
 import { accordionRecipe, type AccordionOptions } from "@claymo/core/surfaces";
 
-type Props = Omit<HTMLAttributes<"details">, "open"> & AccordionOptions;
+type Props = Omit<HTMLAttributes<"details">, "open"> &
+  AccordionOptions & {
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
+  };
 
-const { expanded, defaultExpanded, disabled, class: className, ...rest } = Astro.props;
+const { expanded, defaultExpanded, disabled, motion, class: className, ...rest } = Astro.props;
 const recipe = accordionRecipe({ expanded, defaultExpanded, disabled });
 ---
 
@@ -12,6 +17,7 @@ const recipe = accordionRecipe({ expanded, defaultExpanded, disabled });
   class:list={["clay-accordion", className]}
   open={recipe.open}
   data-clay-accordion
+  data-motion={motion}
   {...rest}
 >
   <summary class="clay clay-accordion__summary" data-clay-interactive {...recipe.summaryAttrs}>

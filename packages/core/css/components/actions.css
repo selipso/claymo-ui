@@ -164,6 +164,7 @@ button.clay-chip__body {
   color: inherit;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--clay-motion-duration) var(--clay-motion-easing);
 }
 .clay-chip[data-size="small"] > .clay-chip__remove {
   width: 20px;

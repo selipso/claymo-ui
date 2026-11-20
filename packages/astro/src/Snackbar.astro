@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
 import {
   snackbarAnchorOrigin,
   snackbarAutoHideDuration,
@@ -19,6 +20,8 @@ type Props = Omit<HTMLAttributes<"div">, "role"> & {
   resumeHideDuration?: number;
   disableWindowBlurListener?: boolean;
   anchorOrigin?: SnackbarAnchorOrigin;
+  /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+  motion?: MotionPreset;
 };
 
 const {
@@ -28,6 +31,7 @@ const {
   resumeHideDuration,
   disableWindowBlurListener = false,
   anchorOrigin = snackbarAnchorOrigin,
+  motion,
   class: className,
   ...rest
 } = Astro.props;
@@ -45,6 +49,7 @@ const {
   data-clay-auto-hide={autoHideDuration ?? undefined}
   data-clay-resume-hide={resumeHideDuration}
   data-clay-ignore-window-blur={disableWindowBlurListener ? "" : undefined}
+  data-motion={motion}
   {...rest}
 >
   <div class="clay-snackbar__wrapper" hidden={!open} inert={!open}>

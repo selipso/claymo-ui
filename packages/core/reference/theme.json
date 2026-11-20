@@ -38,6 +38,92 @@
     }
   },
   "componentColor": "A component's color prop names a semantic role (primary, secondary, success, error, warning, info, default, inherit). It is never a palette name or a CSS color.",
+  "motion": {
+    "attribute": "data-motion",
+    "class": "clay-motion-<preset>",
+    "target": "html for the whole app, any container for a region, or a component's motion prop. The nearest preset wins.",
+    "default": "subtle",
+    "reducedMotion": "prefers-reduced-motion: reduce overrides every preset: no hover or press travel and no animation durations.",
+    "components": [
+      "Accordion",
+      "Alert",
+      "Badge",
+      "Button",
+      "ButtonGroup",
+      "Checkbox",
+      "Chip",
+      "Dialog",
+      "Drawer",
+      "IconButton",
+      "ListItemButton",
+      "Radio",
+      "RadioGroup",
+      "Slider",
+      "Snackbar",
+      "Switch",
+      "Tab",
+      "Tabs",
+      "Tooltip"
+    ],
+    "presets": {
+      "subtle": {
+        "label": "Subtle",
+        "recommended": true,
+        "description": "Default. 1px lift on hover, 2% press, 150ms ease-out; overlays enter in 200ms."
+      },
+      "ease-in-out": {
+        "label": "Ease in-out",
+        "recommended": true,
+        "description": "Subtle distances on a symmetric 200ms curve. Calm, deliberate interfaces."
+      },
+      "expand-contract": {
+        "label": "Expand and contract",
+        "recommended": true,
+        "description": "Grows 2% toward the pointer and contracts 3% when pressed; no vertical travel."
+      },
+      "lift": {
+        "label": "Lift",
+        "recommended": true,
+        "description": "Rises 2px with a deeper shadow on hover and settles back when pressed; no scaling."
+      },
+      "fade": {
+        "label": "Fade",
+        "recommended": true,
+        "description": "No movement: hover and press show as shadow and color changes only."
+      },
+      "none": {
+        "label": "None",
+        "recommended": true,
+        "description": "Instant: states still show, nothing animates."
+      },
+      "lift-push": {
+        "label": "Lift and push",
+        "recommended": false,
+        "description": "Rises 3px like a key under the finger, then sinks into the surface when pressed: the drop shadow disappears and the inset shading deepens. Use for a few accents."
+      },
+      "squish": {
+        "label": "Squish",
+        "recommended": false,
+        "description": "Flattens and widens like soft clay under a press, then regains its shape over 260ms. Use for a few accents."
+      }
+    },
+    "tokens": {
+      "--clay-motion-duration": "Hover, focus, toggles and the release after a press.",
+      "--clay-motion-duration-press": "Going into a press.",
+      "--clay-motion-duration-enter": "Dialogs, drawers, snackbars, badges and value changes appearing.",
+      "--clay-motion-easing": "Timing function for every transition and entrance.",
+      "--clay-motion-hover-y": "Vertical travel on hover (negative rises).",
+      "--clay-motion-hover-scale": "Scale on hover.",
+      "--clay-motion-hover-elevation": "Outer shadow multiplier on hover.",
+      "--clay-motion-press-y": "Vertical travel while pressed.",
+      "--clay-motion-press-scale-x": "Horizontal scale while pressed.",
+      "--clay-motion-press-scale-y": "Vertical scale while pressed.",
+      "--clay-motion-press-drop": "Outer shadow kept while pressed, as a fraction of depth.",
+      "--clay-motion-press-sink": "Inset shading depth while pressed, as a multiple of depth.",
+      "--clay-motion-enter-y": "Distance entering overlays and indicators travel.",
+      "--clay-motion-enter-scale": "Starting scale of entering overlays and indicators."
+    }
+  },
   "overrides": {
     "surface": [
       "--clay-page",

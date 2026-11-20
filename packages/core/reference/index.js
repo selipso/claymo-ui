@@ -22,6 +22,14 @@ const components = {
 export const frameworks = Object.freeze(["astro", "svelte"]);
 export const modes = Object.freeze(["system", "light", "dark"]);
 export const palettes = Object.freeze(Object.keys(theme.palettes));
+export const motionPresets = Object.freeze(Object.keys(theme.motion.presets));
+
+// One definition for every component listed in theme.motion.components.
+const motionProp = {
+  type: "string",
+  enum: motionPresets,
+  description: `Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default ${theme.motion.default}). See list_themes for what each preset does.`,
+};
 
 function choose(kind, value, choices) {
   if (!choices.includes(value))
@@ -64,7 +72,15 @@ export function getComponent(framework, name) {
     purpose,
     package: `@claymo/${framework}`,
     stylesheet: theme.stylesheet,
-    props: { type: "object", properties: { ...props, ...bridge.props }, required: bridge.required },
+    props: {
+      type: "object",
+      properties: {
+        ...props,
+        ...bridge.props,
+        ...(theme.motion.components.includes(name) ? { motion: motionProp } : {}),
+      },
+      required: bridge.required,
+    },
     content: bridge.content,
     events: bridge.events,
     example: componentExample(framework, bridge.imports, bridge.example),

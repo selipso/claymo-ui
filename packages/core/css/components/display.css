@@ -125,17 +125,13 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   .clay-badge__indicator {
-    animation: clay-badge-pop 300ms var(--clay-ease);
+    animation: clay-badge-enter var(--clay-motion-duration-enter) var(--clay-motion-easing);
   }
 }
-@keyframes clay-badge-pop {
+@keyframes clay-badge-enter {
   from {
     opacity: 0;
-    scale: 0.4;
-  }
-  to {
-    opacity: 1;
-    scale: 1;
+    scale: calc(var(--clay-motion-enter-scale) - 0.2);
   }
 }
 
@@ -164,7 +160,7 @@
 }
 @media (prefers-reduced-motion: no-preference) {
   .clay-circular-progress[data-variant="determinate"] .clay-circular-progress__arc {
-    transition: stroke-dashoffset var(--clay-time) ease;
+    transition: stroke-dashoffset var(--clay-motion-duration-enter) var(--clay-motion-easing);
   }
   .clay-circular-progress[data-variant="indeterminate"] {
     animation: clay-circular-progress-spin 1.4s linear infinite;
@@ -250,7 +246,7 @@
 @media (prefers-reduced-motion: no-preference) {
   .clay-linear-progress__bar,
   .clay-linear-progress__buffer {
-    transition: width var(--clay-time) ease;
+    transition: width var(--clay-motion-duration-enter) var(--clay-motion-easing);
   }
   .clay-linear-progress:is([data-variant="indeterminate"], [data-variant="query"])
     .clay-linear-progress__bar {

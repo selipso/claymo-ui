@@ -1,6 +1,7 @@
 <script lang="ts">
   import { untrack, type Snippet } from "svelte";
   import type { HTMLDetailsAttributes } from "svelte/elements";
+  import type { MotionPreset } from "@claymo/core";
   import { accordionRecipe, type AccordionOptions } from "@claymo/core/surfaces";
   import { attachAccordion } from "@claymo/core/behavior/surfaces";
 
@@ -9,6 +10,8 @@
     summary: Snippet;
     /** Called when the user (not the parent) opens or closes the panel. */
     onChange?: (event: Event, expanded: boolean) => void;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
     children?: Snippet;
   }
 
@@ -19,6 +22,7 @@
     summary,
     onChange,
     ontoggle,
+    motion,
     class: className = "",
     children,
     ...rest
@@ -41,6 +45,7 @@
 
 <details
   class={["clay-accordion", className]}
+  data-motion={motion}
   open={recipe.open}
   ontoggle={handleToggle}
   {...rest}

@@ -23,13 +23,13 @@
   width: 100%;
 }
 .clay-dialog[open] {
-  animation: clay-dialog-pop var(--clay-time) var(--clay-ease);
+  animation: clay-dialog-enter var(--clay-motion-duration-enter) var(--clay-motion-easing);
 }
 .clay-dialog::backdrop {
   background: var(--clay-backdrop);
 }
 .clay-dialog[open]::backdrop {
-  animation: clay-fade var(--clay-time) ease;
+  animation: clay-fade var(--clay-motion-duration-enter) var(--clay-motion-easing);
 }
 
 .clay-dialog__title {
@@ -51,21 +51,15 @@
   padding: 8px 24px 24px;
 }
 
-@keyframes clay-dialog-pop {
+@keyframes clay-dialog-enter {
   from {
     opacity: 0;
-    transform: translateY(12px) scale(0.96);
+    transform: translateY(var(--clay-motion-enter-y)) scale(var(--clay-motion-enter-scale));
   }
 }
 @keyframes clay-fade {
   from {
     opacity: 0;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .clay-dialog[open],
-  .clay-dialog[open]::backdrop {
-    animation: none;
   }
 }
 

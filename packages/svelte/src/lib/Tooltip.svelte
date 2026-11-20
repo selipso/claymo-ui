@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
+  import type { MotionPreset } from "@claymo/core";
   import { attachTooltip } from "@claymo/core/behavior/overlays";
   import type { TooltipCloseReason, TooltipPlacement } from "@claymo/core/overlays";
 
@@ -12,6 +13,8 @@
     open?: boolean;
     onOpen?: (event: Event) => void;
     onClose?: (event: Event, reason: TooltipCloseReason) => void;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
     /** One trigger element, described by the tooltip. */
     children?: Snippet;
     /** Noninteractive tooltip content replacing `title`. */
@@ -25,6 +28,7 @@
     open,
     onOpen,
     onClose,
+    motion,
     class: className,
     id,
     children,
@@ -43,6 +47,7 @@
   data-arrow={arrow ? "" : undefined}
   data-clay-open={open === undefined ? undefined : String(open)}
   data-clay-tooltip-content={hasContent ? "" : undefined}
+  data-motion={motion}
   {...rest}
   {@attach (node) =>
     attachTooltip(node, {

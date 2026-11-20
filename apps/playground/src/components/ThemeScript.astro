@@ -10,10 +10,13 @@ import { THEME_CHANGE_EVENT, THEME_STORAGE } from "../lib/theme";
     try {
       var mode = localStorage.getItem(keys.mode);
       var palette = localStorage.getItem(keys.palette);
+      var motion = localStorage.getItem(keys.motion);
       if (mode === "light" || mode === "dark") root.dataset.theme = mode;
       else delete root.dataset.theme;
       if (palette && palette !== "default") root.dataset.palette = palette;
       else delete root.dataset.palette;
+      if (motion && motion !== "subtle") root.dataset.motion = motion;
+      else delete root.dataset.motion;
     } catch (error) {
       // Storage unavailable: keep the system theme.
     }
@@ -23,7 +26,8 @@ import { THEME_CHANGE_EVENT, THEME_STORAGE } from "../lib/theme";
     window.clayThemeListening = true;
     document.addEventListener("astro:after-swap", applyTheme);
     window.addEventListener("storage", (event) => {
-      if (event.key !== null && event.key !== keys.mode && event.key !== keys.palette) return;
+      var watched = [keys.mode, keys.palette, keys.motion];
+      if (event.key !== null && watched.indexOf(event.key) < 0) return;
       applyTheme();
       window.dispatchEvent(new Event(changeEvent));
     });

@@ -3,6 +3,7 @@
   import { on } from "svelte/events";
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
+  import type { MotionPreset } from "@claymo/core";
   import type { RadioGroupOption } from "@claymo/core/input";
   import FormControlLabel from "./FormControlLabel.svelte";
   import Radio from "./Radio.svelte";
@@ -21,6 +22,8 @@
     form?: string;
     options?: readonly RadioGroupOption[];
     onChange?: (event: ChangeEv, value: string | number) => void;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
     children?: Snippet;
   }
 
@@ -34,6 +37,7 @@
     form,
     options,
     onChange,
+    motion,
     class: className = "",
     children,
     ...rest
@@ -97,6 +101,7 @@
   role="radiogroup"
   class={["clay-radio-group", className]}
   data-row={row || undefined}
+  data-motion={motion}
   aria-required={required || undefined}
   {...rest}
 >

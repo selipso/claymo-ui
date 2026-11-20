@@ -26,14 +26,6 @@
 .clay-checkbox:disabled {
   cursor: not-allowed;
 }
-@media (prefers-reduced-motion: no-preference) {
-  .clay-checkbox:hover:not(:disabled) {
-    transform: translateY(-1px);
-  }
-  .clay-checkbox:active:not(:disabled) {
-    transform: translateY(1px) scale(0.94);
-  }
-}
 
 .clay-checkbox:checked,
 .clay-checkbox:indeterminate {
@@ -42,7 +34,7 @@
   box-shadow: var(--clay-raised);
 }
 
-/* Tick: 6x12px, 3px stroke, rotated 45deg. */
+/* Tick: 6x12px, 3px stroke, rotated 45deg. Fades in while growing from 60%. */
 .clay-checkbox::after {
   content: "";
   position: absolute;
@@ -54,10 +46,10 @@
   border: solid var(--c-on);
   border-width: 0 3px 3px 0;
   opacity: 0;
-  transform: translate(-50%, -62%) rotate(45deg) scale(0);
-  transition:
-    transform var(--clay-time) var(--clay-ease),
-    opacity 120ms ease;
+  transform: translate(-50%, -62%) rotate(45deg) scale(0.6);
+  transition-property: transform, opacity;
+  transition-duration: var(--clay-motion-duration);
+  transition-timing-function: var(--clay-motion-easing);
   pointer-events: none;
 }
 .clay-checkbox[data-size="small"]::after {
@@ -84,10 +76,4 @@
   width: 10px;
   height: 3px;
   border-width: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .clay-checkbox::after {
-    transition: none;
-  }
 }

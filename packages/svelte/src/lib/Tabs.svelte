@@ -17,12 +17,15 @@
   import { setContext, untrack, type Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import { tabIds, tabListRecipe } from "@claymo/core";
+  import type { MotionPreset } from "@claymo/core";
 
   interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "role" | "onchange"> {
     value?: TabValue;
     onChange?: (event: Event, value: TabValue) => void;
     variant?: TabsVariant;
     "aria-label": string;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
     /** The `Tab` elements (rendered inside the tablist). */
     children?: Snippet;
     /** `TabPanel` elements, rendered after the tablist so they are not inside `role="tablist"`. */
@@ -33,6 +36,7 @@
     value = $bindable(),
     onChange,
     variant,
+    motion,
     "aria-label": label,
     class: className,
     children,
@@ -71,7 +75,7 @@
   });
 </script>
 
-<div class={["clay-tabs", className]} {...rest}>
+<div class={["clay-tabs", className]} data-motion={motion} {...rest}>
   <div class={list.className} {...list.attrs}>
     {@render children?.()}
   </div>

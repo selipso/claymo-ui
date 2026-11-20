@@ -28,18 +28,23 @@ test("sidebar persists across navigation and follows the current page", async ({
   await expect(sidebar(page)).toHaveAttribute("data-test-marker", "");
 });
 
-test("theme choice applies across pages, reloads and example frames", async ({ page }) => {
+test("theme and motion choices apply across pages, reloads and example frames", async ({
+  page,
+}) => {
   await page.goto("/");
   await sidebar(page).getByLabel("Palette").selectOption("orbit");
   await sidebar(page).getByLabel("Mode").selectOption("dark");
+  await sidebar(page).getByLabel("Motion").selectOption("lift");
 
   await sidebar(page).getByRole("link", { name: "Button", exact: true }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Button");
   const html = page.locator("html");
   await expect(html).toHaveAttribute("data-theme", "dark");
   await expect(html).toHaveAttribute("data-palette", "orbit");
+  await expect(html).toHaveAttribute("data-motion", "lift");
   const frame = page.frameLocator('iframe[src="/examples/astro/button/"]');
   await expect(frame.locator("html")).toHaveAttribute("data-palette", "orbit");
+  await expect(frame.locator("html")).toHaveAttribute("data-motion", "lift");
 
   // Example frames follow a change made after they loaded.
   await sidebar(page).getByLabel("Mode").selectOption("light");
@@ -48,6 +53,11 @@ test("theme choice applies across pages, reloads and example frames", async ({ p
   await page.reload();
   await expect(html).toHaveAttribute("data-theme", "light");
   await expect(sidebar(page).getByLabel("Palette")).toHaveValue("orbit");
+  await expect(sidebar(page).getByLabel("Motion")).toHaveValue("lift");
+
+  // The default removes the attribute instead of storing a redundant preset.
+  await sidebar(page).getByLabel("Motion").selectOption("subtle");
+  await expect(html).not.toHaveAttribute("data-motion");
 });
 
 test("the app demo's Dark switch and the sidebar share one theme", async ({ page }) => {

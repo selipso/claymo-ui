@@ -1,8 +1,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
-  import { fly } from "svelte/transition";
-  import { cubicOut } from "svelte/easing";
+  import type { MotionPreset } from "@claymo/core";
   import {
     snackbarAnchorOrigin,
     snackbarAutoHideDuration,
@@ -22,6 +21,8 @@
     /** When provided, the parent decides whether to close by updating `open`. */
     onClose?: (event: Event | null, reason: SnackbarCloseReason) => void;
     anchorOrigin?: SnackbarAnchorOrigin;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
     /** Replaces message/action, typically an Alert. */
     children?: Snippet;
   }
@@ -35,6 +36,7 @@
     disableWindowBlurListener = false,
     onClose,
     anchorOrigin = snackbarAnchorOrigin,
+    motion,
     class: className,
     children,
     ...rest
@@ -44,12 +46,6 @@
     if (onClose) onClose(event, reason);
     else open = false;
   }
-
-  const motionMs = () =>
-    typeof matchMedia !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches
-      ? 0
-      : 300;
-  const offset = $derived(anchorOrigin.vertical === "top" ? -24 : 24);
 </script>
 
 <!-- Keep the live region mounted before content arrives. -->
@@ -64,22 +60,18 @@
   data-clay-auto-hide={autoHideDuration ?? undefined}
   data-clay-resume-hide={resumeHideDuration}
   data-clay-ignore-window-blur={disableWindowBlurListener ? "" : undefined}
+  data-motion={motion}
   {...rest}
   {@attach (node) => attachSnackbar(node, requestClose)}
 >
-  {#if open}
-    <div
-      class="clay-snackbar__wrapper"
-      transition:fly={{ y: offset, duration: motionMs(), easing: cubicOut }}
-    >
-      {#if children}
-        {@render children()}
-      {:else}
-        <div class="clay clay-snackbar__bar">
-          <span class="clay-snackbar__message">{message}</span>
-          {#if action}<div class="clay-snackbar__action">{@render action()}</div>{/if}
-        </div>
-      {/if}
-    </div>
-  {/if}
+  <div class="clay-snackbar__wrapper" hidden={!open} inert={!open}>
+    {#if children}
+      {@render children()}
+    {:else}
+      <div class="clay clay-snackbar__bar">
+        <span class="clay-snackbar__message">{message}</span>
+        {#if action}<div class="clay-snackbar__action">{@render action()}</div>{/if}
+      </div>
+    {/if}
+  </div>
 </div>

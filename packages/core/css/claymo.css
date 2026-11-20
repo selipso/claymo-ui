@@ -1,5 +1,6 @@
-/* Library styles: tokens, clay material, then components (order matters: components override the material). */
+/* Library styles: tokens and motion, clay material, then components (order matters: components override the material). */
 @import "./tokens.css";
+@import "./motion.css";
 @import "./material.css";
 @import "./components/button.css";
 @import "./components/paper.css";

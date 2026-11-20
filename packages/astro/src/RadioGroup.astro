@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
 import type { RadioGroupOption } from "@claymo/core/input";
 import FormControlLabel from "./FormControlLabel.astro";
 import Radio from "./Radio.astro";
@@ -10,6 +11,8 @@ type Value = string | number;
 type Props = Omit<HTMLAttributes<"fieldset">, "role" | "disabled" | "name" | "form"> & {
   row?: boolean;
   disabled?: boolean;
+  /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+  motion?: MotionPreset;
 } & (
     | {
         options: readonly RadioGroupOption[];
@@ -38,6 +41,7 @@ const {
   form,
   disabled = false,
   row = false,
+  motion,
   class: className,
   ...rest
 } = Astro.props;
@@ -50,6 +54,7 @@ const initial = value ?? defaultValue;
 
 <fieldset
   aria-required={required || undefined}
+  data-motion={motion}
   {...rest}
   role="radiogroup"
   class:list={["clay-radio-group", className]}

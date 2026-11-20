@@ -1,6 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import type { Color, Size } from "@claymo/core";
+import type { Color, MotionPreset, Size } from "@claymo/core";
 import { sliderMarks, sliderPercent, sliderValue } from "@claymo/core/input";
 
 type Props = Omit<
@@ -17,6 +17,8 @@ type Props = Omit<
   valueLabelDisplay?: "off" | "auto" | "on";
   marks?: boolean;
   "aria-label": string;
+  /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+  motion?: MotionPreset;
 };
 
 const {
@@ -30,6 +32,7 @@ const {
   size = "medium",
   valueLabelDisplay = "off",
   marks = false,
+  motion,
   class: className,
   ...rest
 } = Astro.props;
@@ -47,6 +50,7 @@ const ticks = marks ? sliderMarks(min, max, step) : [];
   data-color={color}
   data-size={size}
   data-label={valueLabelDisplay}
+  data-motion={motion}
   style={`--clay-slider-percent:${pct}`}
 >
   {valueLabelDisplay !== "off" && (

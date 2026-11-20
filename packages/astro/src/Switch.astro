@@ -1,6 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import type { Color, Size } from "@claymo/core";
+import type { Color, MotionPreset, Size } from "@claymo/core";
 
 type Props = Omit<HTMLInputAttrs, "type" | "size" | "color" | "role" | "checked" | "value"> & {
   checked?: boolean;
@@ -8,6 +8,8 @@ type Props = Omit<HTMLInputAttrs, "type" | "size" | "color" | "role" | "checked"
   value?: string | number;
   color?: Color;
   size?: Exclude<Size, "large">;
+  /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+  motion?: MotionPreset;
 };
 type HTMLInputAttrs = HTMLAttributes<"input">;
 
@@ -16,12 +18,14 @@ const {
   defaultChecked,
   color = "primary",
   size = "medium",
+  motion,
   class: className,
   ...rest
 } = Astro.props;
 ---
 
 <input
+  data-motion={motion}
   {...rest}
   type="checkbox"
   role="switch"

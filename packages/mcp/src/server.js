@@ -26,7 +26,7 @@ function instructions(framework, svelteIslands) {
     ? "Astro setup enables Svelte islands by default (detected); pass svelteIslands: false to disable them.\n"
     : "";
   return `Claymo builds claymorphic (soft, inflated) UIs from npm packages. ${project}${islands}Follow these steps in order:
-1. Call list_themes. Pick ONE palette whose description fits the product, and a mode (system, light or dark).
+1. Call list_themes. Pick ONE palette whose description fits the product, and a mode (system, light or dark). Keep the default motion preset unless the brief asks for a different feel; set another one with data-motion on <html>.
 2. Call get_setup with your palette and mode. Run its install command and write the returned files, merging the Astro integration into an existing config as noted.
 3. Call list_components. Choose components by purpose. Use ONLY names it returns.
 4. Call get_components ONCE with every chosen name. Copy each example, then change only values its props allow.
@@ -78,10 +78,13 @@ export function createServer({
     {
       title: "List Claymo themes",
       description:
-        "Step 1. Lists every palette with a description and its page, surface, ink, primary and secondary colors in light and dark mode, plus the available modes.",
+        "Step 1. Lists every palette with a description and its page, surface, ink, primary and secondary colors in light and dark mode, the available modes, and the motion presets with their tokens.",
       annotations: readOnly,
     },
-    async () => reply({ modes, palettes: listThemes(), overrides: theme.overrides }),
+    async () => {
+      const { components: _components, ...motion } = theme.motion;
+      return reply({ modes, palettes: listThemes(), overrides: theme.overrides, motion });
+    },
   );
 
   server.registerTool(

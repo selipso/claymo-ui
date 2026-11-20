@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
 import type { TooltipPlacement } from "@claymo/core/overlays";
 
 /**
@@ -13,6 +14,8 @@ type Props = Omit<HTMLAttributes<"span">, "title"> & {
   placement?: TooltipPlacement;
   arrow?: boolean;
   open?: boolean;
+  /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+  motion?: MotionPreset;
 };
 
 const {
@@ -21,6 +24,7 @@ const {
   arrow = false,
   open,
   id,
+  motion,
   class: className,
   ...rest
 } = Astro.props;
@@ -35,6 +39,7 @@ const hasContent = Astro.slots.has("content") || !!title;
   data-clay-tooltip
   data-clay-tooltip-content={hasContent ? "" : undefined}
   data-clay-open={open === undefined ? undefined : String(open)}
+  data-motion={motion}
   {...rest}
 >
   <slot />

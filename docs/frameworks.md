@@ -37,6 +37,10 @@ In Astro, open a `Dialog` or temporary `Drawer` with a button whose `commandfor`
 
 In Svelte, bind `open` and optionally handle `onClose`. In either framework, a tooltip handles Escape only while focus or the pointer is on it.
 
+## Motion
+
+Both bridges accept the same `motion` prop on animated components (`<Button motion="lift">`). It renders `data-motion`, which also works as a plain attribute or `clay-motion-*` class on any element. See [Motion](./motion.md) for presets and tokens.
+
 ## Astro navigation and event types
 
 Claymo's controllers upgrade the initial markup and re-run on `astro:page-load`, so interaction survives `ClientRouter` navigation. Replaced tooltips and snackbars release their event listeners and timers after each swap; tooltips and snackbars inside `transition:persist` keep their controllers and state. Components that generate their own IDs use per-instance IDs; supply unique values for any IDs you assign. If your own code attaches listeners to page elements, bind them on initial load and again on `astro:page-load`. Make the setup idempotent so it doesn't add handlers twice.

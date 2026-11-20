@@ -2,6 +2,7 @@
   import { getContext, type Snippet } from "svelte";
   import type { HTMLButtonAttributes } from "svelte/elements";
   import { tabRecipe, type TabValue } from "@claymo/core";
+  import type { MotionPreset } from "@claymo/core";
   import { moveTabFocus } from "@claymo/core/behavior/tabs";
   import type { TabsContext } from "./Tabs.svelte";
 
@@ -10,6 +11,8 @@
     value: TabValue;
     icon?: Snippet;
     disabled?: boolean;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
   }
 
   let {
@@ -17,6 +20,7 @@
     value,
     icon,
     disabled = false,
+    motion,
     class: className,
     onclick,
     onkeydown,
@@ -51,6 +55,7 @@
 <button
   {...recipe.attrs}
   class={[recipe.className, className]}
+  data-motion={motion}
   {disabled}
   {...rest}
   onclick={handleClick}

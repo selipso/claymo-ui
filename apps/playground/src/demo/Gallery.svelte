@@ -58,6 +58,14 @@
   const sizes: Size[] = ["small", "medium", "large"];
   const severities: Severity[] = ["success", "info", "warning", "error"];
   const variants = ["contained", "outlined", "text"] as const;
+
+  interface MotionChoice {
+    value: string;
+    label: string;
+    description: string;
+    recommended: boolean;
+  }
+  let { motionPresets }: { motionPresets: MotionChoice[] } = $props();
   let checkA = $state(true);
   let checkB = $state(false);
   let sw1 = $state(true);
@@ -85,7 +93,7 @@
       <h1>Component gallery</h1>
       <Typography color="text.secondary">
         Explore variants and states. Hover to lift, press to sink, or Tab to see keyboard focus.
-        Switch palette and mode in the sidebar.
+        Switch palette, mode and motion in the sidebar.
       </Typography>
     </div>
     <div class="samples" aria-hidden="true">
@@ -96,6 +104,32 @@
   </header>
 
   <div class="sections">
+    <Card as="section" aria-labelledby="g-motion">
+      <CardHeader
+        title="Motion presets"
+        subheader="Hover and press each row. The sidebar's Motion setting applies one preset to the whole site."
+      />
+      <CardContent>
+        <h3 id="g-motion" class="clay-sr-only">Motion presets</h3>
+        {#each motionPresets as preset (preset.value)}
+          <div class="motion-row" data-motion={preset.value}>
+            <div class="motion-label">
+              <strong>{preset.label}</strong>
+              {#if !preset.recommended}<span class="motion-tag">Expressive</span>{/if}
+              <span>{preset.description}</span>
+            </div>
+            <div class="wrap">
+              <Button>Save</Button>
+              <Button variant="outlined">Cancel</Button>
+              <IconButton aria-label={`Favorite, ${preset.label}`}><Heart /></IconButton>
+              <Checkbox aria-label={`Checkbox, ${preset.label}`} checked />
+              <Switch aria-label={`Switch, ${preset.label}`} />
+            </div>
+          </div>
+        {/each}
+      </CardContent>
+    </Card>
+
     <Card as="section" aria-labelledby="g-button">
       <CardHeader
         title="Button"
@@ -529,6 +563,43 @@
     font-weight: 600;
     color: var(--clay-ink-muted);
     font-size: 0.875rem;
+  }
+  .motion-row {
+    display: grid;
+    grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
+    gap: 8px 24px;
+    align-items: center;
+    padding: 12px 0;
+    border-top: var(--clay-border-width) solid
+      color-mix(in oklab, var(--clay-edge), transparent 60%);
+  }
+  .motion-row:first-of-type {
+    border-top: 0;
+  }
+  .motion-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 8px;
+    color: var(--clay-ink-muted);
+    font-size: 0.875rem;
+  }
+  .motion-label strong {
+    color: var(--clay-ink);
+    font-size: 1rem;
+  }
+  .motion-tag {
+    padding: 0 8px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--clay-secondary), transparent 80%);
+    color: var(--clay-secondary-ink);
+    font-weight: 600;
+    font-size: 0.75rem;
+  }
+  @media (max-width: 719px) {
+    .motion-row {
+      grid-template-columns: minmax(0, 1fr);
+    }
   }
   .col {
     display: grid;

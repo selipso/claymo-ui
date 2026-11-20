@@ -61,7 +61,8 @@ for (const bridge of ["astro", "svelte"]) {
       const checkbox = page.getByRole("checkbox", { name: "Back up changes" });
       const radio = page.getByRole("radio", { name: "Basic" });
       const toggle = page.getByRole("switch", { name: "Alerts" });
-      for (const control of [checkbox, radio, toggle]) {
+      const pushKey = page.getByRole("button", { name: "Push key" });
+      for (const control of [checkbox, radio, toggle, pushKey]) {
         await control.hover();
         await expect(control).toHaveCSS("transform", "none");
         await page.mouse.down();
@@ -73,18 +74,65 @@ for (const bridge of ["astro", "svelte"]) {
       await expect(toggle).not.toBeChecked();
     });
 
-    test("hover still lifts and changes material depth without tweening shadows", async ({
+    test("default motion is short, never overshoots, and eases the shadow with the surface", async ({
       page,
     }) => {
       await page.emulateMedia({ reducedMotion: "no-preference" });
       const button = page.getByRole("button", { name: "Show notice" });
+      await expect(button).toHaveCSS("transition-duration", /^0\.15s/);
+      await expect(button).toHaveCSS(
+        "transition-timing-function",
+        /^cubic-bezier\(0\.2, 0, 0, 1\)/,
+      );
+      await expect(button).toHaveCSS("transition-property", /\bbox-shadow\b/);
       const shadow = await button.evaluate((node) => getComputedStyle(node).boxShadow);
-      await expect(button).toHaveCSS("transition-property", /\btransform\b/);
-      await expect(button).not.toHaveCSS("transition-property", /\b(?:box-shadow|all)\b/);
 
       await button.hover();
-      await expect(button).not.toHaveCSS("transform", "none");
+      await expect(button).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -1)");
       await expect(button).not.toHaveCSS("box-shadow", shadow);
+      await page.mouse.down();
+      await expect(button).toHaveCSS("transform", "matrix(0.98, 0, 0, 0.98, 0, 1)");
+      await page.mouse.up();
+
+      // Both bridges animate the snackbar with the same CSS (no framework transition).
+      await expect(page.locator(".clay-snackbar__wrapper").first()).toHaveCSS(
+        "transition-duration",
+        /^0\.2s/,
+      );
+    });
+
+    test("presets apply through the motion prop, a class or the attribute; the nearest wins", async ({
+      page,
+    }) => {
+      await page.emulateMedia({ reducedMotion: "no-preference" });
+      const key = page.getByRole("button", { name: "Push key" });
+      await expect(key).toHaveAttribute("data-motion", "lift-push");
+      await key.hover();
+      await expect(key).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -3)");
+      await page.mouse.down();
+      await expect(key).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 2)");
+      // Pushed in: the drop shadow is gone and the inset shading is 1.6x the 6px depth.
+      await expect
+        .poll(() => key.evaluate((node) => getComputedStyle(node).boxShadow))
+        .toMatch(/0px 0px 0px 0px[\s\S]*9\.6px 9\.6px 14\.4px/);
+      await page.mouse.up();
+
+      const lifted = page.getByRole("switch", { name: "Lifted switch" });
+      await expect(lifted).toHaveAttribute("data-motion", "lift");
+      await lifted.hover();
+      await expect(lifted).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, -2)");
+
+      const grow = page.getByRole("button", { name: "Grow" });
+      await grow.hover();
+      await expect(grow).toHaveCSS("transform", "matrix(1.02, 0, 0, 1.02, 0, 0)");
+
+      // `none` inside a `squish` region: no duration and none of squish's distances.
+      const still = page.getByRole("button", { name: "Still" });
+      await expect(still).toHaveCSS("transition-duration", /^0s/);
+      await still.hover();
+      await page.mouse.down();
+      await expect(still).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)");
+      await page.mouse.up();
     });
   });
 }

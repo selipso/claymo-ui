@@ -9,6 +9,7 @@ export const guides = [
   { slug: "getting-started", label: "Getting started" },
   { slug: "frameworks", label: "Astro and Svelte" },
   { slug: "theming", label: "Theming" },
+  { slug: "motion", label: "Motion" },
   { slug: "mcp", label: "MCP server" },
   { slug: "accessibility", label: "Accessibility and limits" },
   { slug: "runbook", label: "Release runbook" },

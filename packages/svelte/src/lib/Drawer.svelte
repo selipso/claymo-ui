@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
-  import type { DialogCloseReason } from "@claymo/core";
+  import type { DialogCloseReason, MotionPreset } from "@claymo/core";
   import { attachDialog, setDialogOpen } from "@claymo/core/behavior/dialog";
   import type { DrawerOptions } from "@claymo/core/overlays";
 
@@ -9,6 +9,8 @@
     "aria-label": string;
     /** When provided, the parent decides whether to close a temporary drawer by updating `open`. */
     onClose?: (event: Event, reason: DialogCloseReason) => void;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
     children?: Snippet;
     actions?: Snippet;
   }
@@ -20,6 +22,7 @@
     anchor = "left",
     width = 280,
     hideBackdrop = false,
+    motion,
     class: className,
     children,
     actions,
@@ -58,6 +61,7 @@
     data-variant={variant}
     data-anchor={anchor}
     data-hide-backdrop={hideBackdrop ? "" : undefined}
+    data-motion={motion}
     style:--clay-drawer-width="{width}px"
     {...rest}
     {@attach (node) => attachDialog(node, { requestClose, closed })}
@@ -69,6 +73,7 @@
     class={["clay clay-drawer", className]}
     data-variant={variant}
     data-anchor={anchor}
+    data-motion={motion}
     style:--clay-drawer-width="{width}px"
     {...rest}
     hidden={variant === "persistent" && !open ? true : rest.hidden}

@@ -2,12 +2,15 @@
   import type { Snippet } from "svelte";
   import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
   import { buttonRecipe, type ButtonOptions } from "@claymo/core";
+  import type { MotionPreset } from "@claymo/core";
 
   interface Props
     extends
       Omit<HTMLButtonAttributes, keyof ButtonOptions>,
       Pick<HTMLAnchorAttributes, "target" | "rel">,
       ButtonOptions {
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
     startIcon?: Snippet;
     endIcon?: Snippet;
     children?: Snippet;
@@ -25,6 +28,7 @@
     loadingPosition,
     disableElevation,
     inflated,
+    motion,
     class: className,
     startIcon,
     endIcon,
@@ -62,6 +66,7 @@
   this={recipe.tag}
   {...recipe.attrs}
   class={[recipe.className, className]}
+  data-motion={motion}
   onclick={handleClick}
   {...rest}
 >

@@ -1,6 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
-import type { Color, Size } from "@claymo/core";
+import type { Color, MotionPreset, Size } from "@claymo/core";
 import { nativeAction, type IconButtonEdge, type NativeActionOptions } from "@claymo/core/actions";
 
 /** Slots: default (icon) and `loading-indicator`. */
@@ -16,6 +16,8 @@ type Props = Omit<
     loading?: boolean | null;
     inflated?: boolean;
     edge?: IconButtonEdge;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
   };
 
 const {
@@ -27,6 +29,7 @@ const {
   loading = false,
   inflated = false,
   edge = false,
+  motion,
   class: className,
   onclick,
   ...rest
@@ -37,6 +40,7 @@ const Tag = action.tag;
 ---
 
 <Tag
+  data-motion={motion}
   {...rest}
   {...action.attrs}
   class:list={["clay clay-icon-button", className]}

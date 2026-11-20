@@ -7,7 +7,7 @@
     closeIconPath,
     type AlertVariant,
   } from "@claymo/core/actions";
-  import type { Severity } from "@claymo/core";
+  import type { MotionPreset, Severity } from "@claymo/core";
 
   interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "role"> {
     severity?: Severity;
@@ -21,6 +21,8 @@
     onClose?: (event: MouseEvent) => void;
     closeText?: string;
     role?: string;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
     children?: Snippet;
   }
 
@@ -33,6 +35,7 @@
     onClose,
     closeText = "Close",
     role = "alert",
+    motion,
     class: className = "",
     children,
     ...rest
@@ -47,6 +50,7 @@
   {role}
   data-color={color ?? severity}
   data-variant={variant}
+  data-motion={motion}
 >
   {#if icon !== false}
     <span class="clay-alert__icon" aria-hidden="true">

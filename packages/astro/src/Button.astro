@@ -1,11 +1,15 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
 import { buttonRecipe, type ButtonOptions } from "@claymo/core";
 
 /** Slots: default (label), `start-icon`, `end-icon`. No client script: disabled links render without href. */
 type Props = Omit<HTMLAttributes<"button">, keyof ButtonOptions> &
   Pick<HTMLAttributes<"a">, "target" | "rel"> &
-  ButtonOptions;
+  ButtonOptions & {
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
+  };
 
 const {
   variant,
@@ -19,6 +23,7 @@ const {
   loadingPosition,
   disableElevation,
   inflated,
+  motion,
   class: className,
   onclick,
   ...rest
@@ -43,6 +48,7 @@ const Tag = recipe.tag;
 <Tag
   {...recipe.attrs}
   class:list={[recipe.className, className]}
+  data-motion={motion}
   {...rest}
   onclick={recipe.inert ? undefined : onclick}
 >

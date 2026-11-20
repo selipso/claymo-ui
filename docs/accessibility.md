@@ -5,8 +5,8 @@
 - Prefer native elements (`button`, `a`, `input`, `select`, `textarea`, `dialog`, `details`, `progress`). Use ARIA for semantics that HTML doesn't provide, such as `switch`, `tablist`, `tooltip`, and `status`.
 - Fields, checkbox and radio edges, and slider tracks use `--clay-edge` to target at least 3:1 against the page. Text color pairs target 4.5:1.
 - Claymo surfaces have a visible 3px keyboard focus ring. The optional page stylesheet extends it to all elements.
-- Both bridges honor `prefers-reduced-motion: reduce`: Claymo's transitions, hover lift, press scaling, and loading animations are disabled without overriding styles on your content. Loading indicators remain visible and controls still show their current state. Apply the preference separately to any motion your app adds.
-- Hover and press still change surface depth. Shadow changes are immediate rather than interpolated, avoiding a repaint of the layered shadows on each animation frame.
+- Both bridges honor `prefers-reduced-motion: reduce`. It overrides every [motion preset](./motion.md): Claymo's transitions, hover lift, press scaling, entrances and loading animations stop, without overriding styles on your content. Loading indicators remain visible and controls still show their current state. Apply the preference separately to any motion your app adds.
+- Hover and press change surface depth with a short shadow transition on interactive elements only; static surfaces don't animate their shadows.
 - In forced colors, clay surfaces use a `ButtonText` border in place of shadows. Some component indicators still need fallbacks (see below).
 - Default-size controls are at least 48px tall. `size="small"` is a dense 36px option.
 

@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
 import type { DrawerOptions } from "@claymo/core/overlays";
 
 /**
@@ -10,7 +11,11 @@ import type { DrawerOptions } from "@claymo/core/overlays";
  * Slots: default (content), `actions`.
  */
 type Props = Omit<HTMLAttributes<"dialog">, keyof DrawerOptions> &
-  DrawerOptions & { "aria-label": string };
+  DrawerOptions & {
+    "aria-label": string;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
+  };
 
 const {
   variant = "temporary",
@@ -18,6 +23,7 @@ const {
   width = 280,
   open = false,
   hideBackdrop = false,
+  motion,
   class: className,
   style,
   ...rest
@@ -37,6 +43,7 @@ const drawerStyle =
     style={drawerStyle}
     data-clay-dialog
     data-clay-open={open ? "" : undefined}
+    data-motion={motion}
     {...rest}
   >
     <div class="clay-drawer__panel">
@@ -54,6 +61,7 @@ const drawerStyle =
     data-variant={variant}
     data-anchor={anchor}
     style={drawerStyle}
+    data-motion={motion}
     {...rest}
     hidden={variant === "persistent" && !open ? true : rest.hidden}
   >

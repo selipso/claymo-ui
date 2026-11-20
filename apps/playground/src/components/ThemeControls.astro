@@ -7,22 +7,33 @@ const modeOptions = modes.map((value) => ({
   value,
   label: value[0].toUpperCase() + value.slice(1),
 }));
+const motionOptions = Object.entries(theme.motion.presets).map(([value, { label }]) => ({
+  value,
+  label,
+}));
 ---
 
 <div class="theme-controls">
   <TextField select size="small" id="site-palette" label="Palette" options={palettes} />
   <TextField select size="small" id="site-mode" label="Mode" options={modeOptions} />
+  <TextField select size="small" id="site-motion" label="Motion" options={motionOptions} />
 </div>
 
 <script>
   import { THEME_CHANGE_EVENT, readTheme, setTheme, type Mode } from "../lib/theme";
 
+  const controls = {
+    palette: "#site-palette",
+    mode: "#site-mode",
+    motion: "#site-motion",
+  } as const;
+
   function sync() {
-    const { palette, mode } = readTheme();
-    const paletteSelect = document.querySelector<HTMLSelectElement>("#site-palette");
-    const modeSelect = document.querySelector<HTMLSelectElement>("#site-mode");
-    if (paletteSelect) paletteSelect.value = palette;
-    if (modeSelect) modeSelect.value = mode;
+    const choice = readTheme();
+    for (const [key, selector] of Object.entries(controls)) {
+      const select = document.querySelector<HTMLSelectElement>(selector);
+      if (select) select.value = choice[key as keyof typeof controls];
+    }
   }
 
   document.addEventListener("astro:page-load", sync);
@@ -31,13 +42,17 @@ const modeOptions = modes.map((value) => ({
     if (!(target instanceof HTMLSelectElement)) return;
     if (target.id === "site-palette") setTheme({ palette: target.value });
     if (target.id === "site-mode") setTheme({ mode: target.value as Mode });
+    if (target.id === "site-motion") setTheme({ motion: target.value });
   });
 </script>
 
 <style>
   .theme-controls {
     display: grid;
-    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 10px;
+  }
+  .theme-controls > :global(:first-child) {
+    grid-column: 1 / -1;
   }
 </style>

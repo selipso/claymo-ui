@@ -2,6 +2,7 @@
   import type { Snippet } from "svelte";
   import type { HTMLDialogAttributes } from "svelte/elements";
   import { dialogRecipe, type DialogCloseReason, type DialogMaxWidth } from "@claymo/core";
+  import type { MotionPreset } from "@claymo/core";
   import { attachDialog, setDialogOpen } from "@claymo/core/behavior/dialog";
 
   interface Props extends Omit<HTMLDialogAttributes, "open" | "title" | "oncancel" | "onclose"> {
@@ -12,6 +13,8 @@
     maxWidth?: DialogMaxWidth;
     /** Rendered as an <h2> and wired to the dialog with aria-labelledby. */
     title?: string;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
     children?: Snippet;
     actions?: Snippet;
   }
@@ -22,6 +25,7 @@
     fullWidth,
     maxWidth,
     title,
+    motion,
     class: className,
     children,
     actions,
@@ -54,6 +58,7 @@
   bind:this={dialog}
   {...recipe.attrs}
   class={[recipe.className, className]}
+  data-motion={motion}
   {...rest}
   {@attach (node) => attachDialog(node, { requestClose, closed })}
 >

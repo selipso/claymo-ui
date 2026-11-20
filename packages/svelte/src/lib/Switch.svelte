@@ -1,7 +1,7 @@
 <script lang="ts">
   import { getContext, onMount } from "svelte";
   import type { HTMLInputAttributes } from "svelte/elements";
-  import type { Color, Size } from "@claymo/core";
+  import type { Color, MotionPreset, Size } from "@claymo/core";
 
   type ChangeEv = Event & { currentTarget: EventTarget & HTMLInputElement };
 
@@ -19,6 +19,8 @@
     value?: string | number;
     id?: string;
     onChange?: (event: ChangeEv, checked: boolean) => void;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
   }
 
   let {
@@ -33,6 +35,7 @@
     id,
     onChange,
     onchange,
+    motion,
     class: className = "",
     ...rest
   }: Props = $props();
@@ -57,6 +60,7 @@
   class={["clay clay-switch", className]}
   data-color={color}
   data-size={size}
+  data-motion={motion}
   disabled={isDisabled}
   {required}
   {name}

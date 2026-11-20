@@ -1,11 +1,14 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
+  import type { MotionPreset } from "@claymo/core";
   import { badgeDefaults, badgeLabel, type BadgeOptions } from "@claymo/core/display";
 
   interface Props
     extends Omit<HTMLAttributes<HTMLSpanElement>, "color">, Omit<BadgeOptions, "badgeContent"> {
     badgeContent?: BadgeOptions["badgeContent"] | Snippet;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
     children?: Snippet;
   }
 
@@ -18,6 +21,7 @@
     variant = badgeDefaults.variant,
     anchorOrigin = badgeDefaults.anchorOrigin,
     overlap = badgeDefaults.overlap,
+    motion,
     class: className = "",
     children,
     ...rest
@@ -38,7 +42,7 @@
   );
 </script>
 
-<span class="clay-badge {className}" {...rest}>
+<span class="clay-badge {className}" data-motion={motion} {...rest}>
   {@render children?.()}
   {#if text !== undefined}
     <span

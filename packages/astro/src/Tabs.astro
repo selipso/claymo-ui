@@ -1,5 +1,6 @@
 ---
 import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
 import { tabIds, tabListRecipe, tabPanelRecipe, tabRecipe, type TabsVariant } from "@claymo/core";
 import { instanceId } from "./ids.ts";
 
@@ -21,9 +22,20 @@ type Props = Omit<HTMLAttributes<"div">, "role"> & {
   /** Initially selected tab value. Composed mode may instead mark one Tab and TabPanel `selected`. */
   value?: string | number;
   variant?: TabsVariant;
+  /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+  motion?: MotionPreset;
 };
 
-const { tabs, value, variant, id, "aria-label": label, class: className, ...rest } = Astro.props;
+const {
+  tabs,
+  value,
+  variant,
+  id,
+  "aria-label": label,
+  motion,
+  class: className,
+  ...rest
+} = Astro.props;
 
 const base = id ?? instanceId("clay-tabs");
 const ids = tabIds(base);
@@ -37,6 +49,7 @@ const panels = await Promise.all(
 <div
   id={base}
   class:list={["clay-tabs", className]}
+  data-motion={motion}
   {...rest}
   data-clay-tabs
   data-clay-selected={value}

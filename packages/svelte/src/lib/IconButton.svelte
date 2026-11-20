@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
   import type { HTMLAnchorAttributes, HTMLButtonAttributes } from "svelte/elements";
-  import type { Color, Size } from "@claymo/core";
+  import type { Color, MotionPreset, Size } from "@claymo/core";
   import { nativeAction, type IconButtonEdge } from "@claymo/core/actions";
 
   interface Props
@@ -19,6 +19,8 @@
     loadingIndicator?: Snippet;
     edge?: IconButtonEdge;
     inflated?: boolean;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
     /** The icon. */
     children?: Snippet;
   }
@@ -32,6 +34,7 @@
     loadingIndicator,
     edge = false,
     inflated = false,
+    motion,
     type = "button",
     class: className = "",
     children,
@@ -62,6 +65,7 @@
   data-size={size}
   data-clay-interactive
   data-inflated={inflated ? "" : undefined}
+  data-motion={motion}
   aria-busy={loading ? "true" : rest["aria-busy"]}
   onclick={handleClick}
 >
