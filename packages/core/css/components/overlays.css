@@ -3,24 +3,32 @@
   --clay-d: 10px;
   --clay-drawer-x: 0%;
   --clay-drawer-y: 0%;
+  /* Asymmetric: the anchored side stays nearly flush, but slightly rounded so the clay
+   * shadow wraps its corners instead of ending in a hard point. */
+  --clay-drawer-radius: 28px;
+  --clay-drawer-edge-radius: 12px;
   box-sizing: border-box;
   width: var(--clay-drawer-width, 280px);
   color: var(--clay-ink);
 }
 .clay-drawer[data-anchor="left"] {
-  --clay-radius: 0 28px 28px 0;
+  --clay-radius: var(--clay-drawer-edge-radius) var(--clay-drawer-radius) var(--clay-drawer-radius)
+    var(--clay-drawer-edge-radius);
   --clay-drawer-x: -100%;
 }
 .clay-drawer[data-anchor="right"] {
-  --clay-radius: 28px 0 0 28px;
+  --clay-radius: var(--clay-drawer-radius) var(--clay-drawer-edge-radius)
+    var(--clay-drawer-edge-radius) var(--clay-drawer-radius);
   --clay-drawer-x: 100%;
 }
 .clay-drawer[data-anchor="top"] {
-  --clay-radius: 0 0 28px 28px;
+  --clay-radius: var(--clay-drawer-edge-radius) var(--clay-drawer-edge-radius)
+    var(--clay-drawer-radius) var(--clay-drawer-radius);
   --clay-drawer-y: -100%;
 }
 .clay-drawer[data-anchor="bottom"] {
-  --clay-radius: 28px 28px 0 0;
+  --clay-radius: var(--clay-drawer-radius) var(--clay-drawer-radius) var(--clay-drawer-edge-radius)
+    var(--clay-drawer-edge-radius);
   --clay-drawer-y: 100%;
 }
 .clay-drawer:is([data-anchor="top"], [data-anchor="bottom"]) {
