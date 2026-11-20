@@ -54,15 +54,19 @@
   let tab = $state<string | number>("dashboard");
 
   // The demo's Dark switch drives the site theme, so it stays in sync with the sidebar controls.
-  function syncDark() {
-    const { mode } = readTheme();
-    dark = mode === "system" ? matchMedia("(prefers-color-scheme: dark)").matches : mode === "dark";
-  }
-
   onMount(() => {
+    const systemMode = matchMedia("(prefers-color-scheme: dark)");
+    function syncDark() {
+      const { mode } = readTheme();
+      dark = mode === "system" ? systemMode.matches : mode === "dark";
+    }
     syncDark();
+    systemMode.addEventListener("change", syncDark);
     window.addEventListener(THEME_CHANGE_EVENT, syncDark);
-    return () => window.removeEventListener(THEME_CHANGE_EVENT, syncDark);
+    return () => {
+      systemMode.removeEventListener("change", syncDark);
+      window.removeEventListener(THEME_CHANGE_EVENT, syncDark);
+    };
   });
 
   function openSection(section: string) {

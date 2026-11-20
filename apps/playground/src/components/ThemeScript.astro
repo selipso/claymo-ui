@@ -1,8 +1,8 @@
 ---
-import { THEME_STORAGE } from "../lib/theme";
+import { THEME_CHANGE_EVENT, THEME_STORAGE } from "../lib/theme";
 ---
 
-<script is:inline define:vars={{ keys: THEME_STORAGE }}>
+<script is:inline define:vars={{ keys: THEME_STORAGE, changeEvent: THEME_CHANGE_EVENT }}>
   // Runs before first paint, after every ClientRouter swap (which replaces the <html> attributes),
   // and when another document, such as an example frame, changes the stored theme.
   function applyTheme() {
@@ -22,6 +22,10 @@ import { THEME_STORAGE } from "../lib/theme";
   if (!window.clayThemeListening) {
     window.clayThemeListening = true;
     document.addEventListener("astro:after-swap", applyTheme);
-    window.addEventListener("storage", applyTheme);
+    window.addEventListener("storage", (event) => {
+      if (event.key !== null && event.key !== keys.mode && event.key !== keys.palette) return;
+      applyTheme();
+      window.dispatchEvent(new Event(changeEvent));
+    });
   }
 </script>

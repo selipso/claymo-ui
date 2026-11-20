@@ -46,9 +46,16 @@ function componentExample(framework, names, markup) {
 
 /** Configuration props are JSON data; native attributes, slots, bindings and callbacks belong in markup. */
 export function getComponent(framework, name) {
-  const available = listComponents(framework);
-  if (!available.includes(name))
-    throw new RangeError(`No ${name} in @claymo/${framework}. Choose: ${available.join(", ")}.`);
+  choose("framework", framework, frameworks);
+  if (
+    typeof name !== "string" ||
+    !Object.hasOwn(components, name) ||
+    !components[name].bridges[framework]
+  ) {
+    throw new RangeError(
+      `No ${name} in @claymo/${framework}. Choose: ${listComponents(framework).join(", ")}.`,
+    );
+  }
   const { purpose, props, bridges } = components[name];
   const bridge = bridges[framework];
   return {
@@ -171,7 +178,7 @@ export function getSetup(framework, palette = "default", mode = "system", svelte
     mode,
     install:
       `npm install @claymo/core @claymo/${framework}` +
-      (withIslands ? " @claymo/svelte @astrojs/svelte svelte" : ""),
+      (withIslands ? " @claymo/svelte @astrojs/svelte@9 svelte@5" : ""),
     files: setupFiles[framework](htmlTag(palette, mode), integration),
     usage: usage[framework],
     notes: [
@@ -180,7 +187,10 @@ export function getSetup(framework, palette = "default", mode = "system", svelte
             `The Claymo integration injects ${theme.stylesheet} and ${theme.pageStylesheet}. Set pageStyles: false to skip the page stylesheet.`,
             `If astro.config.mjs already has integrations, import claymo and add ${integration} to that list rather than replacing the config.`,
             ...(withIslands
-              ? ["Use a client directive (e.g. client:load) on Svelte components."]
+              ? [
+                  "The install command targets Astro 7. For Astro 5 use @astrojs/svelte@7 instead; for Astro 6 use @astrojs/svelte@8.",
+                  "Use a client directive (e.g. client:load) on Svelte components.",
+                ]
               : []),
           ]
         : [

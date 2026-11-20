@@ -26,11 +26,13 @@
 .clay-checkbox:disabled {
   cursor: not-allowed;
 }
-.clay-checkbox:hover:not(:disabled) {
-  transform: translateY(-1px);
-}
-.clay-checkbox:active:not(:disabled) {
-  transform: translateY(1px) scale(0.94);
+@media (prefers-reduced-motion: no-preference) {
+  .clay-checkbox:hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  .clay-checkbox:active:not(:disabled) {
+    transform: translateY(1px) scale(0.94);
+  }
 }
 
 .clay-checkbox:checked,

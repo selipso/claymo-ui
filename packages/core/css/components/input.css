@@ -351,11 +351,13 @@ select.clay-text-field__input option {
 :is(.clay-switch, .clay-radio):disabled {
   cursor: not-allowed;
 }
-:is(.clay-switch, .clay-radio):hover:not(:disabled) {
-  transform: translateY(-1px);
-}
-:is(.clay-switch, .clay-radio):active:not(:disabled) {
-  transform: translateY(1px) scale(0.96);
+@media (prefers-reduced-motion: no-preference) {
+  :is(.clay-switch, .clay-radio):hover:not(:disabled) {
+    transform: translateY(-1px);
+  }
+  :is(.clay-switch, .clay-radio):active:not(:disabled) {
+    transform: translateY(1px) scale(0.96);
+  }
 }
 :is(.clay-switch, .clay-radio):checked {
   --clay-color: var(--c);
@@ -514,6 +516,7 @@ select.clay-text-field__input option {
   .clay-slider__input:not(:disabled):active::-moz-range-thumb {
     transform: none;
   }
+  .clay-slider__bubble,
   .clay-switch::before,
   .clay-radio::after {
     transition: none;

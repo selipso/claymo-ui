@@ -15,3 +15,24 @@ export function upgrader<T extends Element>(
     }
   };
 }
+
+/** Like `upgrader`, but can also release controllers below a removed parent. */
+export function disposableUpgrader<T extends Element>(
+  selector: string,
+  attach: (element: T) => (() => void) | undefined,
+) {
+  const controllers = new WeakMap<T, (() => void) | undefined>();
+  function upgrade(scope: ParentNode = document) {
+    for (const element of scope.querySelectorAll<T>(selector)) {
+      if (!controllers.has(element)) controllers.set(element, attach(element));
+    }
+  }
+  function disconnectRemoved(scope: ParentNode) {
+    for (const element of scope.querySelectorAll<T>(selector)) {
+      if (element.isConnected) continue;
+      controllers.get(element)?.();
+      controllers.delete(element);
+    }
+  }
+  return Object.assign(upgrade, { disconnectRemoved });
+}

@@ -39,7 +39,7 @@ In Svelte, bind `open` and optionally handle `onClose`. In either framework, a t
 
 ## Astro navigation and event types
 
-Claymo's controllers upgrade the initial markup and re-run on `astro:page-load`, so interaction survives `ClientRouter` navigation. Components that generate their own IDs use per-instance IDs; supply unique values for any IDs you assign. If your own code attaches listeners to page elements, bind them on initial load and again on `astro:page-load`. Make the setup idempotent so it doesn't add handlers twice.
+Claymo's controllers upgrade the initial markup and re-run on `astro:page-load`, so interaction survives `ClientRouter` navigation. Replaced tooltips and snackbars release their event listeners and timers after each swap; tooltips and snackbars inside `transition:persist` keep their controllers and state. Components that generate their own IDs use per-instance IDs; supply unique values for any IDs you assign. If your own code attaches listeners to page elements, bind them on initial load and again on `astro:page-load`. Make the setup idempotent so it doesn't add handlers twice.
 
 Import the relevant `@claymo/core/behavior/*` module in your script to bring the `HTMLElementEventMap` augmentation into scope. TypeScript then knows the shape of `event.detail` for `clay-*` events without a cast.
 

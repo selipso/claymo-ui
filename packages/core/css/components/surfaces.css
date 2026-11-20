@@ -281,7 +281,11 @@
   display: inline-flex;
   flex: none;
   line-height: 0;
-  transition: transform var(--clay-time) var(--clay-ease);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .clay-accordion__chevron {
+    transition: transform var(--clay-time) var(--clay-ease);
+  }
 }
 .clay-accordion[open] > .clay-accordion__summary > .clay-accordion__chevron {
   transform: rotate(180deg);

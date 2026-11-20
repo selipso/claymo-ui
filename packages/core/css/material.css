@@ -41,10 +41,16 @@
   background: var(--clay-color);
   border-radius: var(--clay-radius);
   box-shadow: var(--clay-raised);
-  transition:
-    transform var(--clay-time) var(--clay-ease),
-    box-shadow var(--clay-time) var(--clay-ease),
-    background-color var(--clay-time) ease;
+}
+
+/* Interpolating the layered shadows repaints them on every frame. Apply depth changes
+ * immediately while keeping the lift and color feedback for users who allow motion. */
+@media (prefers-reduced-motion: no-preference) {
+  .clay {
+    transition:
+      transform var(--clay-time) var(--clay-ease),
+      background-color var(--clay-time) ease;
+  }
 }
 
 /* Puffy "squircle" corners where supported (Chromium 139+). Elsewhere the
@@ -110,11 +116,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .clay,
-  .clay * {
-    transition: none !important;
-    animation: none !important;
-  }
   .clay[data-clay-interactive]:is(:hover, :active) {
     transform: none;
   }

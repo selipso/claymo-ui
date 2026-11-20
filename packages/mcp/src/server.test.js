@@ -60,7 +60,7 @@ test("detected Svelte islands default on for Astro setup and can be switched off
   const setup = json(await client.callTool({ name: "get_setup", arguments: {} }));
   assert.equal(
     setup.install,
-    "npm install @claymo/core @claymo/astro @claymo/svelte @astrojs/svelte svelte",
+    "npm install @claymo/core @claymo/astro @claymo/svelte @astrojs/svelte@9 svelte@5",
   );
   const config = setup.files.find(({ path }) => path === "astro.config.mjs");
   assert.ok(config);
@@ -127,7 +127,7 @@ test("a detected project framework becomes the default for every tool", async ()
     }),
   );
   assert.equal(astro.framework, "astro");
-  assert.match(astro.install, /@claymo\/svelte @astrojs\/svelte svelte$/);
+  assert.match(astro.install, /@claymo\/svelte @astrojs\/svelte@9 svelte@5$/);
 });
 
 test("invalid input returns the valid choices", async () => {

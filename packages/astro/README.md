@@ -4,8 +4,14 @@ Astro components and integration for Claymo, a claymorphic design system with Ma
 
 ## Install
 
+The playground and release fixture run on Astro 7. To upgrade an existing project, choose the command for its renderer:
+
 ```sh
-npm install @claymo/astro @claymo/core
+# Astro only
+npm install astro@7 @claymo/astro @claymo/core
+
+# Astro with Svelte islands: upgrade the adapter in the same install
+npm install astro@7 @astrojs/svelte@9 svelte@5 @claymo/svelte @claymo/astro @claymo/core
 ```
 
 Add the integration to `astro.config.mjs`. It loads the Claymo stylesheet on every page:
@@ -21,6 +27,8 @@ export default defineConfig({ integrations: [claymo()] });
 | ------------ | ------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `pageStyles` | `true`  | Also loads `@claymo/core/page.css`: brand font, page colors and the focus ring. Turn off inside a page styled elsewhere. |
 | `svelte`     | `false` | Adds `@astrojs/svelte` for `@claymo/svelte` islands. Install `@astrojs/svelte svelte @claymo/svelte` first.              |
+
+Match the adapter to Astro: `@astrojs/svelte@7` for Astro 5, `@astrojs/svelte@8` for Astro 6, and `@astrojs/svelte@9` for Astro 7. Astro-only pages do not need Svelte installed.
 
 ## Use
 

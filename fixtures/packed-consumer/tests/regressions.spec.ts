@@ -55,6 +55,70 @@ test("Astro controllers keep working after a ClientRouter navigation", async ({ 
   await expect(dialog).toBeHidden();
 });
 
+test("Astro detaches replaced overlays and keeps persisted ones across soft swaps", async ({
+  page,
+}) => {
+  await page.goto("/nav/one/");
+  const persisted = page.locator("#persisted-tip");
+  await expect(persisted).toHaveAttribute("data-clay-tooltip-ready", "");
+  const persistedElement = await persisted.elementHandle();
+
+  for (let i = 0; i < 2; i++) {
+    const tooltip = page.locator("#page-tip");
+    await expect(tooltip).toHaveAttribute("data-clay-tooltip-ready", "");
+    const oldTooltip = await tooltip.elementHandle();
+    const oldSnackbar = await page.locator("#page-toast").elementHandle();
+
+    await page.getByRole("link", { name: "Go to page two" }).click();
+    await expect(page.getByRole("heading", { name: "Page two" })).toBeVisible();
+    await expect
+      .poll(() => oldTooltip.evaluate((node) => node.hasAttribute("data-clay-tooltip-ready")))
+      .toBe(false);
+    expect(
+      await oldSnackbar.evaluate((node) => {
+        node.removeAttribute("data-clay-open");
+        node.dispatchEvent(Object.assign(new Event("command"), { command: "--clay-show" }));
+        return node.hasAttribute("data-clay-open");
+      }),
+    ).toBe(false);
+    expect(
+      await persistedElement.evaluate((node) => node === document.querySelector("#persisted-tip")),
+    ).toBe(true);
+    await expect(persisted.getByRole("button")).toHaveAttribute(
+      "aria-describedby",
+      "persisted-tip-tip",
+    );
+    await expect(page.getByText("Persistent tip", { exact: true })).toBeVisible();
+
+    await page.getByRole("link", { name: "Go to page one" }).click();
+    await expect(page.getByRole("heading", { name: "Page one" })).toBeVisible();
+  }
+  await expect(page.locator("#page-tip")).toHaveAttribute("data-clay-tooltip-ready", "");
+});
+
+test("Svelte checkbox preserves controlled mixed state and native change semantics", async ({
+  page,
+}) => {
+  await load(page, "/regressions-svelte/");
+  const checkbox = page.getByLabel("Controlled mixed");
+  await expect(checkbox).toBeChecked({ indeterminate: true });
+  const changes = page.getByLabel("User checkbox changes");
+
+  const toggle = page.getByRole("button", { name: "Toggle mixed" });
+  await toggle.click();
+  await expect(checkbox).not.toBeChecked({ indeterminate: true });
+  await toggle.click();
+  await expect(checkbox).toBeChecked({ indeterminate: true });
+  await expect(changes).toHaveText("0");
+  await checkbox.click();
+  await expect(checkbox).toBeChecked();
+  await expect(checkbox).toBeChecked({ indeterminate: true });
+  await page.getByRole("button", { name: "Reset mixed form" }).click();
+  await expect(checkbox).not.toBeChecked();
+  await expect(checkbox).toBeChecked({ indeterminate: true });
+  await expect(changes).toHaveText("1");
+});
+
 test.describe("Astro overlays share Escape correctly", () => {
   test.beforeEach(({ page }) => load(page, "/regressions-astro/"));
 

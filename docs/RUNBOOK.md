@@ -6,15 +6,15 @@ Packages: `@claymo/core`, `@claymo/svelte`, `@claymo/astro` (components plus the
 
 **Purpose:** work on Claymo with live docs, reference pages and demos.
 
-**Preconditions:** Node 22+, git.
+**Preconditions:** Node and npm versions matching the root `package.json` `engines`, git.
 
 **Steps:**
 
 1. `git clone https://github.com/selipso/claymo-ui.git && cd claymo-ui`
 2. `npm install` — `prepare` builds `@claymo/core` and `@claymo/svelte` `dist` for type checks and packing.
-3. `npm start` — generates the example pages from `@claymo/core/reference`, then serves the playground at http://localhost:4321. Workspace packages resolve to source, so edits to `packages/*` and `docs/*.md` reload live.
+3. `npm start` — generates the example pages from `@claymo/core/reference`, then serves the playground at http://localhost:4321. Workspace components and guides reload live. If you edit a reference example, regenerate its preview with `npm run examples -w @claymo/playground`.
 
-**Verify:** `npm run test:e2e` (first run: `npx playwright install chromium`) — the sidebar persists across navigation, the theme carries across pages and example frames, guides and component pages render, and the narrow-screen menu works.
+**Verify:** `npm run test:e2e` (first run: `npx playwright install chromium firefox webkit`) — the sidebar persists across navigation, the theme carries across pages and example frames, guides and component pages render, and the narrow-screen menu works.
 
 **Rollback:** none needed; nothing outside the clone changes.
 
@@ -22,7 +22,7 @@ Packages: `@claymo/core`, `@claymo/svelte`, `@claymo/astro` (components plus the
 
 **Purpose:** prove the packed tarballs work for a consumer before publishing.
 
-**Preconditions:** Node 22+, `npm install` at the root, Playwright browsers (`npx playwright install chromium firefox webkit`).
+**Preconditions:** root `engines` requirements met, `npm install` at the root, Playwright browsers (`npx playwright install chromium firefox webkit`).
 
 **Steps:**
 

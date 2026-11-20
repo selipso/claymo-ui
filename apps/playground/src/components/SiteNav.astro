@@ -1,8 +1,8 @@
 ---
 import { getCollection } from "astro:content";
-import { listComponents, listThemes } from "@claymo/core/reference";
+import { listComponents } from "@claymo/core/reference";
 import { List, ListItem, ListItemButton, ListItemText } from "@claymo/astro";
-import ThemeControls from "./ThemeControls.svelte";
+import ThemeControls from "./ThemeControls.astro";
 import { componentHref, guideHref, guides, showcase, type NavLink } from "../lib/nav";
 
 const docs = new Set((await getCollection("docs")).map((entry) => entry.id));
@@ -27,7 +27,6 @@ const sections: { id: string; title: string; dense?: boolean; links: NavLink[] }
     ],
   },
 ];
-const palettes = listThemes().map(({ palette, label }) => ({ value: palette, label }));
 ---
 
 <aside class="site-nav" transition:persist="site-nav" data-site-nav>
@@ -46,7 +45,7 @@ const palettes = listThemes().map(({ palette, label }) => ({ value: palette, lab
     </button>
   </div>
   <div class="site-nav__panel" id="site-nav-panel">
-    <ThemeControls client:load palettes={palettes} />
+    <ThemeControls />
     {sections.map((section) => (
       <nav aria-labelledby={section.id}>
         <h2 class="site-nav__heading" id={section.id}>

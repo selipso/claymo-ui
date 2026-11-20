@@ -5,7 +5,7 @@ import {
   type TooltipCloseReason,
 } from "../overlays.ts";
 import { DIALOG_REQUEST_CLOSE_EVENT } from "./dialog.ts";
-import { upgrader } from "./upgrade.ts";
+import { disposableUpgrader } from "./upgrade.ts";
 
 export const OVERLAY_REQUEST_CLOSE_EVENT = DIALOG_REQUEST_CLOSE_EVENT;
 export const TOOLTIP_REQUEST_OPEN_EVENT = "clay-request-open";
@@ -151,10 +151,10 @@ export function attachSnackbar(
   return destroy;
 }
 
-function attachSnackbarElement(root: HTMLElement): void {
+function attachSnackbarElement(root: HTMLElement): (() => void) | undefined {
   const content = root.querySelector<HTMLElement>(":scope > .clay-snackbar__wrapper");
   if (!content) return;
-  attachSnackbar(
+  const detach = attachSnackbar(
     root,
     (_event, reason) => {
       const request: SnackbarRequestCloseEvent = new CustomEvent(OVERLAY_REQUEST_CLOSE_EVENT, {
@@ -168,15 +168,20 @@ function attachSnackbarElement(root: HTMLElement): void {
       content.hidden = content.inert = !visible;
     },
   );
-  root.addEventListener("command", (event) => {
+  const onCommand = (event: Event) => {
     if (event.target !== root || event.defaultPrevented) return;
     const { command } = event as Event & { command: string };
     if (command === "--clay-show") root.setAttribute(OPEN, "true");
     else if (command === "--clay-hide") root.removeAttribute(OPEN);
-  });
+  };
+  root.addEventListener("command", onCommand);
+  return () => {
+    root.removeEventListener("command", onCommand);
+    detach();
+  };
 }
 
-export const upgradeSnackbars = upgrader<HTMLElement>(
+export const upgradeSnackbars = disposableUpgrader<HTMLElement>(
   "[data-clay-snackbar]",
   attachSnackbarElement,
 );
@@ -340,8 +345,8 @@ export function attachTooltip(root: HTMLElement, handlers: TooltipHandlers = {})
   return destroy;
 }
 
-export const upgradeTooltips = upgrader<HTMLElement>("[data-clay-tooltip]", (root) => {
-  attachTooltip(root, {
+export const upgradeTooltips = disposableUpgrader<HTMLElement>("[data-clay-tooltip]", (root) => {
+  return attachTooltip(root, {
     requestOpen() {
       return root.dispatchEvent(
         new CustomEvent(TOOLTIP_REQUEST_OPEN_EVENT, { bubbles: false, cancelable: true }),

@@ -3,7 +3,16 @@
 // so they only work if every Claymo controller re-upgrades on `astro:page-load`.
 import { ClientRouter } from "astro:transitions";
 import "@claymo/core/claymo.css";
-import { Accordion, Button, Checkbox, Dialog, Slider, Tabs } from "@claymo/astro";
+import {
+  Accordion,
+  Button,
+  Checkbox,
+  Dialog,
+  Slider,
+  Snackbar,
+  Tabs,
+  Tooltip,
+} from "@claymo/astro";
 
 export function getStaticPaths() {
   return [{ params: { page: "one" } }, { params: { page: "two" } }];
@@ -23,6 +32,19 @@ const next = page === "one" ? "two" : "one";
   <body>
     <h1>Page {page}</h1>
     <a href={`/nav/${next}/`}>Go to page {next}</a>
+    <div transition:persist="navigation-tooltip">
+      <Tooltip id="persisted-tip" title="Persistent tip" open>
+        <button type="button">Persistent trigger</button>
+      </Tooltip>
+    </div>
+    {page === "one" && (
+      <>
+        <Tooltip id="page-tip" title="Page-only tip" open>
+          <button type="button">Page-only trigger</button>
+        </Tooltip>
+        <Snackbar id="page-toast" message="Page-only toast" open autoHideDuration={null} />
+      </>
+    )}
     <Tabs
       aria-label="Sections"
       value="a"

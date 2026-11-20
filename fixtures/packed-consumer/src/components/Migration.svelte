@@ -6,12 +6,15 @@
     Button,
     Card,
     CardContent,
+    Checkbox,
     Chip,
+    CircularProgress,
     Drawer,
     FormControlLabel,
     LinearProgress,
     Radio,
     RadioGroup,
+    Skeleton,
     Slider,
     Snackbar,
     Switch,
@@ -53,6 +56,9 @@
   <FormControlLabel label="Alerts">
     {#snippet control()}<Switch name="alerts" defaultChecked bind:checked={alerts} />{/snippet}
   </FormControlLabel>
+  <FormControlLabel label="Back up changes">
+    {#snippet control()}<Checkbox />{/snippet}
+  </FormControlLabel>
   <Slider
     id="volume"
     name="volume"
@@ -80,7 +86,10 @@
   ><CardContent>
     <h2>Activity</h2>
     <Badge badgeContent={120} max={99}>Inbox</Badge>
-    <LinearProgress variant="determinate" value={40} aria-label="Import progress" />
+    <LinearProgress variant="buffer" value={40} valueBuffer={65} aria-label="Import progress" />
+    <CircularProgress aria-label="Checking updates" />
+    <LinearProgress aria-label="Downloading updates" />
+    <Skeleton animation="wave" />
     <Table label="Results" stickyHeader style="max-height: 110px">
       <thead><tr><th scope="col">Result</th></tr></thead>
       <tbody>

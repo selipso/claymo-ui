@@ -13,7 +13,7 @@
 
    Installation builds core and the Svelte package. `npm start` (also `npm run dev`) serves the playground at <http://localhost:4321> using workspace source. Edit the packages, docs, or playground and see changes without rebuilding the packages by hand.
 
-2. Explore the playground. Its sidebar stays in place as you navigate and holds the global palette and mode controls.
+2. Explore the playground. Docs and reference pages use server-rendered theme controls; the demos and Svelte previews hydrate where needed. The sidebar stays in place across navigation. Theme changes also reach open tabs and previews.
 
    | Route                 | Contents                                                                   |
    | --------------------- | -------------------------------------------------------------------------- |
@@ -25,7 +25,7 @@
    | `/gallery/`           | Component variants and states                                              |
    | `/lab/`               | Clay surface techniques and browser support                                |
 
-3. Run the checks that cover your change:
+3. Run the checks that cover your change. Before running browser tests for the first time, install the browsers with `npx playwright install chromium firefox webkit`.
 
    ```sh
    npm run check        # TypeScript, Svelte, and Astro checks across workspaces
@@ -98,10 +98,10 @@
 
 ### Add Svelte islands to Astro
 
-1. Install the island dependencies:
+1. Install the adapter that matches your Astro major. For Astro 7 use the command below; for Astro 6 use `@astrojs/svelte@8`, and for Astro 5 use `@astrojs/svelte@7`. Astro-only projects do not need any Svelte packages.
 
    ```sh
-   npm install @astrojs/svelte svelte @claymo/svelte
+   npm install @astrojs/svelte@9 svelte@5 @claymo/svelte
    ```
 
 2. Change the integration call in `astro.config.mjs` to `claymo({ svelte: true })`.

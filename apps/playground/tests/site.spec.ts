@@ -57,6 +57,26 @@ test("the app demo's Dark switch and the sidebar share one theme", async ({ page
   await expect(sidebar(page).getByLabel("Mode")).toHaveValue("dark");
 });
 
+test("system changes and changes from another tab keep the demo controls in sync", async ({
+  page,
+  context,
+}) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/demo/");
+  const dark = page.getByRole("switch", { name: "Dark" });
+  await expect(dark).not.toBeChecked();
+  await page.emulateMedia({ colorScheme: "dark" });
+  await expect(dark).toBeChecked();
+
+  const settings = await context.newPage();
+  await settings.goto("/");
+  await sidebar(settings).getByLabel("Mode").selectOption("light");
+  await sidebar(settings).getByLabel("Palette").selectOption("orbit");
+  await expect(dark).not.toBeChecked();
+  await expect(sidebar(page).getByLabel("Mode")).toHaveValue("light");
+  await expect(sidebar(page).getByLabel("Palette")).toHaveValue("orbit");
+});
+
 test("every guide renders with links that stay inside the site", async ({ page }) => {
   for (const { slug, label } of guides) {
     await page.goto(guideHref(slug));
@@ -76,7 +96,8 @@ test("component pages run the Astro and Svelte examples live", async ({ page }) 
 
   await page.getByRole("tab", { name: "Svelte" }).click();
   const svelte = page.frameLocator('iframe[src="/examples/svelte/tabs/"]');
-  await svelte.getByRole("tab", { name: "Security" }).click();
+  // The lazy iframe shows SSR markup before the island has attached its click handlers.
+  await svelte.locator("astro-island:not([ssr])").getByRole("tab", { name: "Security" }).click();
   await expect(svelte.getByText("Selected tab: security. User changes: 1.")).toBeVisible();
 });
 

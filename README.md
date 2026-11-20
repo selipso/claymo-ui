@@ -6,6 +6,8 @@ A proof-of-concept claymorphic component library with Material UI-style APIs for
 
 ## Quick start
 
+Use Node 22.23.4 (or later 22.x) or Node 24+, with npm 9.6.5+.
+
 ```sh
 git clone https://github.com/selipso/claymo-ui.git && cd claymo-ui && npm install && npm start
 ```

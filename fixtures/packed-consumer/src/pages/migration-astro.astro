@@ -7,11 +7,14 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
   Chip,
+  CircularProgress,
   Drawer,
   FormControlLabel,
   LinearProgress,
   RadioGroup,
+  Skeleton,
   Slider,
   Snackbar,
   Switch,
@@ -50,6 +53,9 @@ import {
     <FormControlLabel label="Alerts">
       <Switch slot="control" name="alerts" defaultChecked />
     </FormControlLabel>
+    <FormControlLabel label="Back up changes">
+      <Checkbox slot="control" />
+    </FormControlLabel>
     <Slider
       id="volume"
       name="volume"
@@ -78,7 +84,10 @@ import {
       <Badge badgeContent={120} max={99}>
         Inbox
       </Badge>
-      <LinearProgress variant="determinate" value={40} aria-label="Import progress" />
+      <LinearProgress variant="buffer" value={40} valueBuffer={65} aria-label="Import progress" />
+      <CircularProgress aria-label="Checking updates" />
+      <LinearProgress aria-label="Downloading updates" />
+      <Skeleton animation="wave" />
       <Table label="Results" stickyHeader style="max-height: 110px">
         <thead>
           <tr>

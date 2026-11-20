@@ -86,7 +86,6 @@
   color: var(--c-on);
   font: 600 0.75rem/1 var(--clay-font);
   white-space: nowrap;
-  animation: clay-badge-pop 300ms var(--clay-ease);
 }
 .clay-badge__indicator[data-color="inherit"] {
   --clay-color: var(--clay-surface);
@@ -124,6 +123,11 @@
   --clay-badge-x: -1;
   left: var(--clay-badge-inset);
 }
+@media (prefers-reduced-motion: no-preference) {
+  .clay-badge__indicator {
+    animation: clay-badge-pop 300ms var(--clay-ease);
+  }
+}
 @keyframes clay-badge-pop {
   from {
     opacity: 0;
@@ -150,22 +154,25 @@
 }
 .clay-circular-progress__arc {
   stroke: var(--clay-circular-progress-color, var(--c));
-  transition: stroke-dashoffset var(--clay-time) ease;
 }
 .clay-circular-progress__arc[data-empty] {
   visibility: hidden;
 }
-.clay-circular-progress[data-variant="indeterminate"] {
-  animation: clay-circular-progress-spin 1.4s linear infinite;
-}
 .clay-circular-progress[data-variant="indeterminate"] .clay-circular-progress__arc {
-  transition: none;
   stroke-dasharray: calc(var(--clay-circular-progress-circ) * 0.3)
     var(--clay-circular-progress-circ);
 }
-.clay-circular-progress[data-variant="indeterminate"]:not([data-disable-shrink])
-  .clay-circular-progress__arc {
-  animation: clay-circular-progress-dash 1.4s ease-in-out infinite;
+@media (prefers-reduced-motion: no-preference) {
+  .clay-circular-progress[data-variant="determinate"] .clay-circular-progress__arc {
+    transition: stroke-dashoffset var(--clay-time) ease;
+  }
+  .clay-circular-progress[data-variant="indeterminate"] {
+    animation: clay-circular-progress-spin 1.4s linear infinite;
+  }
+  .clay-circular-progress[data-variant="indeterminate"]:not([data-disable-shrink])
+    .clay-circular-progress__arc {
+    animation: clay-circular-progress-dash 1.4s ease-in-out infinite;
+  }
 }
 @keyframes clay-circular-progress-spin {
   from {
@@ -219,7 +226,6 @@
   inset-block: 1px;
   inset-inline-start: 1px;
   width: calc((100% - 2px) * var(--clay-linear-progress-fraction));
-  transition: width var(--clay-time) ease;
 }
 .clay-linear-progress__bar {
   --clay-color: var(--clay-linear-progress-color, var(--c));
@@ -240,10 +246,19 @@
 .clay-linear-progress:is([data-variant="indeterminate"], [data-variant="query"])
   .clay-linear-progress__bar {
   width: 40%;
-  animation: clay-linear-progress-slide 1.6s ease-in-out infinite;
 }
-.clay-linear-progress[data-variant="query"] .clay-linear-progress__bar {
-  animation-direction: reverse;
+@media (prefers-reduced-motion: no-preference) {
+  .clay-linear-progress__bar,
+  .clay-linear-progress__buffer {
+    transition: width var(--clay-time) ease;
+  }
+  .clay-linear-progress:is([data-variant="indeterminate"], [data-variant="query"])
+    .clay-linear-progress__bar {
+    animation: clay-linear-progress-slide 1.6s ease-in-out infinite;
+  }
+  .clay-linear-progress[data-variant="query"] .clay-linear-progress__bar {
+    animation-direction: reverse;
+  }
 }
 @keyframes clay-linear-progress-slide {
   from {
@@ -282,21 +297,23 @@
   --clay-radius: 50%;
   corner-shape: round;
 }
-.clay-skeleton[data-animation="pulse"] {
-  animation: clay-skeleton-pulse 2s ease-in-out 0.5s infinite;
-}
-.clay-skeleton[data-animation="wave"]::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    color-mix(in oklab, var(--clay-light), transparent 45%),
-    transparent
-  );
-  transform: translateX(-100%);
-  animation: clay-skeleton-wave 1.6s linear 0.5s infinite;
+@media (prefers-reduced-motion: no-preference) {
+  .clay-skeleton[data-animation="pulse"] {
+    animation: clay-skeleton-pulse 2s ease-in-out 0.5s infinite;
+  }
+  .clay-skeleton[data-animation="wave"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, var(--clay-light), transparent 45%),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: clay-skeleton-wave 1.6s linear 0.5s infinite;
+  }
 }
 @keyframes clay-skeleton-pulse {
   0%,
@@ -373,20 +390,6 @@
   background-color: var(--clay-page);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .clay-circular-progress,
-  .clay-circular-progress[data-variant="indeterminate"]:not([data-disable-shrink])
-    .clay-circular-progress__arc {
-    animation: none;
-  }
-  .clay-circular-progress__arc {
-    transition: none;
-  }
-  .clay-skeleton[data-animation="wave"]::after {
-    display: none;
-    animation: none;
-  }
-}
 @media (forced-colors: active) {
   .clay-circular-progress__arc {
     stroke: Highlight;

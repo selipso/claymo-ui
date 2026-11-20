@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext } from "svelte";
+  import { getContext, untrack } from "svelte";
   import type { HTMLInputAttributes } from "svelte/elements";
   import { checkboxRecipe, type CheckboxOptions } from "@claymo/core";
   import { bindIndeterminate } from "@claymo/core/behavior/checkbox";
@@ -35,9 +35,13 @@
 
   let input: HTMLInputElement | undefined = $state();
 
-  // Re-binds when the parent changes `indeterminate`; core restores it after clicks and form reset.
+  // Prop updates only write the property; the listeners stay attached to the same input.
   $effect(() => {
-    if (input) return bindIndeterminate(input, () => indeterminate);
+    if (input && input.indeterminate !== indeterminate) input.indeterminate = indeterminate;
+  });
+
+  $effect(() => {
+    if (input) return bindIndeterminate(input, () => untrack(() => indeterminate));
   });
 
   function handleChange(event: ChangeEv) {
