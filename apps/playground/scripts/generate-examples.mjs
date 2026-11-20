@@ -1,26 +1,32 @@
 // Turns every reference example (`@claymo/core/reference`, the data the MCP server serves) into a
-// page at /examples/<framework>/<component>/, shown in a frame on the component's reference page.
-// Frames keep each example's fixed ids apart. Output is generated and gitignored.
+// page at /examples/<framework>/<component>-<n>/, shown in a frame on the component's reference
+// page. Frames keep each example's fixed ids apart. Output is generated and gitignored.
 import { mkdirSync, readFileSync, readdirSync, unlinkSync, writeFileSync } from "node:fs";
 import { frameworks, getComponent, listComponents } from "@claymo/core/reference";
-import { componentSlug } from "../src/lib/nav.ts";
+import { exampleSlug } from "../src/lib/nav.ts";
 
 const sources = new URL("../src/examples/", import.meta.url);
 const pages = new URL("../src/pages/examples/", import.meta.url);
 
 for (const framework of frameworks) {
-  const names = listComponents(framework);
+  const examples = listComponents(framework).flatMap((name) =>
+    getComponent(framework, name).examples.map(({ source }, index) => ({
+      name,
+      slug: exampleSlug(name, index),
+      source,
+    })),
+  );
   syncGenerated(
     sources,
     framework,
-    names.map((name) => [`${name}.${framework}`, getComponent(framework, name).example]),
+    examples.map(({ slug, source }) => [`${slug}.${framework}`, source]),
   );
   syncGenerated(
     pages,
     framework,
-    names.map((name) => [
-      `${componentSlug(name)}.astro`,
-      page(framework, name, `${name}.${framework}`),
+    examples.map(({ name, slug }) => [
+      `${slug}.astro`,
+      page(framework, name, `${slug}.${framework}`),
     ]),
   );
 }

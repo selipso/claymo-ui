@@ -19,7 +19,7 @@ const setup = await call("get_setup", { palette: "canopy", mode: "light" });
 assert.equal(setup.framework, "svelte");
 for (const file of setup.files) writeFileSync(file.path, file.content);
 const [page] = await call("get_components", { names: ["Tabs"] });
-writeFileSync("src/routes/+page.svelte", page.example);
+writeFileSync("src/routes/+page.svelte", page.examples[0].source);
 await client.close();
 
 const run = (script) => execFileSync("npm", ["run", script], { stdio: "inherit" });

@@ -6,6 +6,12 @@ export const palettes: readonly string[];
 export const motionPresets: readonly string[];
 export function listComponents(framework: Framework): string[];
 
+/** A complete, runnable file: imports of the components it renders, then the markup. */
+export interface ComponentExample {
+  title: string;
+  source: string;
+}
+
 export interface ComponentReference {
   framework: Framework;
   name: string;
@@ -19,7 +25,8 @@ export interface ComponentReference {
   };
   content: string[];
   events: string[];
-  example: string;
+  /** At least one; the first is the most common use. */
+  examples: ComponentExample[];
 }
 export function getComponent(framework: Framework, name: string): ComponentReference;
 

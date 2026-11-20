@@ -2,14 +2,14 @@
 import { Code } from "astro:components";
 import type { ComponentReference } from "@claymo/core/reference";
 import { Table } from "@claymo/astro";
-import { componentSlug } from "../lib/nav";
+import { exampleSlug } from "../lib/nav";
 import { propDefault, propType } from "../lib/prop-schema";
 
 interface Props {
   reference: ComponentReference;
 }
 const { reference } = Astro.props;
-const { framework, name, props, content, events, example } = reference;
+const { framework, name, props, content, events, examples } = reference;
 const required = new Set(props.required);
 const rows = Object.entries(props.properties).map(([prop, schema]) => ({
   prop: required.has(prop) ? `${prop} (required)` : prop,
@@ -20,17 +20,20 @@ const rows = Object.entries(props.properties).map(([prop, schema]) => ({
 ---
 
 <section class="reference-panel">
-  <h2>Live example</h2>
-  <iframe
-    class="reference-panel__frame"
-    src={`/examples/${framework}/${componentSlug(name)}/`}
-    title={`${name} example, ${framework}`}
-    loading="lazy"
-    data-example
-  ></iframe>
-
-  <h2>Source</h2>
-  <Code code={example} lang={framework} wrap />
+  <h2>Examples</h2>
+  {examples.map(({ title, source }, index) => (
+    <section class="reference-panel__example" aria-labelledby={`${framework}-example-${index}`}>
+      <h3 id={`${framework}-example-${index}`}>{title}</h3>
+      <iframe
+        class="reference-panel__frame"
+        src={`/examples/${framework}/${exampleSlug(name, index)}/`}
+        title={`${title}, ${framework} example`}
+        loading="lazy"
+        data-example
+      ></iframe>
+      <Code code={source} lang={framework} wrap />
+    </section>
+  ))}
 
   <h2>Props</h2>
   {rows.length === 0 ? (
@@ -97,5 +100,14 @@ const rows = Object.entries(props.properties).map(([prop, schema]) => ({
 
   .reference-panel h2 {
     font-size: 1.25rem;
+  }
+
+  .reference-panel h3 {
+    margin-block: 28px 12px;
+    font-size: 1.05rem;
+  }
+
+  .reference-panel__example :global(pre) {
+    margin-block-start: 12px;
   }
 </style>

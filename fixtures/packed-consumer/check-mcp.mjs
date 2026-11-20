@@ -1,6 +1,6 @@
 // Run in the disposable consumer. Acts as an agent: asks the installed claymo-mcp server for a theme,
-// setup files and every component example, writes them unchanged, and leaves `npm run check`,
-// `npm run build` and Playwright to prove they type-check, render and apply the theme.
+// setup files and every example of every component, writes them unchanged, and leaves
+// `npm run check`, `npm run build` and Playwright to prove they type-check, render and apply the theme.
 import assert from "node:assert/strict";
 import { mkdir, writeFile } from "node:fs/promises";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
@@ -29,19 +29,22 @@ for (const [framework, names] of Object.entries({ astro, svelte })) {
   const folder = `${root}/${framework}`;
   await mkdir(folder);
   const components = await call("get_components", { framework, names });
-  for (const { name, example } of components) {
-    const file = `_${name}.${framework}`;
-    await writeFile(`${folder}/${file}`, example);
-    const hydrate = framework === "svelte" ? " client:load" : "";
-    await writeFile(
-      `${folder}/${name}.astro`,
-      `---\nimport Page from "../../../layouts/Page.astro";\nimport Example from "./${file}";\n---\n<Page title=${JSON.stringify(name)}><Example${hydrate} /></Page>\n`,
-    );
+  for (const { name, examples } of components) {
+    assert.ok(examples.length > 0, `${framework} ${name} has no example`);
+    for (const [index, { source }] of examples.entries()) {
+      const file = `_${name}-${index + 1}.${framework}`;
+      await writeFile(`${folder}/${file}`, source);
+      const hydrate = framework === "svelte" ? " client:load" : "";
+      await writeFile(
+        `${folder}/${name}-${index + 1}.astro`,
+        `---\nimport Page from "../../../layouts/Page.astro";\nimport Example from "./${file}";\n---\n<Page title=${JSON.stringify(name)}><Example${hydrate} /></Page>\n`,
+      );
+    }
   }
   // Compare MCP against actual runtime exports; type-only exports are not components.
   await writeFile(
     `${folder}/index.astro`,
-    `---\nimport * as bridge from "@claymo/${framework}";\nconst names = ${JSON.stringify(names)};\nif (JSON.stringify(Object.keys(bridge).sort()) !== JSON.stringify(names)) throw new Error("Stale ${framework} component reference");\n---\n<ul>{names.map((name) => <li><a href={\`./\${name}/\`}>{name}</a></li>)}</ul>\n`,
+    `---\nimport * as bridge from "@claymo/${framework}";\nconst names = ${JSON.stringify(names)};\nif (JSON.stringify(Object.keys(bridge).sort()) !== JSON.stringify(names)) throw new Error("Stale ${framework} component reference");\n---\n<ul>{names.map((name) => <li><a href={\`./\${name}-1/\`}>{name}</a></li>)}</ul>\n`,
   );
 }
 
@@ -52,6 +55,6 @@ assert.ok(config.content.includes("claymo({ svelte: true })"), "Svelte islands m
 for (const file of setup.files) await writeFile(file.path, file.content);
 await writeFile(
   `${root}/setup.astro`,
-  `---\nimport Layout from "../../layouts/Layout.astro";\nimport Example from "./astro/_Button.astro";\n---\n<Layout title="Setup"><Example /></Layout>\n`,
+  `---\nimport Layout from "../../layouts/Layout.astro";\nimport Example from "./astro/_Button-1.astro";\n---\n<Layout title="Setup"><Example /></Layout>\n`,
 );
 await client.close();

@@ -33,3 +33,8 @@ export function componentSlug(name: string): string {
 export function componentHref(name: string): string {
   return `/components/${componentSlug(name)}/`;
 }
+
+/** Route segment of a component's example page: `list-item-button-2` for the second example. */
+export function exampleSlug(name: string, index: number): string {
+  return `${componentSlug(name)}-${index + 1}`;
+}

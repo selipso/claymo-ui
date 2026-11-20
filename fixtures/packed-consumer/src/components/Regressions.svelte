@@ -7,6 +7,8 @@
   let clicks = $state(0);
   let mixed = $state(true);
   let changes = $state(0);
+  let dismissOpen = $state(false);
+  let dismissReasons = $state<string[]>([]);
 
   // Close then reopen in one interaction: the queued native `close` must not close it again.
   async function reopen() {
@@ -28,6 +30,22 @@
   {#snippet actions()}<Button onclick={reopen}>Reopen</Button>{/snippet}
 </Dialog>
 <output id="close-reasons">{reasons.join(",")}</output>
+
+<Button id="open-dismissible" onclick={() => (dismissOpen = true)}>Open dismissible dialog</Button>
+<Dialog
+  bind:open={dismissOpen}
+  title="Dismissible dialog"
+  dismissible
+  closeText="Dismiss"
+  onClose={(_event, reason) => {
+    dismissReasons.push(reason);
+    // The first close request is rejected.
+    if (dismissReasons.length > 1) dismissOpen = false;
+  }}
+>
+  <p>The first close request is rejected.</p>
+</Dialog>
+<output id="dismiss-requests">{dismissReasons.join(",")}</output>
 
 <Button href="/nowhere/" disabled onclick={() => clicks++}>Disabled link</Button>
 <output id="link-clicks">{clicks === 0 ? "none" : "clicked"}</output>

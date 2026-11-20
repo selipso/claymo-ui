@@ -29,7 +29,7 @@ function instructions(framework, svelteIslands) {
 1. Call list_themes. Pick ONE palette whose description fits the product, and a mode (system, light or dark). Keep the default motion preset unless the brief asks for a different feel; set another one with data-motion on <html>.
 2. Call get_setup with your palette and mode. Run its install command and write the returned files, merging the Astro integration into an existing config as noted.
 3. Call list_components. Choose components by purpose. Use ONLY names it returns.
-4. Call get_components ONCE with every chosen name. Copy each example, then change only values its props allow.
+4. Call get_components ONCE with every chosen name. Copy the example whose title is closest to your need, then change only values its props allow.
 Rules: never invent props or components. A component's color prop is a semantic role (primary, error, ...), never a palette name or a CSS color. Theme is set once in the layout, never on components.`;
 }
 
@@ -134,7 +134,7 @@ export function createServer({
     {
       title: "Get Claymo components",
       description:
-        "Step 4. For each requested name, in order: props (JSON Schema with enums and defaults), content slots or snippets, events, and a complete copyable example with imports. Request every component you need in one call.",
+        "Step 4. For each requested name, in order: props (JSON Schema with enums and defaults), content slots or snippets, events, and titled, complete copyable examples with imports (the first is the most common use). Request every component you need in one call.",
       inputSchema: {
         framework,
         names: z

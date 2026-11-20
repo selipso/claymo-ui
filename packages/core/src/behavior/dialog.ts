@@ -3,7 +3,7 @@ import type { SnackbarCloseReason, TooltipCloseReason } from "../overlays.ts";
 import { upgrader } from "./upgrade.ts";
 
 export interface DialogHandlers {
-  /** The user asked to close (Escape or backdrop). The owner decides; nothing closes by itself. */
+  /** The user asked to close (Escape, backdrop or close button). The owner decides; nothing closes by itself. */
   requestClose(event: Event, reason: DialogCloseReason): void;
   /**
    * The browser closed the dialog without asking (form method="dialog", a forced second Escape).
@@ -19,9 +19,10 @@ export function setDialogOpen(dialog: HTMLDialogElement, open: boolean): void {
 }
 
 /**
- * Routes Escape and backdrop clicks through `requestClose`. A backdrop press must start and end on
- * the backdrop, so dragging a text selection out of the panel does not dismiss. Pointer-only by
- * design: the keyboard equivalent is Escape. Returns a detach function.
+ * Routes Escape, backdrop clicks and the dialog's own close button (`[data-clay-dialog-close]`)
+ * through `requestClose`. A backdrop press must start and end on the backdrop, so dragging a text
+ * selection out of the panel does not dismiss. Pointer-only by design: the keyboard equivalent is
+ * Escape. Returns a detach function.
  */
 export function attachDialog(dialog: HTMLDialogElement, handlers: DialogHandlers): () => void {
   let pressedOnBackdrop = false;
@@ -31,7 +32,11 @@ export function attachDialog(dialog: HTMLDialogElement, handlers: DialogHandlers
   };
   const onPointerDown = (event: PointerEvent) => (pressedOnBackdrop = event.target === dialog);
   const onClick = (event: MouseEvent) => {
-    if (pressedOnBackdrop && event.target === dialog) handlers.requestClose(event, "backdropClick");
+    const closer = (event.target as Element).closest("[data-clay-dialog-close]");
+    // A nested dialog's close button belongs to that dialog, not this one.
+    if (closer?.closest("dialog") === dialog) handlers.requestClose(event, "closeButton");
+    else if (pressedOnBackdrop && event.target === dialog)
+      handlers.requestClose(event, "backdropClick");
     pressedOnBackdrop = false;
   };
   // `close` is queued as a task: if the owner reopened the dialog meanwhile, the event is stale.

@@ -42,7 +42,7 @@ test("theme and motion choices apply across pages, reloads and example frames", 
   await expect(html).toHaveAttribute("data-theme", "dark");
   await expect(html).toHaveAttribute("data-palette", "orbit");
   await expect(html).toHaveAttribute("data-motion", "lift");
-  const frame = page.frameLocator('iframe[src="/examples/astro/button/"]');
+  const frame = page.frameLocator('iframe[src="/examples/astro/button-1/"]');
   await expect(frame.locator("html")).toHaveAttribute("data-palette", "orbit");
   await expect(frame.locator("html")).toHaveAttribute("data-motion", "lift");
 
@@ -100,12 +100,12 @@ test("every guide renders with links that stay inside the site", async ({ page }
 
 test("component pages run the Astro and Svelte examples live", async ({ page }) => {
   await page.goto("/components/tabs/");
-  const astro = page.frameLocator('iframe[src="/examples/astro/tabs/"]');
+  const astro = page.frameLocator('iframe[src="/examples/astro/tabs-1/"]');
   await astro.getByRole("tab", { name: "Security" }).click();
   await expect(astro.locator("#account-selected")).toHaveText("security");
 
   await page.getByRole("tab", { name: "Svelte" }).click();
-  const svelte = page.frameLocator('iframe[src="/examples/svelte/tabs/"]');
+  const svelte = page.frameLocator('iframe[src="/examples/svelte/tabs-1/"]');
   // The lazy iframe shows SSR markup before the island has attached its click handlers.
   await svelte.locator("astro-island:not([ssr])").getByRole("tab", { name: "Security" }).click();
   await expect(svelte.getByText("Selected tab: security. User changes: 1.")).toBeVisible();

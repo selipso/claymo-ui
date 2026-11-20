@@ -37,7 +37,12 @@
           "Default slot: optional initials or icon. A small client script reveals the fallback on an image error; no framework island is needed."
         ],
         "events": ["No component events. Listen for native events on the rendered DOM if needed."],
-        "example": "<Avatar alt=\"Ada Lovelace\" size=\"small\" />"
+        "examples": [
+          {
+            "title": "Compare avatar sizes",
+            "source": "<div style=\"display: flex; align-items: center; gap: 16px\">\n  <Avatar alt=\"Ada Lovelace\" size=\"small\" />\n  <Avatar alt=\"Ada Lovelace\" />\n  <Avatar alt=\"Ada Lovelace\" size=\"large\" />\n</div>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["Avatar"],
@@ -48,7 +53,12 @@
           "Changes to src, srcSet, or sizes try the new image source after a failure."
         ],
         "events": ["Native handler props are forwarded to the root; no component events."],
-        "example": "<Avatar alt=\"Ada Lovelace\" size=\"small\" />"
+        "examples": [
+          {
+            "title": "Compare avatar sizes",
+            "source": "<div style=\"display: flex; align-items: center; gap: 16px\">\n  <Avatar alt=\"Ada Lovelace\" size=\"small\" />\n  <Avatar alt=\"Ada Lovelace\" />\n  <Avatar alt=\"Ada Lovelace\" size=\"large\" />\n</div>"
+          }
+        ]
       }
     }
   },
@@ -109,7 +119,7 @@
     },
     "bridges": {
       "astro": {
-        "imports": ["Badge"],
+        "imports": ["Badge", "Button"],
         "required": [],
         "props": {},
         "content": [
@@ -117,10 +127,15 @@
           "badge-content: optional inline markup instead of the scalar badgeContent in the standard variant."
         ],
         "events": ["No component events or client script."],
-        "example": "<Badge badgeContent={120} color=\"error\">\n  <button type=\"button\" aria-label=\"Inbox, 120 unread messages\">Inbox</button>\n</Badge>"
+        "examples": [
+          {
+            "title": "Unread message badge",
+            "source": "<Badge badgeContent={120} color=\"error\">\n  <Button variant=\"outlined\" aria-label=\"Inbox, 120 unread messages\">Inbox</Button>\n</Badge>"
+          }
+        ]
       },
       "svelte": {
-        "imports": ["Badge"],
+        "imports": ["Badge", "Button"],
         "required": [],
         "props": {},
         "content": [
@@ -128,7 +143,12 @@
           "badgeContent may be a snippet instead of a string or number. The dot variant ignores it."
         ],
         "events": ["Native handler props are forwarded to the root; no component events."],
-        "example": "<Badge badgeContent={120} color=\"error\">\n  <button type=\"button\" aria-label=\"Inbox, 120 unread messages\">Inbox</button>\n</Badge>"
+        "examples": [
+          {
+            "title": "Unread message badge",
+            "source": "<Badge badgeContent={120} color=\"error\">\n  <Button variant=\"outlined\" aria-label=\"Inbox, 120 unread messages\">Inbox</Button>\n</Badge>"
+          }
+        ]
       }
     }
   },
@@ -200,7 +220,12 @@
         "props": {},
         "content": [],
         "events": ["No component events or client script."],
-        "example": "<CircularProgress variant=\"determinate\" max={8} value={3} aria-label=\"Imports complete\" />"
+        "examples": [
+          {
+            "title": "Determinate circular progress",
+            "source": "<CircularProgress variant=\"determinate\" max={8} value={3} aria-label=\"Imports complete\" />"
+          }
+        ]
       },
       "svelte": {
         "imports": ["CircularProgress"],
@@ -208,7 +233,12 @@
         "props": {},
         "content": [],
         "events": ["Native handler props are forwarded to the root; no component events."],
-        "example": "<CircularProgress variant=\"determinate\" max={8} value={3} aria-label=\"Imports complete\" />"
+        "examples": [
+          {
+            "title": "Determinate circular progress",
+            "source": "<CircularProgress variant=\"determinate\" max={8} value={3} aria-label=\"Imports complete\" />"
+          }
+        ]
       }
     }
   },
@@ -264,7 +294,12 @@
         "props": {},
         "content": [],
         "events": ["No component events or client script."],
-        "example": "<LinearProgress variant=\"buffer\" value={35} valueBuffer={70} aria-label=\"Download progress\" />"
+        "examples": [
+          {
+            "title": "Linear progress with buffer",
+            "source": "<LinearProgress variant=\"buffer\" value={35} valueBuffer={70} aria-label=\"Download progress\" />"
+          }
+        ]
       },
       "svelte": {
         "imports": ["LinearProgress"],
@@ -272,7 +307,12 @@
         "props": {},
         "content": [],
         "events": ["Native handler props are forwarded to the root; no component events."],
-        "example": "<LinearProgress variant=\"buffer\" value={35} valueBuffer={70} aria-label=\"Download progress\" />"
+        "examples": [
+          {
+            "title": "Linear progress with buffer",
+            "source": "<LinearProgress variant=\"buffer\" value={35} valueBuffer={70} aria-label=\"Download progress\" />"
+          }
+        ]
       }
     }
   },
@@ -305,7 +345,12 @@
         "props": {},
         "content": [],
         "events": ["No component events or client script."],
-        "example": "<Skeleton variant=\"rounded\" width=\"100%\" height={80} animation=\"wave\" />"
+        "examples": [
+          {
+            "title": "Rounded skeleton with wave",
+            "source": "<Skeleton variant=\"rounded\" width=\"100%\" height={80} animation=\"wave\" />"
+          }
+        ]
       },
       "svelte": {
         "imports": ["Skeleton"],
@@ -313,7 +358,12 @@
         "props": {},
         "content": [],
         "events": ["Native handler props are forwarded to the root; no component events."],
-        "example": "<Skeleton variant=\"rounded\" width=\"100%\" height={80} animation=\"wave\" />"
+        "examples": [
+          {
+            "title": "Rounded skeleton with wave",
+            "source": "<Skeleton variant=\"rounded\" width=\"100%\" height={80} animation=\"wave\" />"
+          }
+        ]
       }
     }
   },
@@ -349,7 +399,12 @@
         "props": {},
         "content": ["Default slot: native table content, e.g. caption, thead, tbody, and tfoot."],
         "events": ["No component events or client script."],
-        "example": "<Table label=\"Stock inventory\" size=\"small\" stickyHeader style=\"max-height: 18rem;\">\n  <thead><tr><th scope=\"col\">Item</th><th scope=\"col\">Count</th></tr></thead>\n  <tbody><tr><th scope=\"row\">Notebook</th><td>14</td></tr></tbody>\n</Table>"
+        "examples": [
+          {
+            "title": "Table with sticky header",
+            "source": "<Table label=\"Stock inventory\" size=\"small\" stickyHeader style=\"max-height: 18rem;\">\n  <thead><tr><th scope=\"col\">Item</th><th scope=\"col\">Count</th></tr></thead>\n  <tbody><tr><th scope=\"row\">Notebook</th><td>14</td></tr></tbody>\n</Table>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["Table"],
@@ -357,7 +412,12 @@
         "props": {},
         "content": ["children: native table content, e.g. caption, thead, tbody, and tfoot."],
         "events": ["Native handler props are forwarded to the scroll region; no component events."],
-        "example": "<Table label=\"Stock inventory\" size=\"small\" stickyHeader style=\"max-height: 18rem;\">\n  <thead><tr><th scope=\"col\">Item</th><th scope=\"col\">Count</th></tr></thead>\n  <tbody><tr><th scope=\"row\">Notebook</th><td>14</td></tr></tbody>\n</Table>"
+        "examples": [
+          {
+            "title": "Table with sticky header",
+            "source": "<Table label=\"Stock inventory\" size=\"small\" stickyHeader style=\"max-height: 18rem;\">\n  <thead><tr><th scope=\"col\">Item</th><th scope=\"col\">Count</th></tr></thead>\n  <tbody><tr><th scope=\"row\">Notebook</th><td>14</td></tr></tbody>\n</Table>"
+          }
+        ]
       }
     }
   }

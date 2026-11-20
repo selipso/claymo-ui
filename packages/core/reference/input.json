@@ -78,7 +78,7 @@
     },
     "bridges": {
       "astro": {
-        "imports": ["TextField"],
+        "imports": ["TextField", "Button"],
         "required": [],
         "props": {
           "value": {
@@ -97,7 +97,12 @@
         "events": [
           "Native input and change events on the form control; no component callback prop."
         ],
-        "example": "<form>\n  <TextField label=\"Display name\" name=\"displayName\" required helperText=\"Shown on your profile\" />\n  <TextField label=\"Shelf\" name=\"shelf\" select defaultValue=\"paper\" options={[{ value: 'paper', label: 'Paper' }, { value: 'digital', label: 'Digital' }]} />\n  <button type=\"submit\">Save</button>\n</form>"
+        "examples": [
+          {
+            "title": "Text and select fields",
+            "source": "<form>\n  <TextField label=\"Display name\" name=\"displayName\" required helperText=\"Shown on your profile\" />\n  <TextField label=\"Shelf\" name=\"shelf\" select defaultValue=\"paper\" options={[{ value: 'paper', label: 'Paper' }, { value: 'digital', label: 'Digital' }]} />\n  <Button type=\"submit\">Save</Button>\n</form>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["TextField"],
@@ -120,7 +125,12 @@
           "oninput(event) and onchange(event): native event handlers on the control.",
           "onChange(event): callback following input for input/textarea, or change for select."
         ],
-        "example": "<script lang=\"ts\">\n  let shelf = $state('paper');\n</script>\n\n<form>\n  <TextField label=\"Display name\" name=\"displayName\" required helperText=\"Shown on your profile\" />\n  <TextField label=\"Shelf\" name=\"shelf\" select bind:value={shelf} defaultValue=\"paper\">\n    <option value=\"paper\">Paper</option>\n    <option value=\"digital\">Digital</option>\n  </TextField>\n</form>"
+        "examples": [
+          {
+            "title": "Text and select fields",
+            "source": "<script lang=\"ts\">\n  let shelf = $state('paper');\n</script>\n\n<form>\n  <TextField label=\"Display name\" name=\"displayName\" required helperText=\"Shown on your profile\" />\n  <TextField label=\"Shelf\" name=\"shelf\" select bind:value={shelf} defaultValue=\"paper\">\n    <option value=\"paper\">Paper</option>\n    <option value=\"digital\">Digital</option>\n  </TextField>\n</form>"
+          }
+        ]
       }
     }
   },
@@ -178,7 +188,7 @@
     },
     "bridges": {
       "astro": {
-        "imports": ["Slider"],
+        "imports": ["Slider", "Button"],
         "required": ["aria-label"],
         "props": {
           "value": {
@@ -190,10 +200,15 @@
         "events": [
           "Native input and change events on the range input. The client script only updates visual fill, label and tick states, including after form reset. If setting the value in script, dispatch input to synchronize those visuals."
         ],
-        "example": "<form>\n  <Slider name=\"volume\" aria-label=\"Volume\" defaultValue={25} step={25} marks valueLabelDisplay=\"on\" />\n  <button type=\"reset\">Reset</button>\n</form>"
+        "examples": [
+          {
+            "title": "Reset a volume slider",
+            "source": "<form>\n  <Slider name=\"volume\" aria-label=\"Volume\" defaultValue={25} step={25} marks valueLabelDisplay=\"on\" />\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
+          }
+        ]
       },
       "svelte": {
-        "imports": ["Slider"],
+        "imports": ["Slider", "Button"],
         "required": ["aria-label"],
         "props": {
           "value": { "type": "number", "description": "Live numeric value; supports bind:value." },
@@ -208,7 +223,12 @@
           "onChange(event, value): Svelte callback on every input with the numeric value.",
           "onchange(event): native committed change event on the input."
         ],
-        "example": "<script lang=\"ts\">\n  let volume = $state(25);\n</script>\n\n<form>\n  <Slider name=\"volume\" aria-label=\"Volume\" bind:value={volume} defaultValue={25} step={25} marks valueLabelDisplay=\"on\" />\n  <button type=\"reset\">Reset</button>\n</form>"
+        "examples": [
+          {
+            "title": "Reset a volume slider",
+            "source": "<script lang=\"ts\">\n  let volume = $state(25);\n</script>\n\n<form>\n  <Slider name=\"volume\" aria-label=\"Volume\" bind:value={volume} defaultValue={25} step={25} marks valueLabelDisplay=\"on\" />\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
+          }
+        ]
       }
     }
   },
@@ -260,7 +280,12 @@
         "props": {},
         "content": [],
         "events": ["Native input and change events on the checkbox; no component callback prop."],
-        "example": "<FormControlLabel label=\"Email alerts\">\n  <Switch slot=\"control\" name=\"alerts\" value=\"yes\" defaultChecked />\n</FormControlLabel>"
+        "examples": [
+          {
+            "title": "Email alerts switch",
+            "source": "<FormControlLabel label=\"Email alerts\">\n  <Switch slot=\"control\" name=\"alerts\" value=\"yes\" defaultChecked />\n</FormControlLabel>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["Switch", "FormControlLabel"],
@@ -271,7 +296,12 @@
           "onchange(event): native change handler, called first.",
           "onChange(event, checked): Svelte callback with the current checkedness. Use bind:checked for live state and form resets."
         ],
-        "example": "<script lang=\"ts\">\n  let alerts = $state(true);\n</script>\n\n<FormControlLabel label=\"Email alerts\">\n  {#snippet control()}<Switch name=\"alerts\" value=\"yes\" bind:checked={alerts} defaultChecked />{/snippet}\n</FormControlLabel>"
+        "examples": [
+          {
+            "title": "Email alerts switch",
+            "source": "<script lang=\"ts\">\n  let alerts = $state(true);\n</script>\n\n<FormControlLabel label=\"Email alerts\">\n  {#snippet control()}<Switch name=\"alerts\" value=\"yes\" bind:checked={alerts} defaultChecked />{/snippet}\n</FormControlLabel>"
+          }
+        ]
       }
     }
   },
@@ -306,7 +336,12 @@
         "events": [
           "Listen to native input/change on the wrapped control; no component callback prop."
         ],
-        "example": "<FormControlLabel label=\"Notifications\" labelPlacement=\"start\">\n  <Switch slot=\"control\" name=\"notifications\" />\n</FormControlLabel>"
+        "examples": [
+          {
+            "title": "Label before the switch",
+            "source": "<FormControlLabel label=\"Notifications\" labelPlacement=\"start\">\n  <Switch slot=\"control\" name=\"notifications\" />\n</FormControlLabel>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["FormControlLabel", "Switch"],
@@ -319,7 +354,12 @@
         },
         "content": ["Required control snippet: render a Checkbox, Radio or Switch to label."],
         "events": ["Use the wrapped control's native handlers or its onChange callback."],
-        "example": "<FormControlLabel label=\"Notifications\" labelPlacement=\"start\">\n  {#snippet control()}<Switch name=\"notifications\" />{/snippet}\n</FormControlLabel>"
+        "examples": [
+          {
+            "title": "Label before the switch",
+            "source": "<FormControlLabel label=\"Notifications\" labelPlacement=\"start\">\n  {#snippet control()}<Switch name=\"notifications\" />{/snippet}\n</FormControlLabel>"
+          }
+        ]
       }
     }
   },
@@ -375,7 +415,12 @@
         "events": [
           "Native input and change events on the newly selected radio; no component callback prop."
         ],
-        "example": "<FormControlLabel label=\"Paper\">\n  <Radio slot=\"control\" name=\"format\" value=\"paper\" defaultChecked />\n</FormControlLabel>"
+        "examples": [
+          {
+            "title": "Radio selected by default",
+            "source": "<FormControlLabel label=\"Paper\">\n  <Radio slot=\"control\" name=\"format\" value=\"paper\" defaultChecked />\n</FormControlLabel>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["Radio", "FormControlLabel"],
@@ -386,7 +431,12 @@
           "onchange(event): native change handler on the newly selected radio, called first.",
           "onChange(event, value): Svelte callback with the supplied option value. Bind RadioGroup value for reactive group selection."
         ],
-        "example": "<FormControlLabel label=\"Paper\">\n  {#snippet control()}<Radio name=\"format\" value=\"paper\" defaultChecked />{/snippet}\n</FormControlLabel>"
+        "examples": [
+          {
+            "title": "Radio selected by default",
+            "source": "<FormControlLabel label=\"Paper\">\n  {#snippet control()}<Radio name=\"format\" value=\"paper\" defaultChecked />{/snippet}\n</FormControlLabel>"
+          }
+        ]
       }
     }
   },
@@ -437,7 +487,7 @@
     },
     "bridges": {
       "astro": {
-        "imports": ["RadioGroup"],
+        "imports": ["RadioGroup", "Button"],
         "required": [],
         "props": {
           "name": {
@@ -464,10 +514,15 @@
         "events": [
           "Native change bubbles from the newly checked radio; read event.target.value (a string). There is no client upgrade or component callback."
         ],
-        "example": "<form>\n  <RadioGroup name=\"format\" aria-label=\"Preferred format\" required defaultValue=\"paper\" options={[{ value: 'paper', label: 'Paper' }, { value: 'digital', label: 'Digital' }]} />\n  <button type=\"reset\">Reset</button>\n</form>"
+        "examples": [
+          {
+            "title": "Reset a radio group",
+            "source": "<form>\n  <RadioGroup name=\"format\" aria-label=\"Preferred format\" required defaultValue=\"paper\" options={[{ value: 'paper', label: 'Paper' }, { value: 'digital', label: 'Digital' }]} />\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
+          }
+        ]
       },
       "svelte": {
-        "imports": ["RadioGroup", "Radio", "FormControlLabel"],
+        "imports": ["RadioGroup", "Radio", "FormControlLabel", "Button"],
         "required": [],
         "props": {
           "name": {
@@ -494,7 +549,12 @@
         "events": [
           "onChange(event, value): called after a user selects a new Radio; value retains the Radio prop's string or number type. Form reset updates bind:value without firing onChange."
         ],
-        "example": "<script lang=\"ts\">\n  let format = $state('paper');\n</script>\n\n<form>\n  <RadioGroup name=\"format\" aria-label=\"Preferred format\" bind:value={format} defaultValue=\"paper\" required>\n    <FormControlLabel label=\"Paper\">\n      {#snippet control()}<Radio value=\"paper\" />{/snippet}\n    </FormControlLabel>\n    <FormControlLabel label=\"Digital\">\n      {#snippet control()}<Radio value=\"digital\" />{/snippet}\n    </FormControlLabel>\n  </RadioGroup>\n  <button type=\"reset\">Reset</button>\n</form>"
+        "examples": [
+          {
+            "title": "Reset a radio group",
+            "source": "<script lang=\"ts\">\n  let format = $state('paper');\n</script>\n\n<form>\n  <RadioGroup name=\"format\" aria-label=\"Preferred format\" bind:value={format} defaultValue=\"paper\" required>\n    <FormControlLabel label=\"Paper\">\n      {#snippet control()}<Radio value=\"paper\" />{/snippet}\n    </FormControlLabel>\n    <FormControlLabel label=\"Digital\">\n      {#snippet control()}<Radio value=\"digital\" />{/snippet}\n    </FormControlLabel>\n  </RadioGroup>\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
+          }
+        ]
       }
     }
   }

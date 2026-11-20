@@ -1,8 +1,14 @@
 ---
 import type { HTMLAttributes } from "astro/types";
 
-type Props = HTMLAttributes<"ul"> & { dense?: boolean; disablePadding?: boolean };
-const { dense = false, disablePadding = false, class: className, ...rest } = Astro.props;
+type Props = HTMLAttributes<"ul"> & {
+  dense?: boolean;
+  disablePadding?: boolean;
+  /** Visible heading above the items; also the list's accessible name unless you give another. */
+  subheader?: string;
+};
+const { dense = false, disablePadding = false, subheader, class: className, ...rest } = Astro.props;
+const named = rest["aria-label"] !== undefined || rest["aria-labelledby"] !== undefined;
 ---
 
 <ul
@@ -11,6 +17,12 @@ const { dense = false, disablePadding = false, class: className, ...rest } = Ast
   data-dense={dense ? "" : undefined}
   data-padded={!disablePadding ? "" : undefined}
   role={rest.role ?? "list"}
+  aria-label={named ? rest["aria-label"] : subheader}
 >
+  {subheader && (
+    <li class="clay-list__subheader" aria-hidden="true">
+      {subheader}
+    </li>
+  )}
   <slot />
 </ul>

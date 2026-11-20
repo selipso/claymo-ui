@@ -33,7 +33,7 @@
     },
     "bridges": {
       "astro": {
-        "imports": ["Drawer"],
+        "imports": ["Drawer", "Button", "List", "ListItem", "ListItemButton", "ListItemText"],
         "required": ["aria-label"],
         "props": {
           "id": {
@@ -54,10 +54,15 @@
           "Temporary drawers fire a cancelable clay-request-close on Escape or a backdrop click. Listen on the drawer; event.detail.reason is escapeKeyDown or backdropClick. preventDefault() keeps it open.",
           "Native command=\"close\" and close() are explicit closes, not requests; listen to the native close event if needed."
         ],
-        "example": "<button type=\"button\" commandfor=\"main-drawer\" command=\"show-modal\">Open navigation</button>\n<Drawer id=\"main-drawer\" aria-label=\"Main navigation\">\n  <nav><a href=\"/\">Home</a></nav>\n  <button slot=\"actions\" type=\"button\" commandfor=\"main-drawer\" command=\"close\">Close</button>\n</Drawer>\n<script>\n  document.getElementById('main-drawer')?.addEventListener('clay-request-close', (event) => {\n    if ((event as CustomEvent).detail.reason === 'backdropClick') event.preventDefault();\n  });\n</script>"
+        "examples": [
+          {
+            "title": "Navigation drawer with links",
+            "source": "<Button commandfor=\"main-drawer\" command=\"show-modal\">Open navigation</Button>\n<Drawer id=\"main-drawer\" aria-label=\"Main navigation\">\n  <List>\n    <ListItem disablePadding>\n      <ListItemButton href=\"/\" selected><ListItemText primary=\"Home\" /></ListItemButton>\n    </ListItem>\n    <ListItem disablePadding>\n      <ListItemButton href=\"/settings/\"><ListItemText primary=\"Settings\" /></ListItemButton>\n    </ListItem>\n  </List>\n  <Button slot=\"actions\" variant=\"text\" commandfor=\"main-drawer\" command=\"close\">Close</Button>\n</Drawer>\n<script>\n  document.getElementById('main-drawer')?.addEventListener('clay-request-close', (event) => {\n    if ((event as CustomEvent).detail.reason === 'backdropClick') event.preventDefault();\n  });\n</script>"
+          }
+        ]
       },
       "svelte": {
-        "imports": ["Drawer"],
+        "imports": ["Drawer", "Button", "List", "ListItem", "ListItemButton", "ListItemText"],
         "required": ["aria-label"],
         "props": {},
         "content": ["children: drawer content.", "actions: optional controls below the content."],
@@ -65,7 +70,12 @@
           "Use bind:open to share state. Without onClose the temporary drawer closes itself on Escape or backdrop click.",
           "onClose(event, reason): when supplied, the parent decides whether to set open=false. Reasons: escapeKeyDown, backdropClick."
         ],
-        "example": "<script lang=\"ts\">\n  let open = $state(false);\n</script>\n<button type=\"button\" onclick={() => (open = true)}>Open navigation</button>\n<Drawer aria-label=\"Main navigation\" bind:open>\n  <nav><a href=\"/\">Home</a></nav>\n  {#snippet actions()}<button type=\"button\" onclick={() => (open = false)}>Close</button>{/snippet}\n</Drawer>"
+        "examples": [
+          {
+            "title": "Navigation drawer with links",
+            "source": "<script lang=\"ts\">\n  let open = $state(false);\n</script>\n<Button onclick={() => (open = true)}>Open navigation</Button>\n<Drawer aria-label=\"Main navigation\" bind:open>\n  <List>\n    <ListItem disablePadding>\n      <ListItemButton href=\"/\" selected><ListItemText primary=\"Home\" /></ListItemButton>\n    </ListItem>\n    <ListItem disablePadding>\n      <ListItemButton href=\"/settings/\"><ListItemText primary=\"Settings\" /></ListItemButton>\n    </ListItem>\n  </List>\n  {#snippet actions()}<Button variant=\"text\" onclick={() => (open = false)}>Close</Button>{/snippet}\n</Drawer>"
+          }
+        ]
       }
     }
   },
@@ -105,7 +115,7 @@
     },
     "bridges": {
       "astro": {
-        "imports": ["Snackbar"],
+        "imports": ["Snackbar", "Button"],
         "required": [],
         "props": {
           "id": {
@@ -126,10 +136,15 @@
           "Cancelable, non-bubbling clay-request-close on the snackbar root with event.detail.reason: timeout, escapeKeyDown or clickaway. Listen on the snackbar itself; preventDefault() keeps it open.",
           "--clay-hide or removing data-clay-open closes explicitly without firing a request."
         ],
-        "example": "<button type=\"button\" commandfor=\"saved\" command=\"--clay-show\">Save settings</button>\n<Snackbar id=\"saved\" message=\"Settings saved\" autoHideDuration={4000}>\n  <button slot=\"action\" type=\"button\" commandfor=\"saved\" command=\"--clay-hide\">Dismiss</button>\n</Snackbar>\n<script>\n  document.getElementById('saved')?.addEventListener('clay-request-close', (event) => {\n    if ((event as CustomEvent).detail.reason === 'clickaway') event.preventDefault();\n  });\n</script>"
+        "examples": [
+          {
+            "title": "Snackbar with dismiss action",
+            "source": "<Button commandfor=\"saved\" command=\"--clay-show\">Save settings</Button>\n<Snackbar id=\"saved\" message=\"Settings saved\" autoHideDuration={4000}>\n  <Button slot=\"action\" variant=\"text\" size=\"small\" commandfor=\"saved\" command=\"--clay-hide\">Dismiss</Button>\n</Snackbar>\n<script>\n  document.getElementById('saved')?.addEventListener('clay-request-close', (event) => {\n    if ((event as CustomEvent).detail.reason === 'clickaway') event.preventDefault();\n  });\n</script>"
+          }
+        ]
       },
       "svelte": {
-        "imports": ["Snackbar"],
+        "imports": ["Snackbar", "Button"],
         "required": [],
         "props": {},
         "content": [
@@ -139,7 +154,12 @@
         "events": [
           "Use bind:open to share state. onClose(event, reason) handles timeout (event is null), escapeKeyDown and clickaway. Without onClose the notification closes itself; with onClose the parent decides whether to set open=false."
         ],
-        "example": "<script lang=\"ts\">\n  let open = $state(false);\n</script>\n<button type=\"button\" onclick={() => (open = true)}>Save settings</button>\n<Snackbar bind:open message=\"Settings saved\">\n  {#snippet action()}<button type=\"button\" onclick={() => (open = false)}>Dismiss</button>{/snippet}\n</Snackbar>"
+        "examples": [
+          {
+            "title": "Snackbar with dismiss action",
+            "source": "<script lang=\"ts\">\n  let open = $state(false);\n</script>\n<Button onclick={() => (open = true)}>Save settings</Button>\n<Snackbar bind:open message=\"Settings saved\">\n  {#snippet action()}<Button variant=\"text\" size=\"small\" onclick={() => (open = false)}>Dismiss</Button>{/snippet}\n</Snackbar>"
+          }
+        ]
       }
     }
   },
@@ -168,7 +188,7 @@
     },
     "bridges": {
       "astro": {
-        "imports": ["Tooltip"],
+        "imports": ["Tooltip", "Button"],
         "required": [],
         "props": {
           "id": {
@@ -187,10 +207,15 @@
         "events": [
           "Cancelable, non-bubbling clay-request-open and clay-request-close on the tooltip root for user interactions; listen on the tooltip itself, so an enclosing Dialog's listener never sees them. Close includes event.detail.reason (leave or escapeKeyDown). Escape is handled only while focus or the pointer is on the tooltip. preventDefault() vetoes the automatic state change; in controlled mode, update data-clay-open yourself."
         ],
-        "example": "<Tooltip id=\"save-tip\" placement=\"top\" arrow>\n  <button type=\"button\">Save</button>\n  <span slot=\"content\">Keeps your current settings</span>\n</Tooltip>"
+        "examples": [
+          {
+            "title": "Tooltip above a button",
+            "source": "<Tooltip id=\"save-tip\" placement=\"top\" arrow>\n  <Button>Save</Button>\n  <span slot=\"content\">Keeps your current settings</span>\n</Tooltip>"
+          }
+        ]
       },
       "svelte": {
-        "imports": ["Tooltip"],
+        "imports": ["Tooltip", "Button"],
         "required": [],
         "props": {},
         "content": [
@@ -200,7 +225,12 @@
         "events": [
           "onOpen(event) and onClose(event, reason) report requests from hover, focus, pointer/focus leave, or Escape. In controlled mode update open yourself; in automatic mode these are notifications."
         ],
-        "example": "<Tooltip placement=\"top\" arrow>\n  <button type=\"button\">Save</button>\n  {#snippet content()}Keeps your current settings{/snippet}\n</Tooltip>"
+        "examples": [
+          {
+            "title": "Tooltip above a button",
+            "source": "<Tooltip placement=\"top\" arrow>\n  <Button>Save</Button>\n  {#snippet content()}Keeps your current settings{/snippet}\n</Tooltip>"
+          }
+        ]
       }
     }
   }

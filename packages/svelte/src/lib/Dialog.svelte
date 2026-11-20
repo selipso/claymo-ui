@@ -4,6 +4,7 @@
   import { dialogRecipe, type DialogCloseReason, type DialogMaxWidth } from "@claymo/core";
   import type { MotionPreset } from "@claymo/core";
   import { attachDialog, setDialogOpen } from "@claymo/core/behavior/dialog";
+  import IconButton from "./IconButton.svelte";
 
   interface Props extends Omit<HTMLDialogAttributes, "open" | "title" | "oncancel" | "onclose"> {
     open?: boolean;
@@ -11,6 +12,10 @@
     onClose?: (event: Event, reason: DialogCloseReason) => void;
     fullWidth?: boolean;
     maxWidth?: DialogMaxWidth;
+    /** Show a close (X) button in the top corner; it requests close with reason "closeButton". */
+    dismissible?: boolean;
+    /** Accessible name of the close button. */
+    closeText?: string;
     /** Rendered as an <h2> and wired to the dialog with aria-labelledby. */
     title?: string;
     /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
@@ -24,6 +29,8 @@
     onClose,
     fullWidth,
     maxWidth,
+    dismissible = false,
+    closeText = "Close",
     title,
     motion,
     class: className,
@@ -33,7 +40,9 @@
   }: Props = $props();
 
   const idBase = $props.id();
-  const recipe = $derived(dialogRecipe({ idBase, hasTitle: !!title, fullWidth, maxWidth }));
+  const recipe = $derived(
+    dialogRecipe({ idBase, hasTitle: !!title, fullWidth, maxWidth, dismissible }),
+  );
 
   let dialog = $state<HTMLDialogElement>();
 
@@ -63,6 +72,27 @@
   {@attach (node) => attachDialog(node, { requestClose, closed })}
 >
   <div class="clay-dialog__panel">
+    {#if dismissible}
+      <IconButton
+        size="small"
+        class="clay-dialog__close"
+        aria-label={closeText}
+        data-clay-dialog-close
+      >
+        <svg
+          aria-hidden="true"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+        >
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </IconButton>
+    {/if}
     {#if title}<h2 id={recipe.titleId} class="clay-dialog__title">{title}</h2>{/if}
     <div class="clay-dialog__content">{@render children?.()}</div>
     {#if actions}<div class="clay-dialog__actions">{@render actions()}</div>{/if}

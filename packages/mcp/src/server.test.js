@@ -119,7 +119,13 @@ test("one get_components call returns every requested component, in order", asyn
     components.map((c) => c.name),
     ["Dialog", "Button"],
   );
-  assert.ok(components.every((c) => c.example.includes('from "@claymo/svelte"')));
+  for (const { examples } of components) {
+    assert.ok(examples.length > 0);
+    for (const { title, source } of examples) {
+      assert.ok(title.length > 0);
+      assert.match(source, /from "@claymo\/svelte"/);
+    }
+  }
 });
 
 test("a detected project framework becomes the default for every tool", async () => {

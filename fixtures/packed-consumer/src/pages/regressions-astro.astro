@@ -61,6 +61,14 @@ const tabs = [
     </Tooltip>
   </Dialog>
   <output id="dialog-requests">0</output>
+
+  <Button id="open-dismissible" commandfor="dismissible-dialog" command="show-modal">
+    Open dismissible dialog
+  </Button>
+  <Dialog id="dismissible-dialog" title="Dismissible dialog" dismissible closeText="Dismiss">
+    <p>The first close request is rejected.</p>
+  </Dialog>
+  <output id="dismiss-requests"></output>
 </Page>
 
 <script>
@@ -68,5 +76,13 @@ const tabs = [
   // Typed through HTMLElementEventMap: no cast needed for event.detail.
   document.getElementById("tip-dialog")!.addEventListener("clay-request-close", (event) => {
     requests.textContent = `${Number(requests.textContent) + 1}:${event.detail.reason}`;
+  });
+
+  const dismissRequests = document.getElementById("dismiss-requests")!;
+  const reasons: string[] = [];
+  document.getElementById("dismissible-dialog")!.addEventListener("clay-request-close", (event) => {
+    reasons.push(event.detail.reason);
+    dismissRequests.textContent = reasons.join(",");
+    if (reasons.length === 1) event.preventDefault();
   });
 </script>

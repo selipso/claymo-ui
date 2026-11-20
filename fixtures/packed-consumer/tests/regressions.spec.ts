@@ -193,4 +193,22 @@ for (const bridge of ["astro", "svelte"]) {
     await link.click({ force: true });
     await expect(page.locator("#link-clicks")).toHaveText("none");
   });
+
+  test(`${bridge}: a dismissible Dialog's X requests close, and the owner can reject it`, async ({
+    page,
+  }) => {
+    await load(page, `/regressions-${bridge}/`);
+    await page.locator("#open-dismissible").click();
+    const dialog = page.getByRole("dialog", { name: "Dismissible dialog" });
+    await expect(dialog).toBeVisible();
+    const close = dialog.getByRole("button", { name: "Dismiss" });
+
+    await close.click();
+    await expect(page.locator("#dismiss-requests")).toHaveText("closeButton");
+    await expect(dialog).toBeVisible();
+
+    await close.click();
+    await expect(page.locator("#dismiss-requests")).toHaveText("closeButton,closeButton");
+    await expect(dialog).toBeHidden();
+  });
 }

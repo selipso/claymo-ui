@@ -2,11 +2,12 @@
 import type { HTMLAttributes } from "astro/types";
 import type { MotionPreset } from "@claymo/core";
 import { dialogRecipe, type DialogMaxWidth } from "@claymo/core";
+import IconButton from "./IconButton.astro";
 
 /**
  * Open with a native invoker, no script needed: `<button commandfor={id} command="show-modal">`.
- * Escape and backdrop clicks fire a cancelable `clay-request-close` event; preventDefault() keeps it open.
- * Slots: default (content), `actions`.
+ * Escape, backdrop clicks and the close button fire a cancelable `clay-request-close` event;
+ * preventDefault() keeps it open. Slots: default (content), `actions`.
  */
 type Props = Omit<HTMLAttributes<"dialog">, "open" | "title"> & {
   id: string;
@@ -15,12 +16,27 @@ type Props = Omit<HTMLAttributes<"dialog">, "open" | "title"> & {
   title?: string;
   fullWidth?: boolean;
   maxWidth?: DialogMaxWidth;
+  /** Show a close (X) button in the top corner. */
+  dismissible?: boolean;
+  /** Accessible name of the close button. */
+  closeText?: string;
   /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
   motion?: MotionPreset;
 };
 
-const { id, open, title, fullWidth, maxWidth, motion, class: className, ...rest } = Astro.props;
-const recipe = dialogRecipe({ idBase: id, hasTitle: !!title, fullWidth, maxWidth });
+const {
+  id,
+  open,
+  title,
+  fullWidth,
+  maxWidth,
+  dismissible = false,
+  closeText = "Close",
+  motion,
+  class: className,
+  ...rest
+} = Astro.props;
+const recipe = dialogRecipe({ idBase: id, hasTitle: !!title, fullWidth, maxWidth, dismissible });
 ---
 
 <dialog
@@ -33,6 +49,27 @@ const recipe = dialogRecipe({ idBase: id, hasTitle: !!title, fullWidth, maxWidth
   {...rest}
 >
   <div class="clay-dialog__panel">
+    {dismissible && (
+      <IconButton
+        size="small"
+        class="clay-dialog__close"
+        aria-label={closeText}
+        data-clay-dialog-close
+      >
+        <svg
+          aria-hidden="true"
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+        >
+          <path d="M18 6 6 18M6 6l12 12" />
+        </svg>
+      </IconButton>
+    )}
     {title && (
       <h2 id={recipe.titleId} class="clay-dialog__title">
         {title}

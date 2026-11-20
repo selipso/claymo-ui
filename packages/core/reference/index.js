@@ -43,8 +43,10 @@ export function listComponents(framework) {
     .sort();
 }
 
+/** Prepends an import of the bridge components the example renders (as `<Name`), in list order. */
 function componentExample(framework, names, markup) {
-  const statement = `import { ${names.join(", ")} } from "@claymo/${framework}";`;
+  const used = names.filter((name) => new RegExp(`<${name}\\b`).test(markup));
+  const statement = `import { ${used.join(", ")} } from "@claymo/${framework}";`;
   const opening = framework === "astro" ? /^---\n/ : /^<script(?:\s[^>]*)?>\n/;
   if (opening.test(markup)) return markup.replace(opening, (match) => `${match}${statement}\n`);
   const header =
@@ -83,7 +85,10 @@ export function getComponent(framework, name) {
     },
     content: bridge.content,
     events: bridge.events,
-    example: componentExample(framework, bridge.imports, bridge.example),
+    examples: bridge.examples.map(({ title, source }) => ({
+      title,
+      source: componentExample(framework, bridge.imports, source),
+    })),
   };
 }
 

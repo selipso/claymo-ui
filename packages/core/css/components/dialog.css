@@ -40,8 +40,22 @@
 .clay-dialog__content {
   padding: 8px 24px;
 }
-.clay-dialog__panel > .clay-dialog__content:first-child {
+/* No title: the content opens the panel (after the close button when there is one). */
+.clay-dialog__panel > .clay-dialog__content:is(:first-child, .clay-dialog__close + *) {
   padding-top: 24px;
+}
+.clay-dialog__panel {
+  position: relative;
+}
+/* Centered on the title's first line; the first row leaves room for it. The panel qualifier
+ * outranks IconButton's own positioning, which loads later. */
+.clay-dialog__panel > .clay-dialog__close {
+  position: absolute;
+  inset-block-start: 19px;
+  inset-inline-end: 16px;
+}
+.clay-dialog[data-dismissible] .clay-dialog__close + * {
+  padding-inline-end: 64px;
 }
 .clay-dialog__actions {
   display: flex;

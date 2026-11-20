@@ -46,7 +46,12 @@
         "events": [
           "clay-change: bubbling CustomEvent<{ value: string | number }> on the Tabs root after a user changes the selection; event.detail.value preserves the Tab's value type."
         ],
-        "example": "---\nconst tabs = [{ value: 'profile', label: 'Profile' }, { value: 'security', label: 'Security' }];\n---\n<Tabs id=\"account-tabs\" aria-label=\"Account\" value=\"profile\" tabs={tabs}>\n  <p slot=\"profile\">Profile settings</p>\n  <p slot=\"security\">Security settings</p>\n</Tabs>\n<p>Selected tab: <output id=\"account-selected\">profile</output></p>\n<script>\n  import { TABS_CHANGE_EVENT, type TabsChangeEvent } from '@claymo/core/behavior/tabs';\n  const selected = document.getElementById('account-selected')!;\n  document.getElementById('account-tabs')!.addEventListener(TABS_CHANGE_EVENT, (event) => {\n    selected.textContent = String((event as TabsChangeEvent).detail.value);\n  });\n</script>"
+        "examples": [
+          {
+            "title": "Track the selected tab",
+            "source": "---\nconst tabs = [{ value: 'profile', label: 'Profile' }, { value: 'security', label: 'Security' }];\n---\n<Tabs id=\"account-tabs\" aria-label=\"Account\" value=\"profile\" tabs={tabs}>\n  <p slot=\"profile\">Profile settings</p>\n  <p slot=\"security\">Security settings</p>\n</Tabs>\n<p>Selected tab: <output id=\"account-selected\">profile</output></p>\n<script>\n  import { TABS_CHANGE_EVENT, type TabsChangeEvent } from '@claymo/core/behavior/tabs';\n  const selected = document.getElementById('account-selected')!;\n  document.getElementById('account-tabs')!.addEventListener(TABS_CHANGE_EVENT, (event) => {\n    selected.textContent = String((event as TabsChangeEvent).detail.value);\n  });\n</script>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["Tabs", "Tab", "TabPanel"],
@@ -65,7 +70,12 @@
           "panels: a Svelte snippet containing TabPanel components, rendered after the tablist."
         ],
         "events": ["onChange(event, value): selection callback for user changes only."],
-        "example": "<script lang=\"ts\">\n  let selected = $state<string | number>('profile');\n  let changes = $state(0);\n</script>\n<Tabs aria-label=\"Account\" bind:value={selected} onChange={() => changes++}>\n  <Tab value=\"profile\" label=\"Profile\" />\n  <Tab value=\"security\" label=\"Security\" />\n  {#snippet panels()}\n    <TabPanel value=\"profile\"><p>Profile settings</p></TabPanel>\n    <TabPanel value=\"security\"><p>Security settings</p></TabPanel>\n  {/snippet}\n</Tabs>\n<p>Selected tab: {selected}. User changes: {changes}.</p>"
+        "examples": [
+          {
+            "title": "Track the selected tab",
+            "source": "<script lang=\"ts\">\n  let selected = $state<string | number>('profile');\n  let changes = $state(0);\n</script>\n<Tabs aria-label=\"Account\" bind:value={selected} onChange={() => changes++}>\n  <Tab value=\"profile\" label=\"Profile\" />\n  <Tab value=\"security\" label=\"Security\" />\n  {#snippet panels()}\n    <TabPanel value=\"profile\"><p>Profile settings</p></TabPanel>\n    <TabPanel value=\"security\"><p>Security settings</p></TabPanel>\n  {/snippet}\n</Tabs>\n<p>Selected tab: {selected}. User changes: {changes}.</p>"
+          }
+        ]
       }
     }
   },
@@ -93,7 +103,12 @@
         },
         "content": ["icon: optional named slot before the label."],
         "events": ["Listen for clay-change on Tabs, not on each Tab."],
-        "example": "---\nconst tabsId = 'settings-tabs';\n---\n<Tabs id={tabsId} aria-label=\"Settings\" value=\"preferences\">\n  <Tab tabsId={tabsId} value=\"preferences\" label=\"Preferences\" selected />\n  <Tab tabsId={tabsId} value=\"billing\" label=\"Billing\" />\n  <Fragment slot=\"panels\">\n    <TabPanel tabsId={tabsId} value=\"preferences\" selected>Choose your preferences.</TabPanel>\n    <TabPanel tabsId={tabsId} value=\"billing\">Manage billing.</TabPanel>\n  </Fragment>\n</Tabs>"
+        "examples": [
+          {
+            "title": "Tab with a panel",
+            "source": "---\nconst tabsId = 'settings-tabs';\n---\n<Tabs id={tabsId} aria-label=\"Settings\" value=\"preferences\">\n  <Tab tabsId={tabsId} value=\"preferences\" label=\"Preferences\" selected />\n  <Tab tabsId={tabsId} value=\"billing\" label=\"Billing\" />\n  <Fragment slot=\"panels\">\n    <TabPanel tabsId={tabsId} value=\"preferences\" selected>Choose your preferences.</TabPanel>\n    <TabPanel tabsId={tabsId} value=\"billing\">Manage billing.</TabPanel>\n  </Fragment>\n</Tabs>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["Tabs", "Tab", "TabPanel"],
@@ -105,7 +120,12 @@
         "events": [
           "onclick and onkeydown: native button handlers run before selection or keyboard navigation respectively. Calling event.preventDefault() skips that built-in behavior."
         ],
-        "example": "<Tabs aria-label=\"Settings\" value=\"preferences\">\n  <Tab value=\"preferences\" label=\"Preferences\">\n    {#snippet icon()}<span aria-hidden=\"true\">⚙</span>{/snippet}\n  </Tab>\n  {#snippet panels()}\n    <TabPanel value=\"preferences\"><p>Choose your preferences.</p></TabPanel>\n  {/snippet}\n</Tabs>"
+        "examples": [
+          {
+            "title": "Tab with a panel",
+            "source": "<Tabs aria-label=\"Settings\" value=\"preferences\">\n  <Tab value=\"preferences\" label=\"Preferences\">\n    {#snippet icon()}<span aria-hidden=\"true\">⚙</span>{/snippet}\n  </Tab>\n  {#snippet panels()}\n    <TabPanel value=\"preferences\"><p>Choose your preferences.</p></TabPanel>\n  {/snippet}\n</Tabs>"
+          }
+        ]
       }
     }
   },
@@ -131,7 +151,12 @@
         },
         "content": ["default slot: panel content. Put the panel in Tabs' panels slot."],
         "events": [],
-        "example": "---\nconst tabsId = 'report-tabs';\n---\n<Tabs id={tabsId} aria-label=\"Reports\" value={1}>\n  <Tab tabsId={tabsId} value={1} label=\"Summary\" selected />\n  <TabPanel slot=\"panels\" tabsId={tabsId} value={1} selected>Report summary</TabPanel>\n</Tabs>"
+        "examples": [
+          {
+            "title": "Panel with numeric value",
+            "source": "---\nconst tabsId = 'report-tabs';\n---\n<Tabs id={tabsId} aria-label=\"Reports\" value={1}>\n  <Tab tabsId={tabsId} value={1} label=\"Summary\" selected />\n  <TabPanel slot=\"panels\" tabsId={tabsId} value={1} selected>Report summary</TabPanel>\n</Tabs>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["Tabs", "Tab", "TabPanel"],
@@ -139,7 +164,12 @@
         "props": {},
         "content": ["children: panel content."],
         "events": [],
-        "example": "<Tabs aria-label=\"Reports\" value={1}>\n  <Tab value={1} label=\"Summary\" />\n  {#snippet panels()}\n    <TabPanel value={1}><p>Report summary</p></TabPanel>\n  {/snippet}\n</Tabs>"
+        "examples": [
+          {
+            "title": "Panel with numeric value",
+            "source": "<Tabs aria-label=\"Reports\" value={1}>\n  <Tab value={1} label=\"Summary\" />\n  {#snippet panels()}\n    <TabPanel value={1}><p>Report summary</p></TabPanel>\n  {/snippet}\n</Tabs>"
+          }
+        ]
       }
     }
   },
@@ -165,11 +195,21 @@
         "enum": ["xs", "sm", "md"],
         "default": "sm",
         "description": "Maximum width: xs = 320px, sm = 444px, md = 600px, each capped by the viewport."
+      },
+      "dismissible": {
+        "type": "boolean",
+        "default": false,
+        "description": "Show a close (X) button in the top corner. It requests close with reason closeButton, like Escape and backdrop clicks."
+      },
+      "closeText": {
+        "type": "string",
+        "default": "Close",
+        "description": "Accessible name of the close button."
       }
     },
     "bridges": {
       "astro": {
-        "imports": ["Dialog"],
+        "imports": ["Dialog", "Button"],
         "required": ["id"],
         "props": {
           "id": {
@@ -182,16 +222,21 @@
           "actions: optional named slot for buttons and other actions."
         ],
         "events": [
-          "clay-request-close: cancelable, non-bubbling CustomEvent on the dialog for Escape or backdrop clicks. event.detail.reason is escapeKeyDown or backdropClick. Call event.preventDefault() to keep the dialog open; a native close command does not send this request."
+          "clay-request-close: cancelable, non-bubbling CustomEvent on the dialog for Escape, backdrop clicks or the close (X) button. event.detail.reason is escapeKeyDown, backdropClick or closeButton. Call event.preventDefault() to keep the dialog open; a native close command does not send this request."
         ],
-        "example": "---\nconst dialogId = 'account-help';\n---\n<button type=\"button\" commandfor={dialogId} command=\"show-modal\">Open help</button>\n<Dialog id={dialogId} title=\"Account help\">\n  <p>Choose Close or press Escape to dismiss this dialog.</p>\n  <button type=\"button\" slot=\"actions\" commandfor={dialogId} command=\"close\">Close</button>\n</Dialog>\n<script>\n  import { DIALOG_REQUEST_CLOSE_EVENT, type DialogRequestCloseEvent } from '@claymo/core/behavior/dialog';\n  document.getElementById('account-help')!.addEventListener(DIALOG_REQUEST_CLOSE_EVENT, (event) => {\n    if ((event as DialogRequestCloseEvent).detail.reason === 'backdropClick') event.preventDefault();\n  });\n</script>"
+        "examples": [
+          {
+            "title": "Dialog with close button",
+            "source": "---\nconst dialogId = 'account-help';\n---\n<Button commandfor={dialogId} command=\"show-modal\">Open help</Button>\n<Dialog id={dialogId} title=\"Account help\" dismissible>\n  <p>Choose Close, the X, or press Escape to dismiss this dialog.</p>\n  <Button slot=\"actions\" variant=\"text\" commandfor={dialogId} command=\"close\">Close</Button>\n</Dialog>\n<script>\n  import { DIALOG_REQUEST_CLOSE_EVENT, type DialogRequestCloseEvent } from '@claymo/core/behavior/dialog';\n  document.getElementById('account-help')!.addEventListener(DIALOG_REQUEST_CLOSE_EVENT, (event) => {\n    if ((event as DialogRequestCloseEvent).detail.reason === 'backdropClick') event.preventDefault();\n  });\n</script>"
+          }
+        ]
       },
       "svelte": {
-        "imports": ["Dialog"],
+        "imports": ["Dialog", "Button"],
         "required": [],
         "props": {
           "onClose": {
-            "description": "Optional callback (event: Event, reason: 'escapeKeyDown' | 'backdropClick') => void. For Escape and backdrop requests, set open to false to accept, or leave it unchanged to reject. Without the callback the dialog closes itself."
+            "description": "Optional callback (event: Event, reason: 'escapeKeyDown' | 'backdropClick' | 'closeButton') => void. For these requests, set open to false to accept, or leave it unchanged to reject. Without the callback the dialog closes itself."
           }
         },
         "content": [
@@ -199,9 +244,14 @@
           "actions: optional Svelte snippet for buttons and other actions."
         ],
         "events": [
-          "onClose(event, reason): handles Escape and backdrop close requests. If the browser already closed the dialog (for example via a form with method=\"dialog\"), the binding is resynced and an installed callback receives escapeKeyDown even if Escape did not cause the close."
+          "onClose(event, reason): handles Escape, backdrop and close-button requests. If the browser already closed the dialog (for example via a form with method=\"dialog\"), the binding is resynced and an installed callback receives escapeKeyDown even if Escape did not cause the close."
         ],
-        "example": "<script>\n  let open = $state(false);\n</script>\n<button type=\"button\" onclick={() => (open = true)}>Open help</button>\n<Dialog bind:open title=\"Account help\" onClose={(_event, reason) => {\n  if (reason === 'escapeKeyDown') open = false;\n}}>\n  <p>Choose Close or press Escape to dismiss this dialog.</p>\n  {#snippet actions()}\n    <button type=\"button\" onclick={() => (open = false)}>Close</button>\n  {/snippet}\n</Dialog>"
+        "examples": [
+          {
+            "title": "Dialog with close button",
+            "source": "<script>\n  let open = $state(false);\n</script>\n<Button onclick={() => (open = true)}>Open help</Button>\n<Dialog bind:open title=\"Account help\" dismissible onClose={(_event, reason) => {\n  if (reason !== 'backdropClick') open = false;\n}}>\n  <p>Choose Close, the X, or press Escape to dismiss this dialog.</p>\n  {#snippet actions()}\n    <Button variant=\"text\" onclick={() => (open = false)}>Close</Button>\n  {/snippet}\n</Dialog>"
+          }
+        ]
       }
     }
   }

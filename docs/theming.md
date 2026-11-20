@@ -44,11 +44,12 @@ Use the playground's palette and mode controls while viewing `/gallery/` to comp
 
 ## Override tokens
 
-| What to change   | Tokens and placement                                                                                                                                                                                                      |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Page and surface | Set `--clay-page`, `--clay-surface`, `--clay-ink`, `--clay-ink-muted`, `--clay-edge`, and `--clay-focus` on the themed page or container.                                                                                 |
-| Brand and status | Override a role's fill, on-fill, and surface ink together, for example `--clay-primary`, `--clay-primary-on`, and `--clay-primary-ink`. Check contrast in both modes. Don't assign the internal `--c` variables directly. |
-| Geometry         | Prefer a supported `elevation`, `size`, or `square` prop. If necessary, set `--clay-d` or `--clay-radius` on the surface element itself.                                                                                  |
+| What to change   | Tokens and placement                                                                                                                                                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Page and surface | Set `--clay-page`, `--clay-surface`, `--clay-ink`, `--clay-ink-muted`, `--clay-edge`, and `--clay-focus` on the themed page or container.                                                                                             |
+| Brand and status | Override a role's fill, on-fill, and surface ink together, for example `--clay-primary`, `--clay-primary-on`, and `--clay-primary-ink`. Check contrast in both modes. Don't assign the internal `--c` variables directly.             |
+| Geometry         | Prefer a supported `elevation`, `size`, or `square` prop. If necessary, set `--clay-d` or `--clay-radius` on the surface element itself.                                                                                              |
+| Avatar centering | Initials and icons sit slightly up and left of the geometric center (3px on small and medium avatars, 2.5px on large), matching the lit face of the clay shading. `--clay-avatar-optical-offset` sets the shift; `0` centers exactly. |
 
 ## Inflated lighting
 

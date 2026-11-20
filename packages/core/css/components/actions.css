@@ -437,6 +437,14 @@ button.clay-chip__body {
 .clay-list[data-padded] {
   padding-block: 8px;
 }
+/* Names the list (aria-label) and heads it visually; hidden from the item count. */
+.clay-list__subheader {
+  padding: 8px 16px 4px;
+  color: var(--clay-ink-muted);
+  font: 600 0.75rem/1.5 var(--clay-font);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 .clay-list-item {
   display: flex;
   align-items: center;
@@ -453,6 +461,11 @@ button.clay-chip__body {
 .clay-list-item[data-padded][data-gutters] {
   padding-inline: 16px;
 }
+/* A row that holds a ListItemButton lets the button supply the padding, so `disablePadding` is
+ * optional there. Declared after the gutters rule, which has the same specificity. */
+.clay-list-item[data-padded]:has(> .clay-list-item-button) {
+  padding: 0;
+}
 .clay-list-item[data-divider] {
   border-block-end: var(--clay-border-width) solid var(--clay-edge);
 }
@@ -461,6 +474,10 @@ button.clay-chip__body {
   flex: none;
   align-items: center;
   margin-inline-start: auto;
+}
+/* Beside a full-width button: a little space from it, the row's gutter from the edge. */
+.clay-list-item:has(> .clay-list-item-button) > .clay-list-item__secondary-action {
+  margin-inline: 8px 16px;
 }
 .clay-list-item-button {
   --clay-color: var(--clay-surface);

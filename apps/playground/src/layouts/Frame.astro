@@ -26,7 +26,21 @@ const { title } = Astro.props;
 
 <style is:global>
   body.example-frame {
+    box-sizing: border-box;
     padding: 24px;
+  }
+  /* Modals, snackbars and tooltips draw over the frame's viewport, not inside the page flow,
+   * so a frame sized to its trigger would clip them. Reserve room where they open. */
+  body.example-frame:has(dialog) {
+    min-height: 440px;
+  }
+  body.example-frame:has(.clay-snackbar) {
+    min-height: 220px;
+  }
+  /* Room above for top placement and beside for a bubble wider than its trigger. */
+  body.example-frame:has(.clay-tooltip) {
+    padding-block-start: 72px;
+    padding-inline-start: 120px;
   }
 </style>
 

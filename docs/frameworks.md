@@ -37,6 +37,16 @@ In Astro, open a `Dialog` or temporary `Drawer` with a button whose `commandfor`
 
 In Svelte, bind `open` and optionally handle `onClose`. In either framework, a tooltip handles Escape only while focus or the pointer is on it.
 
+`dismissible` adds a close (X) button to a `Dialog` in both bridges; `closeText` sets its accessible name (default "Close"). It sends the same close request as Escape and the backdrop, with reason `closeButton`, so the same listener or `onClose` callback can keep the dialog open.
+
+## Lists
+
+Compose `List` > `ListItem` > content. Inside a row, `ListItemIcon` (an icon or `Avatar`) and `ListItemText` (`primary`, `secondary`) line up across rows. For a clickable row, put a `ListItemButton` (an `href` makes it a link) inside the `ListItem`; the row drops its own padding automatically, so `disablePadding` is optional. A trailing control goes in the row's secondary action, never inside the button.
+
+- `subheader` on `List` adds a visible heading that also names the list for assistive technology.
+- `ListItemIcon` is decorative (`aria-hidden`) by default; give it an `aria-label` to announce it.
+- A selected `ListItemButton` presses into the surface, like a selected tab. Put lists on a `Card`, `Paper` or `Drawer` so hover and selection read as clay.
+
 ## Motion
 
 Both bridges accept the same `motion` prop on animated components (`<Button motion="lift">`). It renders `data-motion`, which also works as a plain attribute or `clay-motion-*` class on any element. See [Motion](./motion.md) for presets and tokens.

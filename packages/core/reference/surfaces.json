@@ -31,7 +31,12 @@
         "props": {},
         "content": ["Default slot: header content."],
         "events": [],
-        "example": "<AppBar position=\"static\" color=\"default\">\n  <h1>Collection</h1>\n  <nav aria-label=\"Main\"><a href=\"/settings\">Settings</a></nav>\n</AppBar>"
+        "examples": [
+          {
+            "title": "Static app bar",
+            "source": "<AppBar position=\"static\" color=\"default\">\n  <h1>Collection</h1>\n  <nav aria-label=\"Main\"><a href=\"/settings\">Settings</a></nav>\n</AppBar>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["AppBar"],
@@ -39,7 +44,12 @@
         "props": {},
         "content": ["children: header content."],
         "events": [],
-        "example": "<AppBar position=\"static\" color=\"default\">\n  <h1>Collection</h1>\n  <nav aria-label=\"Main\"><a href=\"/settings\">Settings</a></nav>\n</AppBar>"
+        "examples": [
+          {
+            "title": "Static app bar",
+            "source": "<AppBar position=\"static\" color=\"default\">\n  <h1>Collection</h1>\n  <nav aria-label=\"Main\"><a href=\"/settings\">Settings</a></nav>\n</AppBar>"
+          }
+        ]
       }
     }
   },
@@ -70,20 +80,30 @@
     },
     "bridges": {
       "astro": {
-        "imports": ["Card", "CardHeader", "CardContent", "CardActions"],
+        "imports": ["Card", "CardHeader", "CardContent", "CardActions", "Button"],
         "required": [],
         "props": {},
         "content": ["Default slot: surface content."],
         "events": [],
-        "example": "<Card as=\"article\" raised>\n  <CardHeader title=\"Billing\" subheader=\"Updated today\" />\n  <CardContent>Download your latest statement.</CardContent>\n  <CardActions><a href=\"/statements/latest\">View statement</a></CardActions>\n</Card>"
+        "examples": [
+          {
+            "title": "Raised billing card",
+            "source": "<Card as=\"article\" raised style=\"max-width: 420px\">\n  <CardHeader title=\"Billing\" subheader=\"Updated today\" />\n  <CardContent>\n    <p>Your November statement is ready. The balance of $42.00 is due on December 15.</p>\n  </CardContent>\n  <CardActions>\n    <Button href=\"/statements/latest\">View statement</Button>\n    <Button variant=\"text\">Remind me later</Button>\n  </CardActions>\n</Card>"
+          }
+        ]
       },
       "svelte": {
-        "imports": ["Card", "CardHeader", "CardContent", "CardActions"],
+        "imports": ["Card", "CardHeader", "CardContent", "CardActions", "Button"],
         "required": [],
         "props": {},
         "content": ["children: surface content."],
         "events": [],
-        "example": "<Card as=\"article\" raised>\n  <CardHeader title=\"Billing\" subheader=\"Updated today\" />\n  <CardContent>Download your latest statement.</CardContent>\n  <CardActions><a href=\"/statements/latest\">View statement</a></CardActions>\n</Card>"
+        "examples": [
+          {
+            "title": "Raised billing card",
+            "source": "<Card as=\"article\" raised style=\"max-width: 420px\">\n  <CardHeader title=\"Billing\" subheader=\"Updated today\" />\n  <CardContent>\n    <p>Your November statement is ready. The balance of $42.00 is due on December 15.</p>\n  </CardContent>\n  <CardActions>\n    <Button href=\"/statements/latest\">View statement</Button>\n    <Button variant=\"text\">Remind me later</Button>\n  </CardActions>\n</Card>"
+          }
+        ]
       }
     }
   },
@@ -98,20 +118,30 @@
     },
     "bridges": {
       "astro": {
-        "imports": ["Card", "CardActions"],
+        "imports": ["Card", "CardContent", "CardActions", "Button"],
         "required": [],
         "props": {},
         "content": ["Default slot: buttons, links or other actions."],
         "events": [],
-        "example": "<Card>\n  <CardActions><a href=\"/settings\">Settings</a><a href=\"/support\">Support</a></CardActions>\n</Card>"
+        "examples": [
+          {
+            "title": "Save and discard actions",
+            "source": "<Card style=\"max-width: 420px\">\n  <CardContent><p>Save your changes before leaving this page.</p></CardContent>\n  <CardActions>\n    <Button size=\"small\">Save</Button>\n    <Button size=\"small\" variant=\"outlined\">Discard</Button>\n  </CardActions>\n</Card>"
+          }
+        ]
       },
       "svelte": {
-        "imports": ["Card", "CardActions"],
+        "imports": ["Card", "CardContent", "CardActions", "Button"],
         "required": [],
         "props": {},
         "content": ["children: buttons, links or other actions."],
         "events": [],
-        "example": "<Card>\n  <CardActions><a href=\"/settings\">Settings</a><a href=\"/support\">Support</a></CardActions>\n</Card>"
+        "examples": [
+          {
+            "title": "Save and discard actions",
+            "source": "<Card style=\"max-width: 420px\">\n  <CardContent><p>Save your changes before leaving this page.</p></CardContent>\n  <CardActions>\n    <Button size=\"small\">Save</Button>\n    <Button size=\"small\" variant=\"outlined\">Discard</Button>\n  </CardActions>\n</Card>"
+          }
+        ]
       }
     }
   },
@@ -125,7 +155,12 @@
         "props": {},
         "content": ["Default slot: main card content."],
         "events": [],
-        "example": "<Card>\n  <CardContent><p>Billing information appears here.</p></CardContent>\n</Card>"
+        "examples": [
+          {
+            "title": "Card content with padding",
+            "source": "<Card style=\"max-width: 420px\">\n  <CardContent>\n    <p>Billing information appears here. Content keeps the same side padding as the card's header and actions.</p>\n  </CardContent>\n</Card>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["Card", "CardContent"],
@@ -133,7 +168,12 @@
         "props": {},
         "content": ["children: main card content."],
         "events": [],
-        "example": "<Card>\n  <CardContent><p>Billing information appears here.</p></CardContent>\n</Card>"
+        "examples": [
+          {
+            "title": "Card content with padding",
+            "source": "<Card style=\"max-width: 420px\">\n  <CardContent>\n    <p>Billing information appears here. Content keeps the same side padding as the card's header and actions.</p>\n  </CardContent>\n</Card>"
+          }
+        ]
       }
     }
   },
@@ -156,24 +196,34 @@
     },
     "bridges": {
       "astro": {
-        "imports": ["Card", "CardHeader"],
+        "imports": ["Card", "CardHeader", "Avatar", "Button"],
         "required": [],
         "props": {},
         "content": [
           "Named slots: avatar, title, subheader, action. The title and subheader slots take precedence over text props."
         ],
         "events": [],
-        "example": "<Card>\n  <CardHeader subheader=\"Updated today\" disableTypography>\n    <span slot=\"avatar\" aria-hidden=\"true\">AQ</span>\n    <h2 slot=\"title\">Account</h2>\n    <a slot=\"action\" href=\"/settings\">Edit</a>\n  </CardHeader>\n</Card>"
+        "examples": [
+          {
+            "title": "Header with avatar and action",
+            "source": "<Card style=\"max-width: 420px\">\n  <CardHeader title=\"Ada Lovelace\" subheader=\"Updated today\">\n    <Avatar slot=\"avatar\" alt=\"Ada Lovelace\" />\n    <Button slot=\"action\" variant=\"text\" size=\"small\" href=\"/settings\">Edit</Button>\n  </CardHeader>\n</Card>"
+          }
+        ]
       },
       "svelte": {
-        "imports": ["Card", "CardHeader"],
+        "imports": ["Card", "CardHeader", "Avatar", "Button"],
         "required": [],
         "props": {},
         "content": [
           "Optional avatar and action snippets. Both title and subheader can be passed as snippets instead of strings."
         ],
         "events": [],
-        "example": "<Card>\n  <CardHeader subheader=\"Updated today\" disableTypography>\n    {#snippet avatar()}<span aria-hidden=\"true\">AQ</span>{/snippet}\n    {#snippet title()}<h2>Account</h2>{/snippet}\n    {#snippet action()}<a href=\"/settings\">Edit</a>{/snippet}\n  </CardHeader>\n</Card>"
+        "examples": [
+          {
+            "title": "Header with avatar and action",
+            "source": "<Card style=\"max-width: 420px\">\n  <CardHeader title=\"Ada Lovelace\" subheader=\"Updated today\">\n    {#snippet avatar()}<Avatar alt=\"Ada Lovelace\" />{/snippet}\n    {#snippet action()}<Button variant=\"text\" size=\"small\" href=\"/settings\">Edit</Button>{/snippet}\n  </CardHeader>\n</Card>"
+          }
+        ]
       }
     }
   },
@@ -204,7 +254,12 @@
         "props": {},
         "content": ["No content slots; Divider is a void element."],
         "events": [],
-        "example": "<div style=\"display: flex; gap: 0.75rem;\">\n  <a href=\"/settings\">Settings</a>\n  <Divider orientation=\"vertical\" flexItem />\n  <a href=\"/support\">Support</a>\n</div>"
+        "examples": [
+          {
+            "title": "Vertical divider between links",
+            "source": "<div style=\"display: flex; gap: 0.75rem;\">\n  <a href=\"/settings\">Settings</a>\n  <Divider orientation=\"vertical\" flexItem />\n  <a href=\"/support\">Support</a>\n</div>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["Divider"],
@@ -212,7 +267,12 @@
         "props": {},
         "content": ["No snippets; Divider is a void element."],
         "events": [],
-        "example": "<div style=\"display: flex; gap: 0.75rem;\">\n  <a href=\"/settings\">Settings</a>\n  <Divider orientation=\"vertical\" flexItem />\n  <a href=\"/support\">Support</a>\n</div>"
+        "examples": [
+          {
+            "title": "Vertical divider between links",
+            "source": "<div style=\"display: flex; gap: 0.75rem;\">\n  <a href=\"/settings\">Settings</a>\n  <Divider orientation=\"vertical\" flexItem />\n  <a href=\"/support\">Support</a>\n</div>"
+          }
+        ]
       }
     }
   },
@@ -295,7 +355,12 @@
         "props": {},
         "content": ["Default slot: text and inline markup."],
         "events": [],
-        "example": "<Typography variant=\"h4\" as=\"h2\" gutterBottom>Account settings</Typography>\n<Typography color=\"text.secondary\">Manage your profile and notifications.</Typography>"
+        "examples": [
+          {
+            "title": "Heading with supporting text",
+            "source": "<Typography variant=\"h4\" as=\"h2\" gutterBottom>Account settings</Typography>\n<Typography color=\"text.secondary\">Manage your profile and notifications.</Typography>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["Typography"],
@@ -303,7 +368,12 @@
         "props": {},
         "content": ["children: text and inline markup."],
         "events": [],
-        "example": "<Typography variant=\"h4\" as=\"h2\" gutterBottom>Account settings</Typography>\n<Typography color=\"text.secondary\">Manage your profile and notifications.</Typography>"
+        "examples": [
+          {
+            "title": "Heading with supporting text",
+            "source": "<Typography variant=\"h4\" as=\"h2\" gutterBottom>Account settings</Typography>\n<Typography color=\"text.secondary\">Manage your profile and notifications.</Typography>"
+          }
+        ]
       }
     }
   },
@@ -338,7 +408,12 @@
         "events": [
           "Native toggle on the root details element, including programmatic changes. Read details.open for the current state."
         ],
-        "example": "<Accordion id=\"billing-details\" defaultExpanded>\n  <span slot=\"summary\">Billing details</span>\n  <p>Your billing information is up to date.</p>\n</Accordion>\n<p>Billing details: <output id=\"billing-state\">open</output></p>\n<script>\n  const details = document.querySelector<HTMLDetailsElement>('#billing-details')!;\n  const state = document.getElementById('billing-state')!;\n  details.addEventListener('toggle', () => {\n    state.textContent = details.open ? 'open' : 'closed';\n  });\n</script>"
+        "examples": [
+          {
+            "title": "Track accordion expansion",
+            "source": "<Accordion id=\"billing-details\" defaultExpanded>\n  <span slot=\"summary\">Billing details</span>\n  <p>Your billing information is up to date.</p>\n</Accordion>\n<p>Billing details: <output id=\"billing-state\">open</output></p>\n<script>\n  const details = document.querySelector<HTMLDetailsElement>('#billing-details')!;\n  const state = document.getElementById('billing-state')!;\n  details.addEventListener('toggle', () => {\n    state.textContent = details.open ? 'open' : 'closed';\n  });\n</script>"
+          }
+        ]
       },
       "svelte": {
         "imports": ["Accordion"],
@@ -359,7 +434,12 @@
         "events": [
           "onChange(event, expanded) reports a native state change; ontoggle exposes the native event, including programmatic changes."
         ],
-        "example": "<script lang=\"ts\">\n  let expanded = $state(true);\n  let changes = $state(0);\n</script>\n<Accordion bind:expanded onChange={() => changes++}>\n  {#snippet summary()}Billing details{/snippet}\n  <p>Your billing information is up to date.</p>\n</Accordion>\n<p>Billing details: {expanded ? 'open' : 'closed'}. Native changes: {changes}.</p>"
+        "examples": [
+          {
+            "title": "Track accordion expansion",
+            "source": "<script lang=\"ts\">\n  let expanded = $state(true);\n  let changes = $state(0);\n</script>\n<Accordion bind:expanded onChange={() => changes++}>\n  {#snippet summary()}Billing details{/snippet}\n  <p>Your billing information is up to date.</p>\n</Accordion>\n<p>Billing details: {expanded ? 'open' : 'closed'}. Native changes: {changes}.</p>"
+          }
+        ]
       }
     }
   }
