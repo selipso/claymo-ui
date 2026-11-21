@@ -134,6 +134,140 @@
       }
     }
   },
+  "Autocomplete": {
+    "purpose": "A clay-styled filterable combobox for a single selection or multiple removable tags. Unlike MUI's default, value, defaultValue and change notifications contain string option values, not option objects. A string option uses itself as both its value and label; an object with no value uses its label. Values should be unique.",
+    "props": {
+      "options": {
+        "type": "array",
+        "items": {
+          "oneOf": [
+            { "type": "string" },
+            {
+              "type": "object",
+              "properties": { "label": { "type": "string" }, "value": { "type": "string" } },
+              "required": ["label"]
+            }
+          ]
+        },
+        "description": "Choices in display order. Search matches a case-insensitive substring of each label."
+      },
+      "label": { "type": "string", "description": "Visible label associated with the combobox." },
+      "multiple": {
+        "type": "boolean",
+        "default": false,
+        "description": "Render removable chips. Backspace on an empty input removes the last chip."
+      },
+      "freeSolo": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enter or the Add option commits typed text that does not match an existing option."
+      },
+      "addOptionText": {
+        "type": "string",
+        "default": "Add \"{input}\"",
+        "description": "Label template for the creatable option. {input} is replaced with the typed text."
+      },
+      "placeholder": { "type": "string" },
+      "helperText": {
+        "type": "string",
+        "description": "Helper or error text describing the combobox."
+      },
+      "error": {
+        "type": "boolean",
+        "default": false,
+        "description": "Sets error styling and aria-invalid."
+      },
+      "disabled": { "type": "boolean", "default": false },
+      "required": {
+        "type": "boolean",
+        "default": false,
+        "description": "Require a committed selection before form submission."
+      },
+      "fullWidth": { "type": "boolean", "default": false },
+      "size": { "type": "string", "enum": ["small", "medium"], "default": "medium" },
+      "id": { "type": "string", "description": "Combobox id; generated if omitted." },
+      "name": {
+        "type": "string",
+        "description": "Native form field name. Each selected value is submitted as a separate entry with this name."
+      },
+      "filterSelectedOptions": {
+        "type": "boolean",
+        "default": false,
+        "description": "Hide already-selected values from the listbox."
+      },
+      "noOptionsText": { "type": "string", "default": "No options" }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Autocomplete", "Button"],
+        "required": ["options", "label"],
+        "props": {
+          "value": {
+            "type": ["string", "null", "array"],
+            "items": { "type": "string" },
+            "description": "Initial selection; overrides defaultValue. A string or null for single selection, an array of strings for multiple."
+          },
+          "defaultValue": {
+            "type": ["string", "null", "array"],
+            "items": { "type": "string" },
+            "description": "Initial selection when value is omitted; null for single selection or an empty array for multiple by default."
+          }
+        },
+        "content": [],
+        "events": [
+          "clay-change: bubbling CustomEvent on the root when a user changes the selection. Its detail.value is a string or null for single selection, an array of strings for multiple. The global event type also covers Tabs; import AutocompleteChangeEvent from @claymo/core/behavior/input for the narrower Autocomplete detail type."
+        ],
+        "examples": [
+          {
+            "title": "Tags (multiple)",
+            "source": "---\nconst options = [\n  { label: 'TypeScript', value: 'typescript' },\n  { label: 'Astro', value: 'astro' },\n  { label: 'Svelte', value: 'svelte' },\n  { label: 'Playwright', value: 'playwright' },\n];\n---\n<Autocomplete label=\"Tags\" {options} multiple filterSelectedOptions defaultValue={['typescript', 'astro']} placeholder=\"Find a tag\" />"
+          },
+          {
+            "title": "Creatable tags (freeSolo)",
+            "source": "<div id=\"creatable-tags\">\n  <Autocomplete label=\"Topics\" options={['CSS', 'Accessibility', 'TypeScript']} multiple freeSolo defaultValue={['TypeScript']} />\n</div>\n<p>Selected values: <output id=\"topic-values\" aria-label=\"Selected topics\">TypeScript</output></p>\n<script>\n  import { AUTOCOMPLETE_CHANGE_EVENT } from '@claymo/core/behavior/input';\n  const output = document.querySelector<HTMLOutputElement>('#topic-values');\n  document.querySelector<HTMLElement>('#creatable-tags')?.addEventListener(AUTOCOMPLETE_CHANGE_EVENT, ({ detail }) => {\n    if (output && Array.isArray(detail.value)) output.value = detail.value.join(', ') || 'None';\n  });\n</script>"
+          },
+          {
+            "title": "Single value in a form",
+            "source": "<form id=\"shelf-form\">\n  <Autocomplete label=\"Shelf\" name=\"shelf\" required options={[{ label: 'Paper', value: 'paper' }, { label: 'Digital', value: 'digital' }]} />\n  <Button type=\"submit\">Save shelf</Button>\n  <p>Submitted value: <output aria-label=\"Submitted shelf\"></output></p>\n</form>\n<script>\n  const form = document.querySelector<HTMLFormElement>('#shelf-form');\n  const output = form?.querySelector('output');\n  if (form && output) {\n    form.addEventListener('submit', (event) => {\n      event.preventDefault();\n      output.value = String(new FormData(form).get('shelf') ?? '');\n    });\n  }\n</script>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["Autocomplete", "Button"],
+        "required": ["options", "label"],
+        "props": {
+          "value": {
+            "type": ["string", "null", "array"],
+            "items": { "type": "string" },
+            "description": "Live selection; supports bind:value. A string or null for single selection, an array of strings for multiple."
+          },
+          "defaultValue": {
+            "type": ["string", "null", "array"],
+            "items": { "type": "string" },
+            "description": "Initial selection when value is omitted; null for single selection or an empty array for multiple by default."
+          }
+        },
+        "content": [],
+        "events": [
+          "onChange(event, value): called on a user selection change with the native event and the new value (string or null for single selection, string[] for multiple)."
+        ],
+        "examples": [
+          {
+            "title": "Tags (multiple)",
+            "source": "<script lang=\"ts\">\n  const options = [\n    { label: 'TypeScript', value: 'typescript' },\n    { label: 'Astro', value: 'astro' },\n    { label: 'Svelte', value: 'svelte' },\n    { label: 'Playwright', value: 'playwright' },\n  ];\n</script>\n\n<Autocomplete label=\"Tags\" {options} multiple filterSelectedOptions defaultValue={['typescript', 'astro']} placeholder=\"Find a tag\" />"
+          },
+          {
+            "title": "Creatable tags (freeSolo)",
+            "source": "<script lang=\"ts\">\n  let topics = $state<string[]>(['TypeScript']);\n</script>\n\n<Autocomplete label=\"Topics\" options={['CSS', 'Accessibility', 'TypeScript']} multiple freeSolo bind:value={topics} />\n<p>Selected values: <output aria-label=\"Selected topics\">{topics.join(', ') || 'None'}</output></p>"
+          },
+          {
+            "title": "Single value in a form",
+            "source": "<script lang=\"ts\">\n  let submitted = $state('');\n</script>\n\n<form onsubmit={(event) => {\n  event.preventDefault();\n  submitted = String(new FormData(event.currentTarget).get('shelf') ?? '');\n}}>\n  <Autocomplete label=\"Shelf\" name=\"shelf\" required options={[{ label: 'Paper', value: 'paper' }, { label: 'Digital', value: 'digital' }]} />\n  <Button type=\"submit\">Save shelf</Button>\n  <p>Submitted value: <output aria-label=\"Submitted shelf\">{submitted}</output></p>\n</form>"
+          }
+        ]
+      }
+    }
+  },
   "Slider": {
     "purpose": "A single-thumb, horizontal native range input with a clay track. Name it with aria-label; native form attributes are forwarded to the range input and class styles the wrapper.",
     "props": {

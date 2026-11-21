@@ -1,3 +1,4 @@
+export { default as Autocomplete } from "./Autocomplete.svelte";
 export { default as Accordion } from "./Accordion.svelte";
 export { default as Alert } from "./Alert.svelte";
 export { default as AppBar } from "./AppBar.svelte";
@@ -35,7 +36,9 @@ export { default as ListItemIcon } from "./ListItemIcon.svelte";
 export { default as ListItemText } from "./ListItemText.svelte";
 export { default as ClayLighting } from "./ClayLighting.svelte";
 export { default as Table } from "./Table.svelte";
+export { default as DataTable } from "./DataTable.svelte";
 export { default as TextField } from "./TextField.svelte";
 export { default as Tooltip } from "./Tooltip.svelte";
 export { default as Typography } from "./Typography.svelte";
 export type { TabsContext } from "./Tabs.svelte";
+export type { DataTableRowParams } from "./DataTable.svelte";

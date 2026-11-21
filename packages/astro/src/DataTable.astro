@@ -1,0 +1,308 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { actionIconAttrs } from "@claymo/core/actions";
+import {
+  ariaSort,
+  dataTableDefaults,
+  dataTableIcons,
+  dataTableLocaleText,
+  dataTableView,
+  displayedRows,
+  fillTemplate,
+  type DataTableCellParams,
+  type DataTableOptions,
+  type DataTableRow,
+} from "@claymo/core/display";
+import Checkbox from "./Checkbox.astro";
+import IconButton from "./IconButton.astro";
+import LinearProgress from "./LinearProgress.astro";
+import Table from "./Table.astro";
+import TextField from "./TextField.astro";
+import { instanceId } from "./ids.ts";
+
+/** Cell markup, written inline in the template: `renderCell: (params) => <Chip label={params.formattedValue} />`. */
+type CellRenderer<Row extends object> = (params: DataTableCellParams<Row>) => unknown;
+
+/**
+ * Renders every row on the server; the page script sorts, filters, paginates and selects them.
+ * Events (bubbling, on the root; detail is keyed by the prop name): `clay-row-click`,
+ * `clay-sort-model-change`, `clay-pagination-model-change`, `clay-quick-filter-value-change`,
+ * `clay-row-selection-model-change`. Slots: `toolbar`, `no-rows`.
+ */
+type Props<Row extends object = DataTableRow> = Omit<
+  HTMLAttributes<"div">,
+  keyof DataTableOptions | "role" | "tabindex" | "aria-label"
+> &
+  DataTableOptions<Row, CellRenderer<Row>> & {
+    /** Rows are buttons (keyboard: the row header) that fire `clay-row-click`. */
+    clickableRows?: boolean;
+  };
+
+const {
+  rows,
+  columns: columnDefs,
+  getRowId,
+  rowHeader,
+  checkboxSelection = false,
+  rowSelectionModel = [],
+  sortModel = [],
+  quickFilter = false,
+  quickFilterValue = "",
+  pagination = false,
+  paginationModel = dataTableDefaults.paginationModel,
+  pageSizeOptions = dataTableDefaults.pageSizeOptions,
+  sortingMode = dataTableDefaults.mode,
+  filterMode = dataTableDefaults.mode,
+  paginationMode = dataTableDefaults.mode,
+  rowCount,
+  loading = false,
+  localeText,
+  label,
+  size = dataTableDefaults.size,
+  stickyHeader = false,
+  clickableRows = false,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const locale = { ...dataTableLocaleText, ...localeText };
+const view = dataTableView({
+  rows,
+  columns: columnDefs,
+  getRowId,
+  rowHeader,
+  rowCount,
+  sortModel,
+  quickFilterValue,
+  paginationModel: pagination ? paginationModel : undefined,
+  rowSelectionModel,
+  sortingMode,
+  filterMode,
+  paginationMode,
+});
+const visible = new Set(view.visible);
+const shown = new Set(view.ordered);
+// Rows outside the filter stay in the document, hidden, so the page script can bring them back.
+const documentOrder = [...view.ordered, ...view.models.filter((model) => !shown.has(model))];
+const selected = new Set(rowSelectionModel);
+const hasToolbar = quickFilter || Astro.slots.has("toolbar");
+const rowsPerPageId = instanceId("clay-data-table-rows");
+const span = view.columns.length + (checkboxSelection ? 1 : 0);
+---
+
+<div
+  {...rest}
+  class:list={["clay-data-table", className]}
+  data-clay-data-table
+  data-sorting-mode={sortingMode}
+  data-filter-mode={filterMode}
+  data-pagination-mode={paginationMode}
+  data-row-count={rowCount}
+  data-clickable-rows={clickableRows ? "" : undefined}
+>
+  {hasToolbar && (
+    <div class="clay-data-table__toolbar">
+      {Astro.slots.has("toolbar") && (
+        <div class="clay-data-table__toolbar-content">
+          <slot name="toolbar" />
+        </div>
+      )}
+      {quickFilter && (
+        <TextField
+          type="search"
+          size="small"
+          class="clay-data-table__quick-filter"
+          aria-label={locale.toolbarQuickFilterLabel}
+          placeholder={locale.toolbarQuickFilterPlaceholder}
+          value={quickFilterValue}
+          data-clay-quick-filter
+        >
+          <svg slot="start-adornment" {...actionIconAttrs} width="18" height="18">
+            <path d={dataTableIcons.search} />
+          </svg>
+        </TextField>
+      )}
+    </div>
+  )}
+  <div class="clay-data-table__body">
+    {loading && (
+      <LinearProgress class="clay-data-table__loading" aria-label={locale.loadingLabel} />
+    )}
+    <Table
+      label={label}
+      size={size}
+      stickyHeader={stickyHeader}
+      aria-busy={loading ? "true" : undefined}
+    >
+      <thead>
+        <tr>
+          {checkboxSelection && (
+            <th scope="col" class="clay-data-table__checkbox">
+              <Checkbox
+                size="small"
+                aria-label={locale.checkboxSelectionSelectAllRows}
+                checked={view.selectAll.checked}
+                indeterminate={view.selectAll.indeterminate}
+                data-clay-select-all
+              />
+            </th>
+          )}
+          {view.columns.map((column) => (
+            <th
+              scope="col"
+              data-field={column.field}
+              data-type={column.type}
+              data-align={column.align}
+              aria-sort={ariaSort(sortModel, column.field)}
+              style={column.width ? `width: ${column.width}px` : undefined}
+            >
+              {column.sortable ? (
+                <button type="button" class="clay-data-table__sort" data-clay-sort>
+                  {column.headerName}
+                  <svg
+                    class="clay-data-table__sort-icon"
+                    {...actionIconAttrs}
+                    width="16"
+                    height="16"
+                  >
+                    <path d={dataTableIcons.sort} />
+                  </svg>
+                </button>
+              ) : (
+                column.headerName
+              )}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {documentOrder.map((model) => (
+          <tr
+            data-id={model.id}
+            data-index={model.index}
+            data-search={model.search}
+            data-selected={selected.has(model.id) ? "" : undefined}
+            hidden={!visible.has(model)}
+          >
+            {checkboxSelection && (
+              <td class="clay-data-table__checkbox">
+                <Checkbox
+                  size="small"
+                  aria-label={fillTemplate(locale.checkboxSelectionSelectRow, {
+                    row: model.cells[view.rowHeaderIndex]?.text ?? model.id,
+                  })}
+                  checked={selected.has(model.id)}
+                  value={model.id}
+                  data-clay-select-row
+                />
+              </td>
+            )}
+            {view.columns.map((column, index) => {
+              const cell = model.cells[index]!;
+              const isHeader = index === view.rowHeaderIndex;
+              const Cell = isHeader ? "th" : "td";
+              const content = column.renderCell
+                ? column.renderCell({
+                    row: model.row,
+                    id: model.id,
+                    field: column.field,
+                    value: cell.value,
+                    formattedValue: cell.text,
+                    rowIndex: model.index,
+                  })
+                : cell.text;
+              return (
+                <Cell
+                  scope={isHeader ? "row" : undefined}
+                  data-field={column.field}
+                  data-align={column.align}
+                  data-sort={column.sortable ? String(cell.key) : undefined}
+                >
+                  {clickableRows && isHeader ? (
+                    <button type="button" class="clay-data-table__row-button">
+                      {content}
+                    </button>
+                  ) : (
+                    content
+                  )}
+                </Cell>
+              );
+            })}
+          </tr>
+        ))}
+        <tr class="clay-data-table__empty" hidden={view.ordered.length > 0}>
+          <td colspan={span}>
+            {loading ? (
+              locale.loadingLabel
+            ) : rows.length === 0 ? (
+              <slot name="no-rows">{locale.noRowsLabel}</slot>
+            ) : (
+              locale.noResultsOverlayLabel
+            )}
+          </td>
+        </tr>
+      </tbody>
+    </Table>
+  </div>
+  {(pagination || checkboxSelection) && (
+    <div class="clay-data-table__footer">
+      {checkboxSelection && (
+        <span
+          class="clay-data-table__selected"
+          role="status"
+          data-template={locale.footerRowSelected}
+        >
+          {selected.size ? fillTemplate(locale.footerRowSelected, { count: selected.size }) : ""}
+        </span>
+      )}
+      {view.page && (
+        <div class="clay-data-table__pagination">
+          <span id={rowsPerPageId}>{locale.paginationRowsPerPage}</span>
+          <TextField
+            select
+            size="small"
+            class="clay-data-table__page-size"
+            aria-labelledby={rowsPerPageId}
+            options={pageSizeOptions.map((option) => ({ value: option, label: String(option) }))}
+            value={view.page.pageSize}
+            data-clay-page-size
+          />
+          <span
+            class="clay-data-table__displayed"
+            role="status"
+            data-template={locale.paginationDisplayedRows}
+            data-page={view.page.page}
+          >
+            {displayedRows(locale.paginationDisplayedRows, view.page, view.count)}
+          </span>
+          <IconButton
+            size="small"
+            aria-label={locale.paginationPrevious}
+            disabled={view.page.page === 0}
+            data-clay-page="previous"
+          >
+            <svg {...actionIconAttrs} width="18" height="18">
+              <path d={dataTableIcons.previous} />
+            </svg>
+          </IconButton>
+          <IconButton
+            size="small"
+            aria-label={locale.paginationNext}
+            disabled={view.page.page >= view.lastPage}
+            data-clay-page="next"
+          >
+            <svg {...actionIconAttrs} width="18" height="18">
+              <path d={dataTableIcons.next} />
+            </svg>
+          </IconButton>
+        </div>
+      )}
+    </div>
+  )}
+</div>
+
+<script>
+  import { upgradeDataTables } from "@claymo/core/behavior/display";
+  import { onEveryPage } from "./lifecycle.ts";
+  onEveryPage(upgradeDataTables);
+</script>

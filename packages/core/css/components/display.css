@@ -379,9 +379,16 @@
 .clay-table__table > tbody > tr > th {
   color: inherit;
 }
-/* Cell dividers move with the sticky header; the section keeps multiple header rows together. */
-.clay-table__table > :is(thead, tbody, tfoot) > tr:not(:last-child) > :is(th, td),
-.clay-table__table > :is(thead, tbody, tfoot):not(:last-child) > tr:last-child > :is(th, td) {
+/* Cell dividers move with the sticky header; the section keeps multiple header rows together.
+   Hidden rows (filtered or on another page) don't count as the last row. */
+.clay-table__table
+  > :is(thead, tbody, tfoot)
+  > tr:not(:nth-last-child(1 of :not([hidden])))
+  > :is(th, td),
+.clay-table__table
+  > :is(thead, tbody, tfoot):not(:last-child)
+  > tr:nth-last-child(1 of :not([hidden]))
+  > :is(th, td) {
   border-block-end: var(--clay-border-width) solid var(--clay-edge);
 }
 .clay-table__table > tbody > tr:hover > :is(th, td) {
@@ -392,6 +399,122 @@
   inset-block-start: 0;
   z-index: 1;
   background-color: var(--clay-page);
+}
+
+.clay-data-table {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  color: var(--clay-ink);
+}
+.clay-data-table__body {
+  position: relative;
+  min-width: 0;
+}
+/* Overlays the header's top padding so loading never shifts the layout. */
+.clay-data-table__loading.clay-linear-progress {
+  position: absolute;
+  z-index: 2;
+  inset-block-start: 3px;
+  inset-inline: 24px;
+  width: auto;
+  height: 6px;
+}
+.clay-data-table__toolbar,
+.clay-data-table__footer,
+.clay-data-table__pagination,
+.clay-data-table__toolbar-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+.clay-data-table__toolbar-content,
+.clay-data-table__selected {
+  margin-inline-end: auto;
+}
+.clay-data-table__quick-filter {
+  margin-inline-start: auto;
+}
+.clay-data-table__footer {
+  justify-content: flex-end;
+  color: var(--clay-ink-muted);
+  font-size: 0.875rem;
+}
+.clay-data-table__displayed {
+  min-width: 9ch;
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+.clay-data-table :is(th, td)[data-align="right"] {
+  text-align: end;
+}
+.clay-data-table :is(th, td)[data-align="center"] {
+  text-align: center;
+}
+.clay-data-table .clay-table__table > * > tr > .clay-data-table__checkbox {
+  width: 1px;
+  padding-block: 0;
+  padding-inline-end: 0;
+}
+.clay-data-table__sort,
+.clay-data-table__row-button {
+  margin: -2px -6px;
+  padding: 2px 6px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+.clay-data-table__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+/* The icon leads on end-aligned headers, so the label lines up with the values below. */
+[data-align="right"] > .clay-data-table__sort {
+  flex-direction: row-reverse;
+}
+.clay-data-table__sort:focus-visible,
+.clay-data-table__row-button:focus-visible {
+  outline: 3px solid var(--clay-focus);
+  outline-offset: 0;
+}
+.clay-data-table__sort-icon {
+  flex: none;
+  opacity: 0;
+  transition:
+    opacity var(--clay-motion-duration) var(--clay-motion-easing),
+    transform var(--clay-motion-duration) var(--clay-motion-easing);
+}
+.clay-data-table__sort:is(:hover, :focus-visible) > .clay-data-table__sort-icon {
+  opacity: 0.5;
+}
+[aria-sort] > .clay-data-table__sort > .clay-data-table__sort-icon {
+  opacity: 1;
+}
+[aria-sort="descending"] > .clay-data-table__sort > .clay-data-table__sort-icon {
+  transform: rotate(180deg);
+}
+[aria-sort] > .clay-data-table__sort {
+  color: var(--clay-ink);
+}
+.clay-data-table[data-clickable-rows] .clay-table__table > tbody > tr[data-id] {
+  cursor: pointer;
+}
+.clay-data-table .clay-table__table > tbody > tr[data-selected] > :is(th, td) {
+  background-color: color-mix(in oklab, var(--clay-primary) 16%, var(--clay-page));
+}
+.clay-data-table__empty > td {
+  padding-block: 32px;
+  color: var(--clay-ink-muted);
+  text-align: center;
+}
+.clay-data-table .clay-table__table > tbody > tr.clay-data-table__empty:hover > td {
+  background-color: transparent;
 }
 
 @media (forced-colors: active) {

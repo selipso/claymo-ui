@@ -10,6 +10,7 @@ export const guides = [
   { slug: "frameworks", label: "Astro and Svelte" },
   { slug: "theming", label: "Theming" },
   { slug: "motion", label: "Motion" },
+  { slug: "data-patterns", label: "Data patterns" },
   { slug: "mcp", label: "MCP server" },
   { slug: "accessibility", label: "Accessibility and limits" },
   { slug: "runbook", label: "Release runbook" },

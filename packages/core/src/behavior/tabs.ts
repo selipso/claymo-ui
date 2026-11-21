@@ -1,15 +1,10 @@
 import { isTabbable, tabKeyTarget, type TabValue } from "../tabs.ts";
+import { CHANGE_EVENT, type ClayChangeEvent } from "./events.ts";
 import { upgrader } from "./upgrade.ts";
 
 /** Fired on the tabs root when the user selects a tab; never fired by `select()`. */
-export const TABS_CHANGE_EVENT = "clay-change";
-export type TabsChangeEvent = CustomEvent<{ value: TabValue }>;
-
-declare global {
-  interface HTMLElementEventMap {
-    "clay-change": TabsChangeEvent;
-  }
-}
+export { CHANGE_EVENT as TABS_CHANGE_EVENT };
+export type TabsChangeEvent = ClayChangeEvent<TabValue>;
 
 /**
  * The single keyboard implementation for tablists: Arrow keys (RTL-aware), Home and End move focus
@@ -72,7 +67,7 @@ export function attachTabs(root: HTMLElement): TabsController {
       return;
     const value = readTabValue(tab);
     select(value);
-    root.dispatchEvent(new CustomEvent(TABS_CHANGE_EVENT, { bubbles: true, detail: { value } }));
+    root.dispatchEvent(new CustomEvent(CHANGE_EVENT, { bubbles: true, detail: { value } }));
   };
   const onKeydown = (event: KeyboardEvent) => {
     const tab = (event.target as Element).closest<HTMLElement>('[role="tab"]');

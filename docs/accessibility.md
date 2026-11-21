@@ -9,6 +9,8 @@
 - Hover and press change surface depth with a short shadow transition on interactive elements only; static surfaces don't animate their shadows.
 - In forced colors, clay surfaces use a `ButtonText` border in place of shadows. Some component indicators still need fallbacks (see below).
 - Default-size controls are at least 48px tall. `size="small"` is a dense 36px option.
+- `DataTable` keeps native table semantics: sortable headers are buttons with `aria-sort` on the active column, the first data column is the row header, clickable rows make that header a keyboard button, row checkboxes are named after it ("Select logo.svg"), and the selected count and page range are `status` regions. It is not an ARIA grid; see [Data patterns](./data-patterns.md#limits).
+- `Autocomplete` follows the ARIA combobox pattern with a listbox popup (`aria-expanded`, `aria-activedescendant`, arrow keys, Enter, Escape). Chips have named remove buttons, and Backspace in an empty field removes the last one.
 
 ## Known limits
 

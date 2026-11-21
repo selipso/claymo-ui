@@ -1,0 +1,124 @@
+---
+import {
+  autocompleteDefaults,
+  autocompleteInputValue,
+  autocompleteSelectedValues,
+  normalizeAutocompleteOptions,
+  textFieldRecipe,
+  type AutocompleteProps,
+} from "@claymo/core/input";
+import Chip from "./Chip.astro";
+import { instanceId } from "./ids.ts";
+
+type Props = AutocompleteProps;
+
+const {
+  options,
+  label,
+  multiple = false,
+  freeSolo = false,
+  value,
+  defaultValue,
+  placeholder,
+  helperText,
+  error = false,
+  disabled = false,
+  required = false,
+  fullWidth = false,
+  size,
+  id: idProp,
+  name,
+  filterSelectedOptions = false,
+  noOptionsText = autocompleteDefaults.noOptionsText,
+  addOptionText = autocompleteDefaults.addOptionText,
+} = Astro.props;
+const id = idProp ?? instanceId("clay-ac");
+const labelId = `${id}-label`;
+const listId = `${id}-listbox`;
+const normalized = normalizeAutocompleteOptions(options);
+const selected = autocompleteSelectedValues(value === undefined ? defaultValue : value, multiple);
+const recipe = textFieldRecipe({ id, size, error, disabled, fullWidth, helperText });
+---
+
+<div
+  class="clay-text-field clay-autocomplete"
+  {...recipe.root}
+  data-clay-autocomplete
+  data-options={JSON.stringify(options)}
+  data-selected={JSON.stringify(selected)}
+  data-multiple={multiple ? "" : undefined}
+  data-free-solo={freeSolo ? "" : undefined}
+  data-filter-selected-options={filterSelectedOptions ? "" : undefined}
+  data-add-option-text={addOptionText}
+  data-name={name}
+>
+  <label class="clay-text-field__label" id={labelId} for={id}>
+    {label}
+    {required && <span aria-hidden="true"> *</span>}
+  </label>
+  <div class="clay-text-field__control">
+    <div class="clay clay-text-field__input clay-autocomplete__field">
+      {multiple && (
+        <span class="clay-autocomplete__chips">
+          {selected.map((item) => (
+            <Chip
+              label={normalized.get(item)?.label ?? item}
+              size="small"
+              {disabled}
+              deletable
+              data-autocomplete-value={item}
+            />
+          ))}
+        </span>
+      )}
+      <input
+        class="clay-autocomplete__query"
+        {id}
+        type="text"
+        role="combobox"
+        autocomplete="off"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-controls={listId}
+        aria-required={required ? "true" : undefined}
+        required={required && selected.length === 0}
+        {placeholder}
+        {disabled}
+        {...recipe.input}
+        value={autocompleteInputValue(normalized, selected, multiple)}
+      />
+    </div>
+    <div class="clay clay-autocomplete__popup" hidden>
+      <div
+        class="clay-autocomplete__list"
+        id={listId}
+        role="listbox"
+        aria-labelledby={labelId}
+        aria-multiselectable={multiple ? "true" : undefined}
+      ></div>
+      <p class="clay-autocomplete__empty" role="status" hidden>
+        {noOptionsText}
+      </p>
+    </div>
+  </div>
+  {helperText && (
+    <p class="clay-text-field__helper" id={recipe.helperId}>
+      {error && <span aria-hidden="true">!&nbsp;</span>}
+      {helperText}
+    </p>
+  )}
+  <div hidden data-autocomplete-fields>
+    {name && selected.map((item) => <input type="hidden" {name} value={item} {disabled} />)}
+  </div>
+  {multiple && (
+    <template>
+      <Chip label="" size="small" {disabled} deletable />
+    </template>
+  )}
+</div>
+
+<script>
+  import { upgradeAutocompletes } from "@claymo/core/behavior/input";
+  import { onEveryPage } from "./lifecycle.ts";
+  onEveryPage(upgradeAutocompletes);
+</script>

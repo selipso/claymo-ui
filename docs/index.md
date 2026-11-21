@@ -36,6 +36,7 @@ Run `npm start` and open the Lab at `/lab/` to compare the four stages and see t
 - [Frameworks](./frameworks.md): compare component conventions and MUI prop mappings.
 - [Theming](./theming.md): use the CSS directly, choose a palette, or override tokens.
 - [Motion](./motion.md): choose a motion preset or tune hover, press and entrance tokens.
+- [Data patterns](./data-patterns.md): tables with sorting, search, pagination and selection; detail and edit dialogs; tag pickers.
 - [MCP](./mcp.md): configure a coding agent or use the programmatic reference.
 - [Accessibility](./accessibility.md): review behavior, known limits, and test coverage.
 - [Runbook](./RUNBOOK.md): verify and publish a release.

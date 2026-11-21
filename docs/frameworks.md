@@ -47,6 +47,10 @@ Compose `List` > `ListItem` > content. Inside a row, `ListItemIcon` (an icon or 
 - `ListItemIcon` is decorative (`aria-hidden`) by default; give it an `aria-label` to announce it.
 - A selected `ListItemButton` presses into the surface, like a selected tab. Put lists on a `Card`, `Paper` or `Drawer` so hover and selection read as clay.
 
+## Data tables
+
+`DataTable` takes `rows` and `columns` and adds sorting, search, pagination and checkbox selection with MUI X `DataGrid` prop names. Astro renders every row on the server and reports changes as `clay-*-change` events; Svelte binds `sortModel`, `quickFilterValue`, `paginationModel` and `rowSelectionModel`. `renderCell` is a snippet in Svelte and an inline markup function in Astro. See [Data patterns](./data-patterns.md) for the mapping from MUI v4 table wrappers.
+
 ## Motion
 
 Both bridges accept the same `motion` prop on animated components (`<Button motion="lift">`). It renders `data-motion`, which also works as a plain attribute or `clay-motion-*` class on any element. See [Motion](./motion.md) for presets and tokens.

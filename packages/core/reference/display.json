@@ -2,7 +2,10 @@
   "Avatar": {
     "purpose": "Show a profile photo, initials, or an icon. The root span forwards native attributes. Without a photo or after a load failure, Avatar shows supplied fallback content, then the first character of alt, then a decorative profile icon.",
     "props": {
-      "src": { "type": "string", "description": "Image URL." },
+      "src": {
+        "type": "string",
+        "description": "Image URL."
+      },
       "srcSet": {
         "type": "string",
         "description": "Native responsive image candidates (passed to srcset)."
@@ -84,7 +87,11 @@
         "default": "primary",
         "description": "Clay defaults to primary rather than MUI's default color."
       },
-      "max": { "type": "number", "default": 99, "description": "Maximum displayed numeric count." },
+      "max": {
+        "type": "number",
+        "default": 99,
+        "description": "Maximum displayed numeric count."
+      },
       "showZero": {
         "type": "boolean",
         "default": false,
@@ -103,10 +110,21 @@
       },
       "anchorOrigin": {
         "type": "object",
-        "default": { "vertical": "top", "horizontal": "right" },
+        "default": {
+          "vertical": "top",
+          "horizontal": "right"
+        },
         "properties": {
-          "vertical": { "type": "string", "enum": ["top", "bottom"], "default": "top" },
-          "horizontal": { "type": "string", "enum": ["left", "right"], "default": "right" }
+          "vertical": {
+            "type": "string",
+            "enum": ["top", "bottom"],
+            "default": "top"
+          },
+          "horizontal": {
+            "type": "string",
+            "enum": ["left", "right"],
+            "default": "right"
+          }
         },
         "description": "Corner of the wrapped content to anchor to. Ignored without wrapped content."
       },
@@ -368,7 +386,7 @@
     }
   },
   "Table": {
-    "purpose": "Lay out data in a native HTML table inside a keyboard-focusable scrolling region. Use scope on row and column headers where appropriate. Native root attributes such as class and style target the scrolling wrapper.",
+    "purpose": "Lay out hand-written native HTML table markup inside a keyboard-focusable scrolling region. Use scope on row and column headers where appropriate. Native root attributes such as class and style target the scrolling wrapper. For rows and columns as data, with sorting, search, pagination and selection, use DataTable.",
     "props": {
       "label": {
         "type": "string",
@@ -416,6 +434,297 @@
           {
             "title": "Table with sticky header",
             "source": "<Table label=\"Stock inventory\" size=\"small\" stickyHeader style=\"max-height: 18rem;\">\n  <thead><tr><th scope=\"col\">Item</th><th scope=\"col\">Count</th></tr></thead>\n  <tbody><tr><th scope=\"row\">Notebook</th><td>14</td></tr></tbody>\n</Table>"
+          }
+        ]
+      }
+    }
+  },
+  "DataTable": {
+    "purpose": "Data-driven table: pass rows and columns; it renders a Table with optional sorting, quick filter search, pagination, checkbox selection and clickable rows. MUI DataGrid naming. Clay deviations: columns may be field-name strings and default to the first row's keys; row ids are strings; renderCell is a Svelte snippet or, in Astro, a function returning markup written inline in the template. For hand-written markup use Table.",
+    "props": {
+      "label": {
+        "type": "string",
+        "description": "Required accessible name of the scrolling table region (Clay addition)."
+      },
+      "rows": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        },
+        "description": "Row objects. In server pagination mode, only the current page."
+      },
+      "columns": {
+        "type": "array",
+        "items": {
+          "anyOf": [
+            {
+              "type": "string",
+              "description": "Field name shorthand."
+            },
+            {
+              "type": "object",
+              "required": ["field"],
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "headerName": {
+                  "type": "string",
+                  "description": "Default: the field name."
+                },
+                "type": {
+                  "type": "string",
+                  "enum": ["string", "number", "actions"],
+                  "default": "string",
+                  "description": "number aligns right and sorts numerically; actions is neither sortable nor searchable."
+                },
+                "align": {
+                  "type": "string",
+                  "enum": ["left", "center", "right"]
+                },
+                "width": {
+                  "type": "number",
+                  "description": "Column width in px."
+                },
+                "sortable": {
+                  "type": "boolean",
+                  "description": "Default true, false for actions."
+                },
+                "filterable": {
+                  "type": "boolean",
+                  "description": "Searched by the quick filter. Default true, false for actions."
+                },
+                "valueGetter": {
+                  "description": "(value, row) => unknown: derive the cell value; sorting uses it."
+                },
+                "valueFormatter": {
+                  "description": "(value, row) => string: displayed and searched text."
+                },
+                "renderCell": {
+                  "description": "Custom cell content from (params: { row, id, field, value, formattedValue, rowIndex }). Svelte: a snippet. Astro: a function returning markup, written inline in the template."
+                }
+              }
+            }
+          ]
+        },
+        "description": "Column definitions; default: the keys of the first row."
+      },
+      "getRowId": {
+        "description": "(row) => string | number. Default: row.id, then the row position."
+      },
+      "rowHeader": {
+        "type": "string",
+        "description": "Field rendered as the row header (th scope=row); default: the first non-action column. With clickable rows it is the keyboard button."
+      },
+      "checkboxSelection": {
+        "type": "boolean",
+        "default": false,
+        "description": "Add a checkbox column, a select-all checkbox over the filtered rows, and a selected count."
+      },
+      "rowSelectionModel": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "default": [],
+        "description": "Selected row ids. Svelte: supports bind:rowSelectionModel."
+      },
+      "sortModel": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "field": {
+              "type": "string"
+            },
+            "sort": {
+              "type": "string",
+              "enum": ["asc", "desc"]
+            }
+          }
+        },
+        "default": [],
+        "description": "Active sort; header clicks cycle ascending, descending, unsorted. Svelte: supports bind:sortModel."
+      },
+      "quickFilter": {
+        "type": "boolean",
+        "default": false,
+        "description": "Show a search field that keeps rows containing every typed word in a filterable column; typing returns to the first page."
+      },
+      "quickFilterValue": {
+        "type": "string",
+        "default": "",
+        "description": "Search text. Svelte: supports bind:quickFilterValue."
+      },
+      "pagination": {
+        "type": "boolean",
+        "default": false,
+        "description": "Show the pagination footer."
+      },
+      "paginationModel": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "number"
+          },
+          "pageSize": {
+            "type": "number"
+          }
+        },
+        "default": {
+          "page": 0,
+          "pageSize": 10
+        },
+        "description": "Zero-based page and page size. Svelte: supports bind:paginationModel."
+      },
+      "pageSizeOptions": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        },
+        "default": [5, 10, 25, 50, 100],
+        "description": "Rows per page choices."
+      },
+      "sortingMode": {
+        "type": "string",
+        "enum": ["client", "server"],
+        "default": "client",
+        "description": "server: rows arrive sorted; the table only reports sortModel changes."
+      },
+      "filterMode": {
+        "type": "string",
+        "enum": ["client", "server"],
+        "default": "client",
+        "description": "server: rows arrive filtered; the table only reports quickFilterValue changes."
+      },
+      "paginationMode": {
+        "type": "string",
+        "enum": ["client", "server"],
+        "default": "client",
+        "description": "server: rows is the current page and rowCount is required."
+      },
+      "rowCount": {
+        "type": "number",
+        "description": "Total rows for server pagination."
+      },
+      "loading": {
+        "type": "boolean",
+        "default": false,
+        "description": "Show a progress bar and mark the region busy."
+      },
+      "size": {
+        "type": "string",
+        "enum": ["small", "medium"],
+        "default": "medium",
+        "description": "Cell spacing and font size."
+      },
+      "stickyHeader": {
+        "type": "boolean",
+        "default": false,
+        "description": "Pin the header while the region scrolls; set max-height on the table region via CSS."
+      },
+      "localeText": {
+        "type": "object",
+        "description": "Override UI strings: noRowsLabel, noResultsOverlayLabel, loadingLabel, toolbarQuickFilterLabel, toolbarQuickFilterPlaceholder, checkboxSelectionSelectAllRows, checkboxSelectionSelectRow ({row}), footerRowSelected ({count}), paginationRowsPerPage, paginationDisplayedRows ({from}, {to}, {count}), paginationPrevious, paginationNext."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["DataTable", "Chip", "Dialog", "Button", "IconButton", "TextField"],
+        "required": ["label", "rows"],
+        "props": {
+          "clickableRows": {
+            "type": "boolean",
+            "default": false,
+            "description": "Rows fire clay-row-click; the row header becomes the keyboard button. Clicks on links, buttons and inputs inside a row keep their own behavior."
+          }
+        },
+        "content": [
+          "toolbar: optional named slot before the quick filter, e.g. bulk action buttons.",
+          "no-rows: optional named slot shown when rows is empty."
+        ],
+        "events": [
+          "The server renders every row; the page script sorts, filters, pages and selects them. All events bubble from the root; detail is keyed by the prop name.",
+          "clay-row-click: detail { id, rowIndex } (rowIndex is the position in rows). Requires clickableRows.",
+          "clay-sort-model-change: detail { sortModel }.",
+          "clay-pagination-model-change: detail { paginationModel }.",
+          "clay-quick-filter-value-change: detail { quickFilterValue }.",
+          "clay-row-selection-model-change: detail { rowSelectionModel }."
+        ],
+        "examples": [
+          {
+            "title": "Columns from field names",
+            "source": "---\nconst rows = [\n  { id: 1, name: \"Notebook\", category: \"Paper\", stock: 14 },\n  { id: 2, name: \"Fountain pen\", category: \"Writing\", stock: 3 },\n  { id: 3, name: \"Desk lamp\", category: \"Lighting\", stock: 0 },\n];\n---\n\n<DataTable\n  label=\"Inventory\"\n  rows={rows}\n  columns={[\"name\", \"category\", { field: \"stock\", headerName: \"In stock\", type: \"number\" }]}\n/>"
+          },
+          {
+            "title": "Formatted and custom cells",
+            "source": "---\nconst rows = [\n  { id: \"A-1001\", customer: \"Ada Byron\", total: 128.5, paid: true, status: \"Shipped\" },\n  { id: \"A-1002\", customer: \"Grace Hopper\", total: 42, paid: false, status: \"Pending\" },\n  { id: \"A-1003\", customer: \"Alan Kay\", total: null, paid: false, status: \"Cancelled\" },\n];\nconst statusColor: Record<string, \"success\" | \"warning\" | \"error\"> = {\n  Shipped: \"success\",\n  Pending: \"warning\",\n  Cancelled: \"error\",\n};\nconst money = new Intl.NumberFormat(\"en-US\", { style: \"currency\", currency: \"USD\" });\n---\n\n<DataTable\n  label=\"Orders\"\n  rows={rows}\n  columns={[\n    { field: \"id\", headerName: \"Order\" },\n    { field: \"customer\", headerName: \"Customer\" },\n    {\n      field: \"total\",\n      headerName: \"Total\",\n      type: \"number\",\n      valueFormatter: (value) => (value == null ? \"None\" : money.format(Number(value))),\n    },\n    { field: \"paid\", headerName: \"Paid\", valueFormatter: (value) => (value ? \"Yes\" : \"No\") },\n    {\n      field: \"status\",\n      headerName: \"Status\",\n      renderCell: (params) => (\n        <Chip\n          size=\"small\"\n          label={params.formattedValue}\n          color={statusColor[params.formattedValue]}\n        />\n      ),\n    },\n  ]}\n/>"
+          },
+          {
+            "title": "Search, sort and paginate",
+            "source": "---\nconst names = [\n  \"Atlas\",\n  \"Birch\",\n  \"Cedar\",\n  \"Delta\",\n  \"Ember\",\n  \"Fjord\",\n  \"Grove\",\n  \"Harbor\",\n  \"Inlet\",\n  \"Juniper\",\n  \"Kestrel\",\n  \"Lagoon\",\n];\nconst regions = [\"North\", \"Coast\", \"Valley\"];\nconst rows = names.map((name, index) => ({\n  id: index + 1,\n  name,\n  region: regions[index % 3],\n  visits: (index * 37) % 100,\n}));\n---\n\n<DataTable\n  id=\"sites\"\n  label=\"Sites\"\n  rows={rows}\n  columns={[\n    { field: \"name\", headerName: \"Site\" },\n    { field: \"region\", headerName: \"Region\" },\n    { field: \"visits\", headerName: \"Visits\", type: \"number\" },\n  ]}\n  quickFilter\n  pagination\n  paginationModel={{ page: 0, pageSize: 5 }}\n  sortModel={[{ field: \"visits\", sort: \"desc\" }]}\n/>\n<p id=\"sites-state\" aria-live=\"polite\"></p>\n\n<script>\n  const table = document.getElementById(\"sites\")!;\n  const state = document.getElementById(\"sites-state\")!;\n  table.addEventListener(\"clay-pagination-model-change\", (event) => {\n    state.textContent = `Page ${event.detail.paginationModel.page + 1}`;\n  });\n  table.addEventListener(\"clay-sort-model-change\", (event) => {\n    const [sort] = event.detail.sortModel;\n    state.textContent = sort ? `Sorted by ${sort.field}, ${sort.sort}` : \"Unsorted\";\n  });\n</script>"
+          },
+          {
+            "title": "Row details in a dialog",
+            "source": "---\nconst rows = [\n  {\n    id: 1,\n    title: \"Tide tables\",\n    author: \"M. Reyes\",\n    summary: \"How the moon sets the rhythm of the coast.\",\n  },\n  {\n    id: 2,\n    title: \"Reef survey\",\n    author: \"K. Osei\",\n    summary: \"A season of counts along the outer reef.\",\n  },\n  {\n    id: 3,\n    title: \"Kelp forests\",\n    author: \"L. Park\",\n    summary: \"Why kelp grows fastest in cold water.\",\n  },\n];\n---\n\n<DataTable\n  id=\"articles\"\n  label=\"Articles\"\n  rows={rows}\n  columns={[\n    { field: \"title\", headerName: \"Title\" },\n    { field: \"author\", headerName: \"Author\" },\n  ]}\n  clickableRows\n/>\n<Dialog id=\"article\" title=\"Article\" dismissible>\n  <p data-article-summary></p>\n  <Button slot=\"actions\" variant=\"text\" commandfor=\"article\" command=\"close\">\n    Close\n  </Button>\n  <Button slot=\"actions\" commandfor=\"article\" command=\"close\">\n    Read article\n  </Button>\n</Dialog>\n<script type=\"application/json\" id=\"articles-data\" set:html={JSON.stringify(rows)} />\n<script>\n  type Article = { title: string; summary: string };\n  const articles: Article[] = JSON.parse(document.getElementById(\"articles-data\")!.textContent!);\n  const dialog = document.getElementById(\"article\") as HTMLDialogElement;\n  document.getElementById(\"articles\")!.addEventListener(\"clay-row-click\", (event) => {\n    const article = articles[event.detail.rowIndex]!;\n    dialog.querySelector(\".clay-dialog__title\")!.textContent = article.title;\n    dialog.querySelector(\"[data-article-summary]\")!.textContent = article.summary;\n    dialog.showModal();\n  });\n</script>"
+          },
+          {
+            "title": "Selection with a bulk action",
+            "source": "---\nconst rows = [\n  { id: \"f1\", name: \"budget.xlsx\", owner: \"Ada\", size: 24 },\n  { id: \"f2\", name: \"logo.svg\", owner: \"Grace\", size: 8 },\n  { id: \"f3\", name: \"notes.md\", owner: \"Alan\", size: 2 },\n];\n---\n\n<DataTable\n  id=\"files\"\n  label=\"Files\"\n  rows={rows}\n  columns={[\n    { field: \"name\", headerName: \"Name\" },\n    { field: \"owner\", headerName: \"Owner\" },\n    { field: \"size\", headerName: \"Size (KB)\", type: \"number\" },\n  ]}\n  checkboxSelection\n>\n  <Button slot=\"toolbar\" id=\"delete-files\" variant=\"outlined\" color=\"error\" disabled>\n    Delete selected\n  </Button>\n</DataTable>\n<output id=\"files-request\"></output>\n\n<script>\n  const remove = document.getElementById(\"delete-files\") as HTMLButtonElement;\n  let selected: string[] = [];\n  document.getElementById(\"files\")!.addEventListener(\"clay-row-selection-model-change\", (event) => {\n    selected = event.detail.rowSelectionModel;\n    remove.disabled = selected.length === 0;\n  });\n  // Rows come from the server: send the ids to your API, then reload the page.\n  remove.addEventListener(\"click\", () => {\n    document.getElementById(\"files-request\")!.textContent = `DELETE /api/files?ids=${selected}`;\n  });\n</script>"
+          },
+          {
+            "title": "Edit rows in a dialog",
+            "source": "---\nconst rows = [\n  { id: 1, name: \"Ada Byron\", email: \"ada@example.com\" },\n  { id: 2, name: \"Grace Hopper\", email: \"grace@example.com\" },\n];\n---\n\n<DataTable\n  id=\"contacts\"\n  label=\"Contacts\"\n  rows={rows}\n  columns={[\n    { field: \"name\", headerName: \"Name\" },\n    { field: \"email\", headerName: \"Email\" },\n    {\n      field: \"edit\",\n      type: \"actions\",\n      renderCell: (params) => (\n        <IconButton size=\"small\" aria-label={`Edit ${params.row.name}`} data-edit={params.id}>\n          <svg\n            aria-hidden=\"true\"\n            width=\"18\"\n            height=\"18\"\n            viewBox=\"0 0 24 24\"\n            fill=\"none\"\n            stroke=\"currentColor\"\n            stroke-width=\"2\"\n            stroke-linecap=\"round\"\n          >\n            <path d=\"M4 20h4L19 9l-4-4L4 16v4Z\" />\n          </svg>\n        </IconButton>\n      ),\n    },\n  ]}\n/>\n<Dialog id=\"edit-contact\" title=\"Edit contact\">\n  <form id=\"contact-form\" method=\"dialog\" class=\"contact-form\">\n    <TextField label=\"Name\" name=\"name\" fullWidth />\n    <TextField label=\"Email\" name=\"email\" type=\"email\" fullWidth />\n  </form>\n  <Button slot=\"actions\" variant=\"text\" commandfor=\"edit-contact\" command=\"close\">\n    Cancel\n  </Button>\n  <Button slot=\"actions\" type=\"submit\" form=\"contact-form\">\n    Save\n  </Button>\n</Dialog>\n\n<style>\n  .contact-form {\n    display: grid;\n    gap: 16px;\n    padding-block-start: 8px;\n  }\n</style>\n\n<script>\n  import { DIALOG_REQUEST_CLOSE_EVENT } from \"@claymo/core/behavior/dialog\";\n\n  const dialog = document.getElementById(\"edit-contact\") as HTMLDialogElement;\n  const form = document.getElementById(\"contact-form\") as HTMLFormElement;\n  const fields = [\"name\", \"email\"] as const;\n  let row: HTMLTableRowElement | undefined;\n  const input = (field: string) => form.elements.namedItem(field) as HTMLInputElement;\n  const cell = (field: string) => row!.querySelector(`[data-field=\"${field}\"]`)!;\n  const dirty = () => fields.some((field) => input(field).value !== cell(field).textContent);\n\n  document.getElementById(\"contacts\")!.addEventListener(\"click\", (event) => {\n    const button = (event.target as Element).closest<HTMLElement>(\"[data-edit]\");\n    if (!button) return;\n    row = button.closest(\"tr\")!;\n    for (const field of fields) input(field).value = cell(field).textContent ?? \"\";\n    dialog.showModal();\n  });\n  // Save: method=\"dialog\" closes the dialog after submit.\n  form.addEventListener(\"submit\", () => {\n    for (const field of fields) cell(field).textContent = input(field).value;\n  });\n  // Escape and backdrop clicks ask first when there are unsaved edits.\n  dialog.addEventListener(DIALOG_REQUEST_CLOSE_EVENT, (event) => {\n    if (dirty() && !confirm(\"Discard unsaved changes?\")) event.preventDefault();\n  });\n</script>"
+          },
+          {
+            "title": "Loading and empty states",
+            "source": "---\nconst columns = [\n  { field: \"name\", headerName: \"Report\" },\n  { field: \"owner\", headerName: \"Owner\" },\n];\n---\n\n<div style=\"display: grid; gap: 24px;\">\n  <DataTable label=\"Reports, loading\" rows={[]} columns={columns} loading />\n  <DataTable label=\"Reports\" rows={[]} columns={columns}>\n    <span slot=\"no-rows\">No reports yet. Reports you create appear here.</span>\n  </DataTable>\n</div>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["DataTable", "Chip", "Dialog", "Button", "IconButton", "TextField"],
+        "required": ["label", "rows"],
+        "props": {
+          "onRowClick": {
+            "description": "Optional callback ({ id, row, rowIndex }, event) => void. Makes rows clickable; the row header becomes the keyboard button. Clicks on links, buttons and inputs inside a row keep their own behavior."
+          }
+        },
+        "content": [
+          "toolbar: optional snippet before the quick filter, e.g. bulk action buttons.",
+          "noRows: optional snippet shown when rows is empty."
+        ],
+        "events": [
+          "onSortModelChange(sortModel), onPaginationModelChange(paginationModel), onQuickFilterValueChange(quickFilterValue), onRowSelectionModelChange(rowSelectionModel): called after user changes; the matching props also support bind:."
+        ],
+        "examples": [
+          {
+            "title": "Columns from field names",
+            "source": "<script lang=\"ts\">\n  const rows = [\n    { id: 1, name: \"Notebook\", category: \"Paper\", stock: 14 },\n    { id: 2, name: \"Fountain pen\", category: \"Writing\", stock: 3 },\n    { id: 3, name: \"Desk lamp\", category: \"Lighting\", stock: 0 },\n  ];\n</script>\n\n<DataTable\n  label=\"Inventory\"\n  {rows}\n  columns={[\"name\", \"category\", { field: \"stock\", headerName: \"In stock\", type: \"number\" }]}\n/>"
+          },
+          {
+            "title": "Formatted and custom cells",
+            "source": "<script lang=\"ts\">\n  import type { DataTableCellParams } from \"@claymo/core/display\";\n\n  type Order = {\n    id: string;\n    customer: string;\n    total: number | null;\n    paid: boolean;\n    status: \"Shipped\" | \"Pending\" | \"Cancelled\";\n  };\n  const rows: Order[] = [\n    { id: \"A-1001\", customer: \"Ada Byron\", total: 128.5, paid: true, status: \"Shipped\" },\n    { id: \"A-1002\", customer: \"Grace Hopper\", total: 42, paid: false, status: \"Pending\" },\n    { id: \"A-1003\", customer: \"Alan Kay\", total: null, paid: false, status: \"Cancelled\" },\n  ];\n  const statusColor = { Shipped: \"success\", Pending: \"warning\", Cancelled: \"error\" } as const;\n  const money = new Intl.NumberFormat(\"en-US\", { style: \"currency\", currency: \"USD\" });\n</script>\n\n{#snippet status({ row }: DataTableCellParams<Order>)}\n  <Chip size=\"small\" label={row.status} color={statusColor[row.status]} />\n{/snippet}\n\n<DataTable\n  label=\"Orders\"\n  {rows}\n  columns={[\n    { field: \"id\", headerName: \"Order\" },\n    { field: \"customer\", headerName: \"Customer\" },\n    {\n      field: \"total\",\n      headerName: \"Total\",\n      type: \"number\",\n      valueFormatter: (value) => (value == null ? \"None\" : money.format(Number(value))),\n    },\n    { field: \"paid\", headerName: \"Paid\", valueFormatter: (value) => (value ? \"Yes\" : \"No\") },\n    { field: \"status\", headerName: \"Status\", renderCell: status },\n  ]}\n/>"
+          },
+          {
+            "title": "Search, sort and paginate",
+            "source": "<script lang=\"ts\">\n  import type { DataTableSortModel } from \"@claymo/core/display\";\n\n  const names = [\n    \"Atlas\",\n    \"Birch\",\n    \"Cedar\",\n    \"Delta\",\n    \"Ember\",\n    \"Fjord\",\n    \"Grove\",\n    \"Harbor\",\n    \"Inlet\",\n    \"Juniper\",\n    \"Kestrel\",\n    \"Lagoon\",\n  ];\n  const regions = [\"North\", \"Coast\", \"Valley\"];\n  const rows = names.map((name, index) => ({\n    id: index + 1,\n    name,\n    region: regions[index % 3],\n    visits: (index * 37) % 100,\n  }));\n  let paginationModel = $state({ page: 0, pageSize: 5 });\n  let sortModel = $state<DataTableSortModel>([{ field: \"visits\", sort: \"desc\" }]);\n  let quickFilterValue = $state(\"\");\n</script>\n\n<DataTable\n  label=\"Sites\"\n  {rows}\n  columns={[\n    { field: \"name\", headerName: \"Site\" },\n    { field: \"region\", headerName: \"Region\" },\n    { field: \"visits\", headerName: \"Visits\", type: \"number\" },\n  ]}\n  quickFilter\n  pagination\n  bind:paginationModel\n  bind:sortModel\n  bind:quickFilterValue\n/>\n<p aria-live=\"polite\">\n  Page {paginationModel.page + 1}{sortModel[0]\n    ? `, sorted by ${sortModel[0].field}`\n    : \"\"}{quickFilterValue ? `, matching \"${quickFilterValue}\"` : \"\"}\n</p>"
+          },
+          {
+            "title": "Row details in a dialog",
+            "source": "<script lang=\"ts\">\n  type Article = { id: number; title: string; author: string; summary: string };\n  const rows: Article[] = [\n    {\n      id: 1,\n      title: \"Tide tables\",\n      author: \"M. Reyes\",\n      summary: \"How the moon sets the rhythm of the coast.\",\n    },\n    {\n      id: 2,\n      title: \"Reef survey\",\n      author: \"K. Osei\",\n      summary: \"A season of counts along the outer reef.\",\n    },\n    {\n      id: 3,\n      title: \"Kelp forests\",\n      author: \"L. Park\",\n      summary: \"Why kelp grows fastest in cold water.\",\n    },\n  ];\n  let active = $state<Article>();\n  let open = $state(false);\n</script>\n\n<DataTable\n  label=\"Articles\"\n  {rows}\n  columns={[\n    { field: \"title\", headerName: \"Title\" },\n    { field: \"author\", headerName: \"Author\" },\n  ]}\n  onRowClick={({ row }) => {\n    active = row;\n    open = true;\n  }}\n/>\n<Dialog bind:open title={active?.title ?? \"Article\"} dismissible>\n  <p>{active?.summary}</p>\n  {#snippet actions()}\n    <Button variant=\"text\" onclick={() => (open = false)}>Close</Button>\n    <Button onclick={() => (open = false)}>Read article</Button>\n  {/snippet}\n</Dialog>"
+          },
+          {
+            "title": "Selection with a bulk action",
+            "source": "<script lang=\"ts\">\n  let rows = $state([\n    { id: \"f1\", name: \"budget.xlsx\", owner: \"Ada\", size: 24 },\n    { id: \"f2\", name: \"logo.svg\", owner: \"Grace\", size: 8 },\n    { id: \"f3\", name: \"notes.md\", owner: \"Alan\", size: 2 },\n  ]);\n  let selected = $state<string[]>([]);\n\n  function remove() {\n    // Send `selected` to your API; here the rows simply disappear.\n    rows = rows.filter((row) => !selected.includes(row.id));\n    selected = [];\n  }\n</script>\n\n<DataTable\n  label=\"Files\"\n  {rows}\n  columns={[\n    { field: \"name\", headerName: \"Name\" },\n    { field: \"owner\", headerName: \"Owner\" },\n    { field: \"size\", headerName: \"Size (KB)\", type: \"number\" },\n  ]}\n  checkboxSelection\n  bind:rowSelectionModel={selected}\n>\n  {#snippet toolbar()}\n    <Button variant=\"outlined\" color=\"error\" disabled={selected.length === 0} onclick={remove}>\n      Delete selected\n    </Button>\n  {/snippet}\n</DataTable>"
+          },
+          {
+            "title": "Edit rows in a dialog",
+            "source": "<script lang=\"ts\">\n  import type { DataTableCellParams } from \"@claymo/core/display\";\n\n  type Contact = { id: number; name: string; email: string };\n  let rows = $state<Contact[]>([\n    { id: 1, name: \"Ada Byron\", email: \"ada@example.com\" },\n    { id: 2, name: \"Grace Hopper\", email: \"grace@example.com\" },\n  ]);\n  let editing = $state<Contact>();\n  let draft = $state({ name: \"\", email: \"\" });\n  let open = $state(false);\n  const dirty = $derived(\n    !!editing && (draft.name !== editing.name || draft.email !== editing.email),\n  );\n\n  function edit(row: Contact) {\n    editing = row;\n    draft = { name: row.name, email: row.email };\n    open = true;\n  }\n  function save(event: SubmitEvent) {\n    event.preventDefault();\n    rows = rows.map((row) => (row.id === editing?.id ? { ...row, ...draft } : row));\n    open = false;\n  }\n  // Escape and backdrop clicks ask first when there are unsaved edits.\n  function requestClose() {\n    if (!dirty || confirm(\"Discard unsaved changes?\")) open = false;\n  }\n</script>\n\n{#snippet editButton({ row }: DataTableCellParams<Contact>)}\n  <IconButton size=\"small\" aria-label=\"Edit {row.name}\" onclick={() => edit(row)}>\n    <svg\n      aria-hidden=\"true\"\n      width=\"18\"\n      height=\"18\"\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      stroke-width=\"2\"\n      stroke-linecap=\"round\"><path d=\"M4 20h4L19 9l-4-4L4 16v4Z\" /></svg\n    >\n  </IconButton>\n{/snippet}\n\n<DataTable\n  label=\"Contacts\"\n  {rows}\n  columns={[\n    { field: \"name\", headerName: \"Name\" },\n    { field: \"email\", headerName: \"Email\" },\n    { field: \"edit\", type: \"actions\", renderCell: editButton },\n  ]}\n/>\n<Dialog bind:open title=\"Edit contact\" onClose={requestClose}>\n  <form id=\"contact-form\" class=\"contact-form\" onsubmit={save}>\n    <TextField label=\"Name\" bind:value={draft.name} fullWidth />\n    <TextField label=\"Email\" type=\"email\" bind:value={draft.email} fullWidth />\n  </form>\n  {#snippet actions()}\n    <Button variant=\"text\" onclick={() => (open = false)}>Cancel</Button>\n    <Button type=\"submit\" form=\"contact-form\" disabled={!dirty}>Save</Button>\n  {/snippet}\n</Dialog>\n\n<style>\n  .contact-form {\n    display: grid;\n    gap: 16px;\n    padding-block-start: 8px;\n  }\n</style>"
+          },
+          {
+            "title": "Server-side data with loading state",
+            "source": "<script lang=\"ts\">\n  import type { DataTablePaginationModel, DataTableSortModel } from \"@claymo/core/display\";\n\n  type Book = { id: number; title: string; year: number };\n  const library: Book[] = Array.from({ length: 23 }, (_, index) => ({\n    id: index + 1,\n    title: `Volume ${index + 1}`,\n    year: 1990 + ((index * 7) % 30),\n  }));\n\n  // Stands in for your API: it filters, sorts and pages, and reports the total.\n  async function fetchBooks(\n    page: DataTablePaginationModel,\n    sort: DataTableSortModel,\n    search: string,\n  ) {\n    await new Promise((resolve) => setTimeout(resolve, 300));\n    const found = library.filter((book) => book.title.toLowerCase().includes(search.toLowerCase()));\n    const [order] = sort;\n    if (order) {\n      const direction = order.sort === \"asc\" ? 1 : -1;\n      found.sort(\n        (a, b) =>\n          direction *\n          (order.field === \"year\"\n            ? a.year - b.year\n            : a.title.localeCompare(b.title, \"en\", { numeric: true })),\n      );\n    }\n    return {\n      rows: found.slice(page.page * page.pageSize, (page.page + 1) * page.pageSize),\n      total: found.length,\n    };\n  }\n\n  let paginationModel = $state({ page: 0, pageSize: 5 });\n  let sortModel = $state<DataTableSortModel>([]);\n  let quickFilterValue = $state(\"\");\n  let rows = $state<Book[]>([]);\n  let rowCount = $state(0);\n  let loading = $state(true);\n\n  $effect(() => {\n    const request = fetchBooks(paginationModel, sortModel, quickFilterValue);\n    let current = true;\n    loading = true;\n    request.then((result) => {\n      if (!current) return; // a newer request replaced this one\n      rows = result.rows;\n      rowCount = result.total;\n      loading = false;\n    });\n    return () => (current = false);\n  });\n</script>\n\n<DataTable\n  label=\"Books\"\n  {rows}\n  {rowCount}\n  {loading}\n  columns={[\n    { field: \"title\", headerName: \"Title\" },\n    { field: \"year\", headerName: \"Year\", type: \"number\" },\n  ]}\n  quickFilter\n  pagination\n  pageSizeOptions={[5, 10]}\n  paginationMode=\"server\"\n  sortingMode=\"server\"\n  filterMode=\"server\"\n  bind:paginationModel\n  bind:sortModel\n  bind:quickFilterValue\n>\n  {#snippet noRows()}No books match.{/snippet}\n</DataTable>"
           }
         ]
       }

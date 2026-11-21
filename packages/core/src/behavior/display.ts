@@ -16,3 +16,5 @@ export const upgradeAvatars = upgrader<HTMLElement>("[data-clay-avatar]", (avata
     fallback.hidden = false;
   });
 });
+
+export * from "./data-table.ts";

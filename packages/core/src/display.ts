@@ -177,3 +177,5 @@ export interface TableOptions {
 }
 
 export const tableDefaults = { size: "medium", padding: "normal" } as const;
+
+export * from "./data-table.ts";

@@ -509,3 +509,112 @@ select.clay-text-field__input option {
     content: none;
   }
 }
+
+.clay-autocomplete {
+  inline-size: 18rem;
+}
+.clay-autocomplete[data-size] .clay-autocomplete__field {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-block: 3px;
+}
+.clay-autocomplete:not([data-error])
+  .clay-autocomplete__field:has(.clay-autocomplete__query:focus) {
+  border-color: var(--c-ink);
+}
+.clay-autocomplete__field:has(.clay-autocomplete__query:focus-visible) {
+  outline: 3px solid var(--clay-focus);
+  outline-offset: 3px;
+}
+.clay-autocomplete__chips {
+  display: contents;
+}
+.clay-autocomplete__query {
+  flex: 1 1 5ch;
+  min-inline-size: 0;
+  inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+.clay-autocomplete__query:focus-visible {
+  outline: none;
+}
+.clay-autocomplete__query::placeholder {
+  color: var(--clay-ink-muted);
+  opacity: 1;
+}
+.clay-autocomplete[data-disabled] .clay-autocomplete__field {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.clay-autocomplete__query:disabled {
+  cursor: not-allowed;
+}
+.clay-autocomplete__popup {
+  --clay-radius: 14px;
+  --clay-d: 4px;
+  position: absolute;
+  z-index: 2;
+  inset-block-start: calc(100% + 6px);
+  inset-inline: 0;
+  padding: 6px;
+}
+.clay-autocomplete__list {
+  max-block-size: min(18rem, 40dvh);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.clay-autocomplete__option {
+  display: block;
+  box-sizing: border-box;
+  inline-size: 100%;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: calc(var(--clay-radius) / 2);
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: background-color var(--clay-motion-duration) var(--clay-motion-easing);
+}
+.clay-autocomplete__option[aria-selected="true"] {
+  font-weight: 600;
+}
+.clay-autocomplete__option:is(:hover, [data-active], [aria-selected="true"]) {
+  background: color-mix(in oklab, var(--clay-surface), var(--clay-ink) 12%);
+}
+.clay-autocomplete__option[data-active] {
+  outline: 2px solid var(--c-ink);
+  outline-offset: -2px;
+}
+.clay-autocomplete__empty {
+  margin: 0;
+  padding: 8px 12px;
+  color: var(--clay-ink-muted);
+  overflow-wrap: anywhere;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .clay-autocomplete__popup:not([hidden]) {
+    animation: clay-autocomplete-enter var(--clay-motion-duration-enter) var(--clay-motion-easing);
+  }
+}
+@keyframes clay-autocomplete-enter {
+  from {
+    opacity: 0;
+    translate: 0 calc(var(--clay-motion-enter-y) * -1);
+  }
+}
+@media (forced-colors: active) {
+  .clay-autocomplete__field:has(.clay-autocomplete__query:focus-visible),
+  .clay-autocomplete__option[data-active] {
+    outline-color: Highlight;
+  }
+}

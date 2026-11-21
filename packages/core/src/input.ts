@@ -1,6 +1,8 @@
 import { flag, type Attrs } from "./attrs.ts";
 import type { Color, Size } from "./types.ts";
 
+export * from "./autocomplete.ts";
+
 export interface TextFieldOption {
   label: string;
   value: string | number;

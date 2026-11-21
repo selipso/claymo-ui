@@ -29,9 +29,17 @@
               "type": "object",
               "required": ["value", "label"],
               "properties": {
-                "value": { "type": "string" },
-                "label": { "type": "string", "description": "Visible text of the tab." },
-                "disabled": { "type": "boolean", "default": false }
+                "value": {
+                  "type": "string"
+                },
+                "label": {
+                  "type": "string",
+                  "description": "Visible text of the tab."
+                },
+                "disabled": {
+                  "type": "boolean",
+                  "default": false
+                }
               }
             }
           },
@@ -82,19 +90,28 @@
   "Tab": {
     "purpose": "Render a tab button inside Tabs. Pair it with a TabPanel of the same value.",
     "props": {
-      "label": { "type": "string", "description": "Visible text of the tab." },
+      "label": {
+        "type": "string",
+        "description": "Visible text of the tab."
+      },
       "value": {
         "type": ["string", "number"],
         "description": "Selection key. Match a TabPanel value exactly, including type: 2 and \"2\" are different tabs."
       },
-      "disabled": { "type": "boolean", "default": false }
+      "disabled": {
+        "type": "boolean",
+        "default": false
+      }
     },
     "bridges": {
       "astro": {
         "imports": ["Tabs", "Tab", "TabPanel"],
         "required": ["label", "value", "tabsId"],
         "props": {
-          "tabsId": { "type": "string", "description": "Match the parent Tabs id." },
+          "tabsId": {
+            "type": "string",
+            "description": "Match the parent Tabs id."
+          },
           "selected": {
             "type": "boolean",
             "default": false,
@@ -142,7 +159,10 @@
         "imports": ["Tabs", "Tab", "TabPanel"],
         "required": ["value", "tabsId"],
         "props": {
-          "tabsId": { "type": "string", "description": "Match the parent Tabs id." },
+          "tabsId": {
+            "type": "string",
+            "description": "Match the parent Tabs id."
+          },
           "selected": {
             "type": "boolean",
             "default": false,
@@ -209,7 +229,7 @@
     },
     "bridges": {
       "astro": {
-        "imports": ["Dialog", "Button"],
+        "imports": ["Dialog", "Button", "TextField"],
         "required": ["id"],
         "props": {
           "id": {
@@ -228,11 +248,15 @@
           {
             "title": "Dialog with close button",
             "source": "---\nconst dialogId = 'account-help';\n---\n<Button commandfor={dialogId} command=\"show-modal\">Open help</Button>\n<Dialog id={dialogId} title=\"Account help\" dismissible>\n  <p>Choose Close, the X, or press Escape to dismiss this dialog.</p>\n  <Button slot=\"actions\" variant=\"text\" commandfor={dialogId} command=\"close\">Close</Button>\n</Dialog>\n<script>\n  import { DIALOG_REQUEST_CLOSE_EVENT, type DialogRequestCloseEvent } from '@claymo/core/behavior/dialog';\n  document.getElementById('account-help')!.addEventListener(DIALOG_REQUEST_CLOSE_EVENT, (event) => {\n    if ((event as DialogRequestCloseEvent).detail.reason === 'backdropClick') event.preventDefault();\n  });\n</script>"
+          },
+          {
+            "title": "View and edit modes",
+            "source": "---\nconst dialogId = \"team-meeting\";\n---\n\n<Button commandfor={dialogId} command=\"show-modal\">\n  Open event\n</Button>\n<Dialog id={dialogId} title=\"Team meeting\" dismissible>\n  <p data-view>Weekly sync with the design team.</p>\n  <div data-edit hidden>\n    <TextField label=\"Description\" multiline rows={3} fullWidth />\n  </div>\n  <Button slot=\"actions\" variant=\"outlined\" data-start-edit>\n    Edit\n  </Button>\n  <Button slot=\"actions\" variant=\"text\" data-cancel hidden>\n    Cancel\n  </Button>\n  <Button slot=\"actions\" data-save hidden>\n    Save\n  </Button>\n</Dialog>\n\n<script>\n  import { DIALOG_REQUEST_CLOSE_EVENT } from \"@claymo/core/behavior/dialog\";\n\n  const dialog = document.getElementById(\"team-meeting\") as HTMLDialogElement;\n  const view = dialog.querySelector<HTMLElement>(\"[data-view]\")!;\n  const edit = dialog.querySelector<HTMLElement>(\"[data-edit]\")!;\n  const field = edit.querySelector(\"textarea\")!;\n  const start = dialog.querySelector<HTMLButtonElement>(\"[data-start-edit]\")!;\n  const cancel = dialog.querySelector<HTMLButtonElement>(\"[data-cancel]\")!;\n  const save = dialog.querySelector<HTMLButtonElement>(\"[data-save]\")!;\n  const dirty = () => !edit.hidden && field.value !== view.textContent;\n\n  function setEditing(editing: boolean) {\n    for (const element of [view, start]) element.hidden = editing;\n    for (const element of [edit, cancel, save]) element.hidden = !editing;\n    if (editing) {\n      field.value = view.textContent ?? \"\";\n      field.focus();\n    }\n  }\n  start.addEventListener(\"click\", () => setEditing(true));\n  cancel.addEventListener(\"click\", () => setEditing(false));\n  save.addEventListener(\"click\", () => {\n    view.textContent = field.value;\n    setEditing(false);\n  });\n  // Escape, backdrop clicks and the X ask first when there are unsaved edits.\n  dialog.addEventListener(DIALOG_REQUEST_CLOSE_EVENT, (event) => {\n    if (dirty() && !confirm(\"Discard unsaved changes?\")) event.preventDefault();\n  });\n  dialog.addEventListener(\"close\", () => setEditing(false));\n</script>"
           }
         ]
       },
       "svelte": {
-        "imports": ["Dialog", "Button"],
+        "imports": ["Dialog", "Button", "TextField"],
         "required": [],
         "props": {
           "onClose": {
@@ -250,6 +274,10 @@
           {
             "title": "Dialog with close button",
             "source": "<script>\n  let open = $state(false);\n</script>\n<Button onclick={() => (open = true)}>Open help</Button>\n<Dialog bind:open title=\"Account help\" dismissible onClose={(_event, reason) => {\n  if (reason !== 'backdropClick') open = false;\n}}>\n  <p>Choose Close, the X, or press Escape to dismiss this dialog.</p>\n  {#snippet actions()}\n    <Button variant=\"text\" onclick={() => (open = false)}>Close</Button>\n  {/snippet}\n</Dialog>"
+          },
+          {
+            "title": "View and edit modes",
+            "source": "<script lang=\"ts\">\n  let open = $state(false);\n  let editing = $state(false);\n  let saved = $state(\"Weekly sync with the design team.\");\n  let draft = $state(\"\");\n  const dirty = $derived(editing && draft !== saved);\n\n  function startEdit() {\n    draft = saved;\n    editing = true;\n  }\n  function save() {\n    saved = draft;\n    editing = false;\n  }\n  // Escape, backdrop clicks and the X ask first when there are unsaved edits.\n  function requestClose() {\n    if (dirty && !confirm(\"Discard unsaved changes?\")) return;\n    editing = false;\n    open = false;\n  }\n</script>\n\n<Button onclick={() => (open = true)}>Open event</Button>\n<Dialog bind:open title=\"Team meeting\" dismissible onClose={requestClose}>\n  {#if editing}\n    <TextField label=\"Description\" multiline rows={3} fullWidth bind:value={draft} />\n  {:else}\n    <p>{saved}</p>\n  {/if}\n  {#snippet actions()}\n    {#if editing}\n      <Button variant=\"text\" onclick={() => (editing = false)}>Cancel</Button>\n      <Button onclick={save} disabled={!dirty}>Save</Button>\n    {:else}\n      <Button variant=\"outlined\" onclick={startEdit}>Edit</Button>\n    {/if}\n  {/snippet}\n</Dialog>"
           }
         ]
       }

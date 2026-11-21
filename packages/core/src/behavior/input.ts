@@ -2,6 +2,9 @@ import { sliderPercent } from "../input.ts";
 import { afterFormReset } from "./form.ts";
 import { upgrader } from "./upgrade.ts";
 
+export * from "./autocomplete.ts";
+export { afterFormReset };
+
 export const upgradeSliders = upgrader<HTMLElement>("[data-clay-slider]", (root) => {
   const input = root.querySelector<HTMLInputElement>(".clay-slider__input");
   if (!input) return;

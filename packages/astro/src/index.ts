@@ -1,3 +1,4 @@
+export { default as Autocomplete } from "./Autocomplete.astro";
 export { default as Accordion } from "./Accordion.astro";
 export { default as Alert } from "./Alert.astro";
 export { default as AppBar } from "./AppBar.astro";
@@ -32,6 +33,7 @@ export { default as Snackbar } from "./Snackbar.astro";
 export { default as Switch } from "./Switch.astro";
 export { default as Tab } from "./Tab.astro";
 export { default as Table } from "./Table.astro";
+export { default as DataTable } from "./DataTable.astro";
 export { default as TabPanel } from "./TabPanel.astro";
 export { default as Dialog } from "./Dialog.astro";
 export { default as ClayLighting } from "./ClayLighting.astro";

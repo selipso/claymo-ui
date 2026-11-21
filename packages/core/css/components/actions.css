@@ -181,7 +181,7 @@ button.clay-chip__body {
   outline: 3px solid var(--clay-focus);
   outline-offset: 2px;
 }
-:is(.clay-alert, .clay-chip)[hidden]:not([hidden="until-found"]) {
+:is(.clay-alert, .clay-chip, .clay-button, .clay-icon-button)[hidden]:not([hidden="until-found"]) {
   display: none;
 }
 
