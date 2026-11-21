@@ -563,6 +563,7 @@
       },
       "paginationModel": {
         "type": "object",
+        "required": ["page", "pageSize"],
         "properties": {
           "page": {
             "type": "number"
