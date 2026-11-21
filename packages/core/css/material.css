@@ -14,15 +14,15 @@
     color-mix(in oklab, var(--clay-color), var(--clay-highlight) 60%),
     color-mix(in oklab, var(--clay-color), var(--clay-highlight) 16%)
   );
+  /* Hue-matched: shade and drop are the element's own color, darker and more saturated, never
+   * a mix with black. Same OKLCH hue; chroma scales with the lightness drop and then gains 25%,
+   * so saturation (chroma relative to lightness) rises while the color stays inside sRGB,
+   * where browsers would otherwise clip it and shift the hue. */
   --clay-shade: light-dark(
-    color-mix(in oklab, var(--clay-color), var(--clay-shadow) 24%),
-    color-mix(in oklab, var(--clay-color), var(--clay-shadow) 42%)
+    oklch(from var(--clay-color) calc(l - 0.18) calc(c * (l - 0.18) / l * 1.25) h),
+    oklch(from var(--clay-color) calc(l - 0.12) calc(c * (l - 0.12) / l * 1.25) h)
   );
-  --clay-drop: color-mix(
-    in oklab,
-    color-mix(in oklab, var(--clay-color), var(--clay-shadow) 55%),
-    transparent 50%
-  );
+  --clay-drop: oklch(from var(--clay-color) calc(l * 0.5) calc(c * 0.5 * 1.25) h / 0.5);
   --clay-lift: calc(var(--clay-d) * var(--clay-elevation));
   --clay-outer: calc(var(--clay-lift) * 1.2) calc(var(--clay-lift) * 1.6) calc(var(--clay-lift) * 3)
     0 var(--clay-drop);

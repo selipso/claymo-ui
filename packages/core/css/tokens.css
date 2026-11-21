@@ -2,6 +2,12 @@
  * Tokens. Every colour is light-dark(light, dark): one block, no
  * duplicated dark theme. <html data-theme="light|dark"> overrides the
  * system preference; with no attribute the system preference wins.
+ *
+ * Backdrop rule (claymorphism, not neumorphism): the page is clean and
+ * near-neutral (OKLCH chroma <= 0.015, a hint of the palette hue), and
+ * surfaces are pastel clay in the palette hue (chroma >= 0.06, at least
+ * 4x the page, OKLCH delta E >= 0.08 from it). Inks keep >= 4.5:1 and
+ * edges and focus >= 3:1 on both. src/theme.test.ts enforces this.
  * ------------------------------------------------------------------ */
 :root {
   color-scheme: light dark;
@@ -9,10 +15,9 @@
   --clay-font: "Source Sans 3", system-ui, sans-serif;
   --clay-border-width: 1px;
   --clay-highlight: white;
-  --clay-shadow: black;
 
-  --clay-page: light-dark(#d4e8e6, #102629);
-  --clay-surface: light-dark(#e6f2f0, #1f4044);
+  --clay-page: light-dark(#f2faf9, #0e1415);
+  --clay-surface: light-dark(#9deee8, #004c54);
   --clay-ink: light-dark(#102629, #e8f3f2);
   --clay-ink-muted: light-dark(#3f5a5d, #b7d0cf);
   --clay-edge: light-dark(#5a7e80, #7aa3a5);
@@ -34,8 +39,8 @@
   --clay-primary-ink: light-dark(#006060, #55c9c5);
   --clay-secondary-ink: light-dark(#275f8a, #8fc2ec);
   --clay-success-ink: light-dark(#2a6e4a, #7fd0a0);
-  --clay-error-ink: light-dark(#a63b32, #f08a80);
-  --clay-warning-ink: light-dark(#8a5a00, #f0c060);
+  --clay-error-ink: light-dark(#a63b32, #fe978c);
+  --clay-warning-ink: light-dark(#865805, #f0c060);
   --clay-info-ink: light-dark(#1b6280, #7cc5e0);
 }
 :root[data-theme="light"] {
@@ -55,8 +60,8 @@
  * theme forms a holistic, collision-free light/dark palette.
  * ------------------------------------------------------------------ */
 [data-palette="tidal"] {
-  --clay-page: light-dark(#c8ebe7, #0a1e22);
-  --clay-surface: light-dark(#f0fcfb, #16363c);
+  --clay-page: light-dark(#f2faf9, #0e1415);
+  --clay-surface: light-dark(#9deee6, #034b57);
   --clay-ink: light-dark(#0b2528, #eaf9f8);
   --clay-ink-muted: light-dark(#315457, #b2d5d7);
   --clay-edge: light-dark(#4d787c, #70a2a7);
@@ -81,15 +86,15 @@
   --clay-info-ink: light-dark(#164ca3, #a3c8ff);
 }
 [data-palette="sorbet"] {
-  --clay-page: light-dark(#ffe1c4, #230f1a);
-  --clay-surface: light-dark(#fff5eb, #3a1c2d);
+  --clay-page: light-dark(#fcf7f2, #161114);
+  --clay-surface: light-dark(#ffd3a9, #4c2039);
   --clay-ink: light-dark(#2e1120, #fff0eb);
   --clay-ink-muted: light-dark(#693b4f, #e8bfd0);
   --clay-edge: light-dark(#905c71, #b8849a);
   --clay-focus: light-dark(#b50091, #ff85ef);
   --clay-primary: light-dark(#db00b0, #ff2ee6);
   --clay-primary-on: light-dark(#ffffff, #2b0025);
-  --clay-primary-ink: light-dark(#b50091, #ff85ef);
+  --clay-primary-ink: light-dark(#b0048d, #ff85ef);
   --clay-secondary: light-dark(#007ab8, #24d6ff);
   --clay-secondary-on: light-dark(#ffffff, #00222b);
   --clay-secondary-ink: light-dark(#005e8f, #7ce6ff);
@@ -107,8 +112,8 @@
   --clay-info-ink: light-dark(#3c30ab, #beb8ff);
 }
 [data-palette="orbit"] {
-  --clay-page: light-dark(#e2dfff, #120e26);
-  --clay-surface: light-dark(#f5f3ff, #231c44);
+  --clay-page: light-dark(#f7f7fd, #121217);
+  --clay-surface: light-dark(#d3cdff, #312a55);
   --clay-ink: light-dark(#1c143a, #f4f0ff);
   --clay-ink-muted: light-dark(#4a406f, #c9c1e8);
   --clay-edge: light-dark(#706498, #9186bc);
@@ -127,14 +132,14 @@
   --clay-error-ink: light-dark(#ab1b36, #ffa1b3);
   --clay-warning: light-dark(#eb9800, #ffb52e);
   --clay-warning-on: light-dark(#261600, #261700);
-  --clay-warning-ink: light-dark(#855200, #ffd17a);
+  --clay-warning-ink: light-dark(#7f4e02, #ffd17a);
   --clay-info: light-dark(#0074a8, #38c7ff);
   --clay-info-on: light-dark(#ffffff, #002130);
   --clay-info-ink: light-dark(#005b85, #85dcff);
 }
 [data-palette="atelier"] {
-  --clay-page: light-dark(#d6e5ff, #0b1529);
-  --clay-surface: light-dark(#f2f7ff, #17294a);
+  --clay-page: light-dark(#f5f8fd, #101317);
+  --clay-surface: light-dark(#bbd4ff, #1d3057);
   --clay-ink: light-dark(#0e1e3b, #edf4ff);
   --clay-ink-muted: light-dark(#384e76, #b8cce8);
   --clay-edge: light-dark(#5974a2, #7793bf);
@@ -144,7 +149,7 @@
   --clay-primary-ink: light-dark(#0f40ad, #9ec2ff);
   --clay-secondary: light-dark(#e87700, #ff9224);
   --clay-secondary-on: light-dark(#241000, #291200);
-  --clay-secondary-ink: light-dark(#944900, #ffba75);
+  --clay-secondary-ink: light-dark(#8e4600, #ffba75);
   --clay-success: light-dark(#12804c, #38de8b);
   --clay-success-on: light-dark(#ffffff, #032614);
   --clay-success-ink: light-dark(#0d633a, #7cf2b5);
@@ -153,14 +158,14 @@
   --clay-error-ink: light-dark(#a31521, #ffa3ab);
   --clay-warning: light-dark(#e6be00, #ffe033);
   --clay-warning-on: light-dark(#241d00, #262000);
-  --clay-warning-ink: light-dark(#755f00, #ffeb7a);
+  --clay-warning-ink: light-dark(#6b5705, #ffeb7a);
   --clay-info: light-dark(#007799, #2ed3f5);
   --clay-info-on: light-dark(#ffffff, #00232b);
   --clay-info-ink: light-dark(#005d78, #80e6fc);
 }
 [data-palette="canopy"] {
-  --clay-page: light-dark(#cbf0e2, #081e17);
-  --clay-surface: light-dark(#eefcf6, #13362a);
+  --clay-page: light-dark(#f3faf7, #0e1412);
+  --clay-surface: light-dark(#a6eed5, #014030);
   --clay-ink: light-dark(#0b261c, #e8fbf3);
   --clay-ink-muted: light-dark(#2f5748, #b0dbcb);
   --clay-edge: light-dark(#4c7d6a, #6ca38f);

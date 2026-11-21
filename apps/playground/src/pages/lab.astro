@@ -193,7 +193,7 @@ const variants = [
     filter: drop-shadow(10px 14px 14px var(--drop-color));
   }
   .variant-d {
-    --drop-color: color-mix(in oklab, var(--clay-shadow), transparent 55%);
+    --drop-color: oklch(from var(--clay-surface) calc(l * 0.5) calc(c * 1.4) h / 0.45);
   }
   .variant-d .shape {
     box-shadow: none;
