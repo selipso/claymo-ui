@@ -16,13 +16,13 @@ Open <http://localhost:4321> for the docs, component previews, and demos.
 
 ## Packages
 
-| Package              | Purpose                                                |
-| -------------------- | ------------------------------------------------------ |
-| `@claymo/core`       | Styles, recipes, DOM behavior, and component reference |
-| `@claymo/astro`      | Astro components and `@claymo/astro/integration`       |
-| `@claymo/svelte`     | Svelte 5 components                                    |
-| `@claymo/mcp`        | Read-only MCP server for coding agents                 |
-| `@claymo/playground` | Documentation and demos (private)                      |
+| Package                                                          | Purpose                                                |
+| ---------------------------------------------------------------- | ------------------------------------------------------ |
+| [`@claymo/core`](https://www.npmjs.com/package/@claymo/core)     | Styles, recipes, DOM behavior, and component reference |
+| `@claymo/astro`                                                  | Astro components and `@claymo/astro/integration`       |
+| [`@claymo/svelte`](https://www.npmjs.com/package/@claymo/svelte) | Svelte 5 components                                    |
+| [`@claymo/mcp`](https://www.npmjs.com/package/@claymo/mcp)       | Read-only MCP server for coding agents                 |
+| `@claymo/playground`                                             | Documentation and demos (private)                      |
 
 ## Documentation
 
