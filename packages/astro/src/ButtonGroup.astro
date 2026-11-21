@@ -1,0 +1,42 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { Color, MotionPreset, Size } from "@claymo/core";
+import type { ButtonGroupOrientation, ButtonVariant } from "@claymo/core/actions";
+
+type Props = Omit<HTMLAttributes<"fieldset">, "color"> & {
+  variant?: ButtonVariant;
+  color?: Color;
+  size?: Size;
+  orientation?: ButtonGroupOrientation;
+  fullWidth?: boolean;
+  disableElevation?: boolean;
+  /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+  motion?: MotionPreset;
+};
+
+const {
+  variant = "contained",
+  color = "primary",
+  size = "medium",
+  orientation = "horizontal",
+  fullWidth = false,
+  disableElevation = false,
+  motion,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<fieldset
+  data-motion={motion}
+  {...rest}
+  class:list={["clay clay-button-group", className]}
+  data-variant={variant}
+  data-orientation={orientation}
+  data-full-width={fullWidth ? "" : undefined}
+  data-no-elevation={disableElevation ? "" : undefined}
+  data-color={color}
+  data-size={size}
+>
+  <slot />
+</fieldset>

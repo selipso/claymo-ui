@@ -1,0 +1,59 @@
+---
+import { ClayLighting } from "@claymo/astro";
+import ThemeScript from "../components/ThemeScript.astro";
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>{title}</title>
+    <link rel="icon" href="data:," />
+    <ThemeScript />
+  </head>
+  <body class="example-frame">
+    <ClayLighting />
+    <slot />
+  </body>
+</html>
+
+<style is:global>
+  body.example-frame {
+    box-sizing: border-box;
+    padding: 24px;
+  }
+  /* Modals, snackbars and tooltips draw over the frame's viewport, not inside the page flow,
+   * so a frame sized to its trigger would clip them. Reserve room where they open. */
+  body.example-frame:has(dialog) {
+    min-height: 440px;
+  }
+  body.example-frame:has(.clay-snackbar) {
+    min-height: 220px;
+  }
+  /* Room above for top placement and beside for a bubble wider than its trigger. */
+  body.example-frame:has(.clay-tooltip) {
+    padding-block-start: 72px;
+    padding-inline-start: 120px;
+  }
+</style>
+
+<script>
+  // Reports the content height to the reference page, which sizes this frame to fit. The body, not
+  // the document, is measured: the document is never shorter than the frame, so it could not shrink.
+  const report = () =>
+    parent.postMessage(
+      {
+        claymoExample: location.pathname,
+        height: Math.ceil(document.body.getBoundingClientRect().height),
+      },
+      location.origin,
+    );
+  new ResizeObserver(report).observe(document.body);
+</script>

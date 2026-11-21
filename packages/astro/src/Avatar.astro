@@ -1,0 +1,52 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { avatarDefaults, avatarInitial, type AvatarOptions } from "@claymo/core/display";
+
+type Props = HTMLAttributes<"span"> & AvatarOptions;
+
+const {
+  src,
+  srcSet,
+  sizes,
+  alt = avatarDefaults.alt,
+  size = avatarDefaults.size,
+  variant = avatarDefaults.variant,
+  class: className,
+  ...rest
+} = Astro.props;
+const hasImage = Boolean(src || srcSet);
+const hasFallback = Astro.slots.has("default");
+const initial = avatarInitial(alt);
+---
+
+<span
+  class:list={["clay clay-avatar", className]}
+  data-size={size}
+  data-variant={variant}
+  data-clay-avatar={hasImage ? "" : undefined}
+  {...rest}
+>
+  {hasImage && (
+    <img class="clay-avatar__image" src={src || undefined} srcset={srcSet} {sizes} {alt} />
+  )}
+  <span
+    class="clay-avatar__fallback"
+    hidden={hasImage}
+    role={!hasFallback && initial ? "img" : undefined}
+    aria-label={!hasFallback && initial ? alt : undefined}
+  >
+    <slot>
+      {initial || (
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+          <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z" />
+        </svg>
+      )}
+    </slot>
+  </span>
+</span>
+
+<script>
+  import { upgradeAvatars } from "@claymo/core/behavior/display";
+  import { onEveryPage } from "./lifecycle.ts";
+  onEveryPage(upgradeAvatars);
+</script>

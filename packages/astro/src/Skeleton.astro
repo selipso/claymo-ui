@@ -1,0 +1,34 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { skeletonDefaults, skeletonDimensions, type SkeletonOptions } from "@claymo/core/display";
+
+type Props = Omit<HTMLAttributes<"span">, "aria-hidden" | keyof SkeletonOptions> & SkeletonOptions;
+
+const {
+  variant = skeletonDefaults.variant,
+  width,
+  height,
+  animation = skeletonDefaults.animation,
+  class: className,
+  style,
+  ...rest
+} = Astro.props;
+const dimensions = skeletonDimensions({ variant, width, height });
+const inline =
+  typeof style === "string"
+    ? `${style}${dimensions.width === undefined ? "" : `;width:${dimensions.width}`}${dimensions.height === undefined ? "" : `;height:${dimensions.height}`}`
+    : {
+        ...style,
+        ...(dimensions.width === undefined ? {} : { width: dimensions.width }),
+        ...(dimensions.height === undefined ? {} : { height: dimensions.height }),
+      };
+---
+
+<span
+  class:list={["clay clay-skeleton", className]}
+  data-variant={variant}
+  data-animation={animation || undefined}
+  {...rest}
+  aria-hidden="true"
+  style={inline}
+></span>

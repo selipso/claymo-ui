@@ -1,0 +1,14 @@
+---
+import { theme } from "@claymo/core/reference";
+import Shell from "../layouts/Shell.astro";
+import Gallery from "../demo/Gallery.svelte";
+
+const motionPresets = Object.entries(theme.motion.presets).map(([value, preset]) => ({
+  value,
+  ...preset,
+}));
+---
+
+<Shell title="Gallery">
+  <Gallery client:load {motionPresets} />
+</Shell>

@@ -1,0 +1,15 @@
+---
+import Page from "../layouts/Page.astro";
+import { Button, Paper } from "@claymo/astro";
+---
+
+<Page title="Static surfaces">
+  <Paper elevation={2} as="section" style="padding:24px">
+    <h1>Static surfaces</h1>
+    <p>Paper and Button rendered by Astro with no client JavaScript.</p>
+    <Button href="/astro/">Continue</Button>
+    <Button variant="outlined" href="/svelte/">
+      Svelte bridge
+    </Button>
+  </Paper>
+</Page>

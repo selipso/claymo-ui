@@ -1,0 +1,12 @@
+---
+import type { HTMLAttributes } from "astro/types";
+
+/** Decorative by default (aria-hidden) because the row's text names it; an aria-label makes it announced. */
+type Props = HTMLAttributes<"span">;
+const { class: className, ...rest } = Astro.props;
+const hidden = rest["aria-hidden"] ?? (rest["aria-label"] ? undefined : "true");
+---
+
+<span {...rest} class:list={["clay-list-item-icon", className]} aria-hidden={hidden}>
+  <slot />
+</span>

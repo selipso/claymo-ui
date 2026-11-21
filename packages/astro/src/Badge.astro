@@ -1,0 +1,46 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
+import { badgeDefaults, badgeLabel, type BadgeOptions } from "@claymo/core/display";
+
+type Props = Omit<HTMLAttributes<"span">, keyof BadgeOptions> &
+  BadgeOptions & {
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
+  };
+
+const {
+  badgeContent,
+  color = badgeDefaults.color,
+  max,
+  showZero,
+  invisible,
+  variant = badgeDefaults.variant,
+  anchorOrigin = badgeDefaults.anchorOrigin,
+  overlap = badgeDefaults.overlap,
+  motion,
+  class: className,
+  ...rest
+} = Astro.props;
+const label = badgeLabel(
+  { badgeContent, max, showZero, invisible, variant },
+  Astro.slots.has("badge-content"),
+);
+---
+
+<span class:list={["clay-badge", className]} data-motion={motion} {...rest}>
+  <slot />
+  {label !== undefined && (
+    <span
+      class="clay clay-badge__indicator"
+      data-variant={variant}
+      data-anchored={Astro.slots.has("default") ? "" : undefined}
+      data-vertical={anchorOrigin.vertical ?? badgeDefaults.anchorOrigin.vertical}
+      data-horizontal={anchorOrigin.horizontal ?? badgeDefaults.anchorOrigin.horizontal}
+      data-overlap={overlap}
+      data-color={color}
+    >
+      {variant === "standard" && <slot name="badge-content">{label}</slot>}
+    </span>
+  )}
+</span>

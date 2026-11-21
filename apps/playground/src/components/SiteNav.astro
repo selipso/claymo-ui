@@ -1,0 +1,110 @@
+---
+import { getCollection } from "astro:content";
+import { listComponents } from "@claymo/core/reference";
+import { List, ListItem, ListItemButton, ListItemText } from "@claymo/astro";
+import ThemeControls from "./ThemeControls.astro";
+import { componentHref, guideHref, guides, showcase, type NavLink } from "../lib/nav";
+
+const docs = new Set((await getCollection("docs")).map((entry) => entry.id));
+for (const { slug } of guides) {
+  if (!docs.has(slug)) throw new Error(`Sidebar guide "${slug}" has no docs/${slug}.md`);
+}
+
+const sections: { id: string; title: string; dense?: boolean; links: NavLink[] }[] = [
+  {
+    id: "nav-guides",
+    title: "Guides",
+    links: guides.map(({ slug, label }) => ({ href: guideHref(slug), label })),
+  },
+  { id: "nav-showcase", title: "Showcase", links: showcase },
+  {
+    id: "nav-components",
+    title: "Components",
+    dense: true,
+    links: [
+      { href: "/components/", label: "Overview" },
+      ...listComponents("astro").map((name) => ({ href: componentHref(name), label: name })),
+    ],
+  },
+];
+---
+
+<aside class="site-nav" transition:persist="site-nav" data-site-nav>
+  <div class="site-nav__bar">
+    <a class="site-nav__brand" href="/">
+      Claymo UI
+    </a>
+    <button
+      type="button"
+      class="site-nav__toggle"
+      aria-expanded="false"
+      aria-controls="site-nav-panel"
+      data-site-nav-toggle
+    >
+      Menu
+    </button>
+  </div>
+  <div class="site-nav__panel" id="site-nav-panel">
+    <ThemeControls />
+    {sections.map((section) => (
+      <nav aria-labelledby={section.id}>
+        <h2 class="site-nav__heading" id={section.id}>
+          {section.title}
+        </h2>
+        <List dense={section.dense}>
+          {section.links.map((link) => (
+            <ListItem disablePadding>
+              <ListItemButton href={link.href} dense={section.dense}>
+                <ListItemText primary={link.label} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      </nav>
+    ))}
+  </div>
+</aside>
+
+<script>
+  // The sidebar persists across navigations, so its current link and menu state are updated here
+  // instead of being server-rendered per page.
+  function markCurrent(nav: HTMLElement) {
+    const here = withSlash(location.pathname);
+    for (const link of nav.querySelectorAll<HTMLAnchorElement>("a[href]")) {
+      const current =
+        withSlash(link.pathname) === here && link.closest(".site-nav__panel") !== null;
+      link.toggleAttribute("data-selected", current);
+      if (!current) link.removeAttribute("aria-current");
+      else {
+        link.setAttribute("aria-current", "page");
+        link.scrollIntoView({ block: "nearest" });
+      }
+    }
+  }
+
+  function withSlash(path: string) {
+    return path.endsWith("/") ? path : `${path}/`;
+  }
+
+  function setMenu(nav: HTMLElement, open: boolean) {
+    nav.toggleAttribute("data-open", open);
+    nav.querySelector("[data-site-nav-toggle]")?.setAttribute("aria-expanded", String(open));
+  }
+
+  function siteNav() {
+    return document.querySelector<HTMLElement>("[data-site-nav]");
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    const nav = siteNav();
+    if (!nav) return;
+    markCurrent(nav);
+    setMenu(nav, false);
+  });
+
+  document.addEventListener("click", (event) => {
+    const toggle = (event.target as Element).closest("[data-site-nav-toggle]");
+    const nav = siteNav();
+    if (toggle && nav) setMenu(nav, !nav.hasAttribute("data-open"));
+  });
+</script>

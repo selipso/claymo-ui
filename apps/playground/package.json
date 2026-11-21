@@ -1,0 +1,31 @@
+{
+  "name": "@claymo/playground",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "examples": "node scripts/generate-examples.mjs",
+    "predev": "npm run examples",
+    "dev": "astro dev",
+    "prebuild": "npm run examples",
+    "build": "astro build",
+    "preview": "astro preview",
+    "precheck": "npm run examples",
+    "check": "astro check && svelte-check --tsconfig ./tsconfig.json --fail-on-warnings",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@astrojs/markdown-satteri": "^0.4.10",
+    "@astrojs/svelte": "^9.1.6",
+    "@claymo/astro": "0.1.0",
+    "@claymo/core": "0.1.0",
+    "@claymo/svelte": "0.1.0",
+    "@lucide/svelte": "^1.73.0",
+    "astro": "^7.4.13",
+    "svelte": "^5.57.3"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "svelte-check": "^4.7.8",
+    "typescript": "^6.0.3"
+  }
+}

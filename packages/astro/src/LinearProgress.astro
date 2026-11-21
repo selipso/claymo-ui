@@ -1,0 +1,49 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { linearProgress, progressDefaults, type LinearProgressOptions } from "@claymo/core/display";
+
+type Props = Omit<
+  HTMLAttributes<"div">,
+  keyof LinearProgressOptions | "role" | "aria-valuemin" | "aria-valuemax" | "aria-valuenow"
+> &
+  LinearProgressOptions & { "aria-label": string };
+
+const {
+  variant = progressDefaults.variant,
+  min,
+  max,
+  value,
+  valueBuffer,
+  color = progressDefaults.color,
+  "aria-label": ariaLabel,
+  class: className,
+  ...rest
+} = Astro.props;
+const progress = linearProgress({ variant, min, max, value, valueBuffer });
+---
+
+<div
+  class:list={["clay clay-linear-progress", className]}
+  data-variant={variant}
+  role="progressbar"
+  aria-label={ariaLabel}
+  aria-valuemin={progress.range?.min}
+  aria-valuemax={progress.range?.max}
+  aria-valuenow={progress.range?.now}
+  data-color={color}
+  {...rest}
+>
+  {progress.buffer !== undefined && (
+    <div
+      class="clay-linear-progress__buffer"
+      style={{ "--clay-linear-progress-fraction": progress.buffer }}
+    ></div>
+  )}
+  <div
+    class="clay clay-linear-progress__bar"
+    data-empty={progress.range?.fraction === 0 ? "" : undefined}
+    style={
+      progress.range ? { "--clay-linear-progress-fraction": progress.range.fraction } : undefined
+    }
+  ></div>
+</div>

@@ -1,0 +1,18 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import Shell from "../layouts/Shell.astro";
+
+interface Props {
+  entry: CollectionEntry<"docs">;
+}
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const title = headings.find(({ depth }) => depth === 1)?.text;
+if (!title) throw new Error(`docs/${entry.id}.md needs a "# Title" heading`);
+---
+
+<Shell title={entry.id === "index" ? "Claymo UI" : title}>
+  <main class="prose">
+    <Content />
+  </main>
+</Shell>

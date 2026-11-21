@@ -1,0 +1,34 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { Color, MotionPreset, Size } from "@claymo/core";
+
+type Props = Omit<HTMLAttributes<"input">, "type" | "size" | "color" | "checked" | "value"> & {
+  value: string | number;
+  checked?: boolean;
+  defaultChecked?: boolean;
+  color?: Color;
+  size?: Exclude<Size, "large">;
+  /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+  motion?: MotionPreset;
+};
+
+const {
+  checked,
+  defaultChecked,
+  color = "primary",
+  size = "medium",
+  motion,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<input
+  data-motion={motion}
+  {...rest}
+  type="radio"
+  class:list={["clay", "clay-radio", className]}
+  data-color={color}
+  data-size={size}
+  checked={checked ?? defaultChecked}
+/>

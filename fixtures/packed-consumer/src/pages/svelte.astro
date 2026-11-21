@@ -1,0 +1,12 @@
+---
+import Page from "../layouts/Page.astro";
+import Parity from "../components/Parity.svelte";
+import Scenarios from "../components/Scenarios.svelte";
+import SecondTabs from "../components/SecondTabs.svelte";
+---
+
+<Page title="Svelte bridge">
+  <Parity client:load />
+  <Scenarios client:load />
+  <SecondTabs client:load />
+</Page>

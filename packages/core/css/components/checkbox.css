@@ -1,0 +1,79 @@
+.clay-checkbox {
+  --clay-color: var(--clay-page);
+  --clay-d: 3px;
+  --clay-radius: 9px;
+  appearance: none;
+  -webkit-appearance: none;
+  position: relative;
+  display: inline-block;
+  flex: none;
+  box-sizing: border-box;
+  width: 28px;
+  height: 28px;
+  margin: 0;
+  padding: 0;
+  border: var(--clay-border-width) solid var(--clay-edge);
+  box-shadow: var(--clay-well);
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.clay-checkbox[data-size="small"] {
+  width: 24px;
+  height: 24px;
+  --clay-radius: 8px;
+}
+.clay-checkbox:disabled {
+  cursor: not-allowed;
+}
+
+.clay-checkbox:checked,
+.clay-checkbox:indeterminate {
+  --clay-color: var(--c);
+  border-color: var(--c-ink);
+  box-shadow: var(--clay-raised);
+}
+
+/* Tick: 6x12px, 3px stroke, rotated 45deg. Fades in while growing from 60%. */
+.clay-checkbox::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  box-sizing: border-box;
+  width: 6px;
+  height: 12px;
+  border: solid var(--c-on);
+  border-width: 0 3px 3px 0;
+  opacity: 0;
+  transform: translate(-50%, -62%) rotate(45deg) scale(0.6);
+  transition-property: transform, opacity;
+  transition-duration: var(--clay-motion-duration);
+  transition-timing-function: var(--clay-motion-easing);
+  pointer-events: none;
+}
+.clay-checkbox[data-size="small"]::after {
+  width: 5px;
+  height: 10px;
+  border-width: 0 2px 2px 0;
+}
+.clay-checkbox:checked::after {
+  opacity: 1;
+  transform: translate(-50%, -62%) rotate(45deg) scale(1);
+}
+
+/* Indeterminate: 12x3px dash. Declared after :checked so it wins when both apply. */
+.clay-checkbox:indeterminate::after {
+  width: 12px;
+  height: 3px;
+  border: 0;
+  border-radius: 2px;
+  background: var(--c-on);
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+.clay-checkbox[data-size="small"]:indeterminate::after {
+  width: 10px;
+  height: 3px;
+  border-width: 0;
+}

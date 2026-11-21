@@ -1,0 +1,44 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
+import { nativeAction, type NativeActionOptions } from "@claymo/core/actions";
+
+type Props = Omit<HTMLAttributes<"button">, keyof NativeActionOptions> &
+  Pick<HTMLAttributes<"a">, "target" | "rel"> &
+  NativeActionOptions & {
+    selected?: boolean;
+    dense?: boolean;
+    disableGutters?: boolean;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
+  };
+const {
+  selected = false,
+  dense = false,
+  disableGutters = false,
+  href,
+  type,
+  disabled,
+  motion,
+  class: className,
+  onclick,
+  ...rest
+} = Astro.props;
+const action = nativeAction({ href, type, disabled });
+const Tag = action.tag;
+---
+
+<Tag
+  data-motion={motion}
+  {...rest}
+  {...action.attrs}
+  class:list={["clay clay-list-item-button", className]}
+  data-selected={selected ? "" : undefined}
+  data-dense={dense ? "" : undefined}
+  data-gutters={!disableGutters ? "" : undefined}
+  data-clay-interactive
+  aria-current={rest["aria-current"] ?? (selected ? (href ? "page" : "true") : undefined)}
+  onclick={disabled ? undefined : onclick}
+>
+  <slot />
+</Tag>

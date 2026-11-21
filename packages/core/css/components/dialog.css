@@ -1,0 +1,83 @@
+.clay-dialog {
+  --clay-radius: 32px;
+  --clay-d: 10px;
+  --clay-dialog-width: 444px;
+  box-sizing: border-box;
+  width: fit-content;
+  min-width: min(280px, calc(100% - 32px));
+  max-width: min(var(--clay-dialog-width), calc(100% - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  color: var(--clay-ink);
+}
+.clay-dialog[data-max-width="xs"] {
+  --clay-dialog-width: 320px;
+}
+.clay-dialog[data-max-width="md"] {
+  --clay-dialog-width: 600px;
+}
+.clay-dialog[data-full-width] {
+  width: 100%;
+}
+.clay-dialog[open] {
+  animation: clay-dialog-enter var(--clay-motion-duration-enter) var(--clay-motion-easing);
+}
+.clay-dialog::backdrop {
+  background: var(--clay-backdrop);
+}
+.clay-dialog[open]::backdrop {
+  animation: clay-fade var(--clay-motion-duration-enter) var(--clay-motion-easing);
+}
+
+.clay-dialog__title {
+  margin: 0;
+  padding: 24px 24px 8px;
+  font: 600 1.25rem/1.3 var(--clay-font);
+}
+.clay-dialog__content {
+  padding: 8px 24px;
+}
+/* No title: the content opens the panel (after the close button when there is one). */
+.clay-dialog__panel > .clay-dialog__content:is(:first-child, .clay-dialog__close + *) {
+  padding-top: 24px;
+}
+.clay-dialog__panel {
+  position: relative;
+}
+/* Centered on the title's first line; the first row leaves room for it. The panel qualifier
+ * outranks IconButton's own positioning, which loads later. */
+.clay-dialog__panel > .clay-dialog__close {
+  position: absolute;
+  inset-block-start: 19px;
+  inset-inline-end: 16px;
+}
+.clay-dialog[data-dismissible] .clay-dialog__close + * {
+  padding-inline-end: 64px;
+}
+.clay-dialog__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8px 24px 24px;
+}
+
+@keyframes clay-dialog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(var(--clay-motion-enter-y)) scale(var(--clay-motion-enter-scale));
+  }
+}
+@keyframes clay-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Scroll lock while any modal dialog is open. */
+body:has(dialog[open]) {
+  overflow: hidden;
+}

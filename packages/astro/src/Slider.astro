@@ -1,0 +1,89 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { Color, MotionPreset, Size } from "@claymo/core";
+import { sliderMarks, sliderPercent, sliderValue } from "@claymo/core/input";
+
+type Props = Omit<
+  HTMLAttributes<"input">,
+  "type" | "size" | "color" | "min" | "max" | "step" | "value" | "aria-label"
+> & {
+  value?: number;
+  defaultValue?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  color?: Color;
+  size?: Exclude<Size, "large">;
+  valueLabelDisplay?: "off" | "auto" | "on";
+  marks?: boolean;
+  "aria-label": string;
+  /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+  motion?: MotionPreset;
+};
+
+const {
+  value,
+  defaultValue,
+  min = 0,
+  max = 100,
+  step = 1,
+  disabled,
+  color = "primary",
+  size = "medium",
+  valueLabelDisplay = "off",
+  marks = false,
+  motion,
+  class: className,
+  ...rest
+} = Astro.props;
+const current = sliderValue(value ?? defaultValue ?? min, min, max, step);
+const pct = sliderPercent(current, min, max);
+const ticks = marks ? sliderMarks(min, max, step) : [];
+---
+
+<div
+  class:list={["clay-slider", className]}
+  data-clay-slider
+  data-disabled={disabled || undefined}
+  data-has-label={valueLabelDisplay !== "off" || undefined}
+  data-has-marks={ticks.length > 0 || undefined}
+  data-color={color}
+  data-size={size}
+  data-label={valueLabelDisplay}
+  data-motion={motion}
+  style={`--clay-slider-percent:${pct}`}
+>
+  {valueLabelDisplay !== "off" && (
+    <span class="clay clay-slider__bubble" aria-hidden="true">
+      {current}
+    </span>
+  )}
+  <input
+    class="clay clay-slider__input"
+    type="range"
+    {min}
+    {max}
+    {step}
+    {disabled}
+    value={current}
+    {...rest}
+  />
+  {ticks.length > 0 && (
+    <span class="clay-slider__marks" aria-hidden="true">
+      {ticks.map((tick) => (
+        <span
+          class="clay-slider__tick"
+          data-value={tick}
+          data-active={tick <= current || undefined}
+          style={`--clay-slider-tick:${sliderPercent(tick, min, max)}%`}
+        ></span>
+      ))}
+    </span>
+  )}
+</div>
+
+<script>
+  import { upgradeSliders } from "@claymo/core/behavior/input";
+  import { onEveryPage } from "./lifecycle.ts";
+  onEveryPage(upgradeSliders);
+</script>

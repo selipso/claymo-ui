@@ -1,0 +1,86 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
+import { tabIds, tabListRecipe, tabPanelRecipe, tabRecipe, type TabsVariant } from "@claymo/core";
+import { instanceId } from "./ids.ts";
+
+export interface TabItem {
+  value: string;
+  label: string;
+  disabled?: boolean;
+}
+
+/**
+ * Two modes. Data: pass `tabs`, and each panel is the slot named by its tab value. Composed: put
+ * `Tab` children in the default slot and `TabPanel`s in the `panels` slot; give Tabs an `id` and pass
+ * it to each child as `tabsId`. Without `id`, each instance gets a unique one, so repeated tablists
+ * never share panel ids. Listen for `clay-change` on the root for user selections.
+ */
+type Props = Omit<HTMLAttributes<"div">, "role"> & {
+  "aria-label": string;
+  tabs?: readonly TabItem[];
+  /** Initially selected tab value. Composed mode may instead mark one Tab and TabPanel `selected`. */
+  value?: string | number;
+  variant?: TabsVariant;
+  /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+  motion?: MotionPreset;
+};
+
+const {
+  tabs,
+  value,
+  variant,
+  id,
+  "aria-label": label,
+  motion,
+  class: className,
+  ...rest
+} = Astro.props;
+
+const base = id ?? instanceId("clay-tabs");
+const ids = tabIds(base);
+const enabled = tabs?.filter((tab) => !tab.disabled).map((tab) => tab.value) ?? [];
+const list = tabListRecipe({ variant, label });
+const panels = await Promise.all(
+  (tabs ?? []).map((tab) => (Astro.slots.has(tab.value) ? Astro.slots.render(tab.value) : "")),
+);
+---
+
+<div
+  id={base}
+  class:list={["clay-tabs", className]}
+  data-motion={motion}
+  {...rest}
+  data-clay-tabs
+  data-clay-selected={value}
+  data-clay-selected-numeric={typeof value === "number" ? "" : undefined}
+>
+  <div class={list.className} {...list.attrs}>
+    {tabs ? (
+      tabs.map((tab) => {
+        const recipe = tabRecipe({ value: tab.value, selected: value, enabled, ids });
+        return (
+          <button {...recipe.attrs} class={recipe.className} disabled={tab.disabled}>
+            <span class="clay-tab__label">{tab.label}</span>
+          </button>
+        );
+      })
+    ) : (
+      <slot />
+    )}
+  </div>
+  {tabs ? (
+    tabs.map((tab, i) => {
+      const recipe = tabPanelRecipe({ value: tab.value, selected: value, ids });
+      return <div {...recipe.attrs} class={recipe.className} set:html={panels[i]} />;
+    })
+  ) : (
+    <slot name="panels" />
+  )}
+</div>
+
+<script>
+  import { upgradeTabs } from "@claymo/core/behavior/tabs";
+  import { onEveryPage } from "./lifecycle.ts";
+  onEveryPage(upgradeTabs);
+</script>

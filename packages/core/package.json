@@ -1,0 +1,104 @@
+{
+  "name": "@claymo/core",
+  "version": "0.1.0",
+  "description": "Claymorphic design system core: CSS, server-safe component recipes, and DOM behavior.",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./actions": {
+      "types": "./dist/actions.d.ts",
+      "default": "./dist/actions.js"
+    },
+    "./display": {
+      "types": "./dist/display.d.ts",
+      "default": "./dist/display.js"
+    },
+    "./input": {
+      "types": "./dist/input.d.ts",
+      "default": "./dist/input.js"
+    },
+    "./overlays": {
+      "types": "./dist/overlays.d.ts",
+      "default": "./dist/overlays.js"
+    },
+    "./surfaces": {
+      "types": "./dist/surfaces.d.ts",
+      "default": "./dist/surfaces.js"
+    },
+    "./behavior/actions": {
+      "types": "./dist/behavior/actions.d.ts",
+      "default": "./dist/behavior/actions.js"
+    },
+    "./behavior/display": {
+      "types": "./dist/behavior/display.d.ts",
+      "default": "./dist/behavior/display.js"
+    },
+    "./behavior/input": {
+      "types": "./dist/behavior/input.d.ts",
+      "default": "./dist/behavior/input.js"
+    },
+    "./behavior/overlays": {
+      "types": "./dist/behavior/overlays.d.ts",
+      "default": "./dist/behavior/overlays.js"
+    },
+    "./behavior/surfaces": {
+      "types": "./dist/behavior/surfaces.d.ts",
+      "default": "./dist/behavior/surfaces.js"
+    },
+    "./behavior/tabs": {
+      "types": "./dist/behavior/tabs.d.ts",
+      "default": "./dist/behavior/tabs.js"
+    },
+    "./behavior/dialog": {
+      "types": "./dist/behavior/dialog.d.ts",
+      "default": "./dist/behavior/dialog.js"
+    },
+    "./behavior/checkbox": {
+      "types": "./dist/behavior/checkbox.d.ts",
+      "default": "./dist/behavior/checkbox.js"
+    },
+    "./reference": {
+      "types": "./reference/index.d.ts",
+      "default": "./reference/index.js"
+    },
+    "./claymo.css": "./css/claymo.css",
+    "./page.css": "./css/page.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "css",
+    "reference"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "prepack": "npm run build",
+    "check": "tsc -p tsconfig.json",
+    "test": "node --test \"src/**/*.test.ts\""
+  },
+  "dependencies": {
+    "@fontsource/source-sans-3": "^5.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/selipso/claymo-ui.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/selipso/claymo-ui#readme",
+  "bugs": {
+    "url": "https://github.com/selipso/claymo-ui/issues"
+  }
+}

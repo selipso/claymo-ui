@@ -1,0 +1,65 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { Color, MotionPreset, Size } from "@claymo/core";
+import { nativeAction, type IconButtonEdge, type NativeActionOptions } from "@claymo/core/actions";
+
+/** Slots: default (icon) and `loading-indicator`. */
+type Props = Omit<
+  HTMLAttributes<"button">,
+  keyof NativeActionOptions | "color" | "size" | "aria-label"
+> &
+  Pick<HTMLAttributes<"a">, "target" | "rel"> &
+  NativeActionOptions & {
+    "aria-label": string;
+    color?: Color;
+    size?: Size;
+    loading?: boolean | null;
+    inflated?: boolean;
+    edge?: IconButtonEdge;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
+  };
+
+const {
+  color = "default",
+  size = "medium",
+  href,
+  type,
+  disabled,
+  loading = false,
+  inflated = false,
+  edge = false,
+  motion,
+  class: className,
+  onclick,
+  ...rest
+} = Astro.props;
+const inactive = disabled || loading;
+const action = nativeAction({ href, type, disabled: inactive });
+const Tag = action.tag;
+---
+
+<Tag
+  data-motion={motion}
+  {...rest}
+  {...action.attrs}
+  class:list={["clay clay-icon-button", className]}
+  data-loading={loading ? "" : undefined}
+  data-edge={edge || undefined}
+  data-color={color}
+  data-size={size}
+  data-clay-interactive
+  data-inflated={inflated ? "" : undefined}
+  aria-busy={loading ? "true" : rest["aria-busy"]}
+  onclick={inactive ? undefined : onclick}
+>
+  {loading ? (
+    <slot name="loading-indicator">
+      <span class="clay-icon-button__spinner" role="progressbar" aria-label="Loading"></span>
+    </slot>
+  ) : (
+    <span class="clay-icon-button__icon">
+      <slot />
+    </span>
+  )}
+</Tag>

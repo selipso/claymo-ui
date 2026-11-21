@@ -1,0 +1,75 @@
+.clay-tabs__list {
+  display: flex;
+  gap: 8px;
+  box-sizing: border-box;
+  /* Room for the 3px focus ring + 3px offset and the clay shadows, which an overflow container would clip. */
+  padding: 10px 12px 14px;
+  overflow-x: auto;
+}
+.clay-tabs__list[data-variant="fullWidth"] {
+  width: 100%;
+}
+
+.clay-tab {
+  --clay-radius: 18px;
+  --clay-d: 5px;
+  --clay-color: var(--clay-surface);
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
+  min-height: 48px;
+  padding: 0 22px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--clay-ink-muted);
+  font: 600 1rem/1 var(--clay-font);
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.clay-tabs__list[data-variant="fullWidth"] > .clay-tab {
+  flex: 1 1 0;
+}
+.clay-tab__icon {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.25em;
+  line-height: 0;
+}
+
+.clay-tab:not([aria-selected="true"]):is(:hover, :focus-visible):not(:disabled) {
+  background: var(--clay-surface);
+  box-shadow: var(--clay-raised);
+  color: var(--clay-ink);
+}
+
+/* Selected: pressed well, coloured text and an underline. */
+.clay-tab[aria-selected="true"] {
+  background: var(--clay-page);
+  --clay-color: var(--clay-page);
+  box-shadow: var(--clay-well);
+  color: var(--c-ink);
+}
+.clay-tab[aria-selected="true"]:hover:not(:disabled) {
+  transform: none;
+}
+.clay-tab[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  inset-inline: 22%;
+  inset-block-end: 5px;
+  border-block-end: var(--clay-border-width) solid var(--c-ink);
+}
+
+@media (forced-colors: active) {
+  .clay-tab[aria-selected="true"]::after {
+    forced-color-adjust: none;
+    border-color: Highlight;
+  }
+}

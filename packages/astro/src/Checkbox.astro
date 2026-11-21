@@ -1,0 +1,42 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
+import { checkboxRecipe, type CheckboxOptions } from "@claymo/core";
+
+type Props = Omit<HTMLAttributes<"input">, "type" | "size" | "color"> &
+  CheckboxOptions & {
+    defaultChecked?: boolean;
+    /** Initial mixed state; a user click clears it, form reset restores it. */
+    indeterminate?: boolean;
+    /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+    motion?: MotionPreset;
+  };
+
+const {
+  color,
+  size,
+  checked,
+  defaultChecked,
+  indeterminate,
+  motion,
+  class: className,
+  ...rest
+} = Astro.props;
+const recipe = checkboxRecipe({ color, size });
+---
+
+<input
+  type="checkbox"
+  {...recipe.attrs}
+  class:list={[recipe.className, className]}
+  data-clay-indeterminate={indeterminate ? "" : undefined}
+  checked={checked ?? defaultChecked}
+  data-motion={motion}
+  {...rest}
+/>
+
+<script>
+  import { upgradeCheckboxes } from "@claymo/core/behavior/checkbox";
+  import { onEveryPage } from "./lifecycle.ts";
+  onEveryPage(upgradeCheckboxes);
+</script>

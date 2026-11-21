@@ -1,0 +1,9 @@
+---
+import { getEntry } from "astro:content";
+import DocPage from "../components/DocPage.astro";
+
+const entry = await getEntry("docs", "index");
+if (!entry) throw new Error("docs/index.md is missing");
+---
+
+<DocPage entry={entry} />

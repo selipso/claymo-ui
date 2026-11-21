@@ -1,0 +1,36 @@
+---
+import { ClientRouter } from "astro:transitions";
+import { ClayLighting } from "@claymo/astro";
+import SiteNav from "../components/SiteNav.astro";
+import ThemeScript from "../components/ThemeScript.astro";
+import "../styles/site.css";
+
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title === "Claymo UI" ? title : `${title} · Claymo UI`}</title>
+    <link rel="icon" href="data:," />
+    <ThemeScript />
+    <ClientRouter />
+  </head>
+  <body>
+    <a class="site-skip" href="#content">
+      Skip to content
+    </a>
+    <ClayLighting />
+    <div class="site">
+      <SiteNav />
+      <div class="site-content" id="content" tabindex="-1">
+        <slot />
+      </div>
+    </div>
+  </body>
+</html>

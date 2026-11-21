@@ -1,0 +1,610 @@
+{
+  "Alert": {
+    "purpose": "An inline status message with an optional icon and action. Defaults to role=alert; use role=status for less urgent messages. Severity is announced in text as well as shown visually.",
+    "props": {
+      "severity": {
+        "type": "string",
+        "enum": ["success", "info", "warning", "error"],
+        "default": "success",
+        "description": "Chooses the default icon, spoken severity label, and palette color."
+      },
+      "color": {
+        "type": "string",
+        "enum": ["success", "info", "warning", "error"],
+        "description": "Palette override; defaults to severity and does not change the icon or spoken label."
+      },
+      "variant": {
+        "type": "string",
+        "enum": ["standard", "filled", "outlined"],
+        "default": "standard"
+      },
+      "role": { "type": "string", "default": "alert" },
+      "closeText": {
+        "type": "string",
+        "default": "Close",
+        "description": "Accessible name of the default close button."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Alert"],
+        "required": [],
+        "props": {
+          "dismissible": {
+            "type": "boolean",
+            "default": false,
+            "description": "Show the default close button when no action slot is supplied."
+          },
+          "icon": {
+            "type": "boolean",
+            "enum": [false],
+            "description": "Use false to hide the icon."
+          }
+        },
+        "content": [
+          "Default slot: message.",
+          "icon: replaces the severity icon.",
+          "action: replaces the close button."
+        ],
+        "events": [
+          "clay-close: a bubbling, cancelable CustomEvent<{ originalEvent: MouseEvent }> on the alert. The alert is hidden unless a listener calls preventDefault()."
+        ],
+        "examples": [
+          {
+            "title": "Dismissible status message",
+            "source": "<Alert severity=\"info\" variant=\"outlined\" role=\"status\" dismissible>Changes have been synced.</Alert>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["Alert"],
+        "required": [],
+        "props": {},
+        "content": [
+          "children: message.",
+          "icon: optional snippet replacing the severity icon, or false to hide it.",
+          "action: snippet replacing the close button."
+        ],
+        "events": [
+          "onClose(event: MouseEvent): providing this callback shows the default close button unless action is set. The caller owns visibility; the callback does not hide the alert automatically."
+        ],
+        "examples": [
+          {
+            "title": "Dismissible status message",
+            "source": "<script>\n  let visible = $state(true);\n</script>\n\n{#if visible}\n  <Alert severity=\"info\" variant=\"outlined\" role=\"status\" onClose={() => (visible = false)}>Changes have been synced.</Alert>\n{/if}"
+          }
+        ]
+      }
+    }
+  },
+  "Chip": {
+    "purpose": "A compact label with optional avatar, icon, action and removal control. When clickable and removable, the label button and remove button are native siblings, never nested.",
+    "props": {
+      "label": {
+        "type": "string",
+        "description": "Visible label; also used to name the remove button."
+      },
+      "variant": { "type": "string", "enum": ["filled", "outlined"], "default": "filled" },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "default"
+      },
+      "size": { "type": "string", "enum": ["small", "medium"], "default": "medium" },
+      "clickable": {
+        "type": "boolean",
+        "default": false,
+        "description": "Render the label as a button."
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disable both the label and remove buttons when present."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Chip"],
+        "required": ["label"],
+        "props": {
+          "deletable": {
+            "type": "boolean",
+            "default": false,
+            "description": "Show a remove button."
+          }
+        },
+        "content": [
+          "avatar: optional leading avatar.",
+          "icon: optional leading icon.",
+          "delete-icon: replaces the remove glyph."
+        ],
+        "events": [
+          "The body dispatches a native click when clickable. Listen on .clay-chip__body for label activation only.",
+          "clay-delete: a bubbling, cancelable CustomEvent<{ label: string, originalEvent: MouseEvent | KeyboardEvent }> dispatched on the chip by the remove button or by Backspace/Delete on either button. The chip is hidden unless a listener calls preventDefault()."
+        ],
+        "examples": [
+          {
+            "title": "Removable chip",
+            "source": "<Chip label=\"Design systems\" variant=\"outlined\" color=\"secondary\" deletable />"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["Chip"],
+        "required": ["label"],
+        "props": {},
+        "content": [
+          "avatar and icon: optional leading snippets.",
+          "deleteIcon: snippet replacing the remove glyph."
+        ],
+        "events": [
+          "onclick(event: MouseEvent): activates the label and implies a clickable native button even if clickable is omitted.",
+          "onDelete(event: MouseEvent | KeyboardEvent): providing this callback shows the remove button. Removal is requested by clicking it or pressing Backspace/Delete on either button. The caller owns visibility."
+        ],
+        "examples": [
+          {
+            "title": "Removable chip",
+            "source": "<script>\n  let visible = $state(true);\n</script>\n\n{#if visible}\n  <Chip label=\"Design systems\" variant=\"outlined\" color=\"secondary\" onDelete={() => (visible = false)} />\n{/if}"
+          }
+        ]
+      }
+    }
+  },
+  "ButtonGroup": {
+    "purpose": "A fieldset of related Buttons with shared variant, color and size styling. Give the group a name using aria-label, aria-labelledby or a legend; buttons retain native focus and activation.",
+    "props": {
+      "variant": {
+        "type": "string",
+        "enum": ["contained", "outlined", "text"],
+        "default": "contained"
+      },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "primary"
+      },
+      "size": { "type": "string", "enum": ["small", "medium", "large"], "default": "medium" },
+      "orientation": {
+        "type": "string",
+        "enum": ["horizontal", "vertical"],
+        "default": "horizontal"
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disables native buttons through the fieldset. Links are not form controls; pass disabled to linked Buttons separately."
+      },
+      "fullWidth": {
+        "type": "boolean",
+        "default": false,
+        "description": "Expand the group to its container width."
+      },
+      "disableElevation": {
+        "type": "boolean",
+        "default": false,
+        "description": "Remove the group's outer shadow while retaining inset shading on contained and outlined groups."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["ButtonGroup", "Button"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: Button children."],
+        "events": ["No component events; listen to native events on the buttons or fieldset."],
+        "examples": [
+          {
+            "title": "Outlined history controls",
+            "source": "<ButtonGroup aria-label=\"Editor history\" variant=\"outlined\" color=\"secondary\" size=\"small\">\n  <Button>Undo</Button>\n  <Button>Redo</Button>\n</ButtonGroup>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["ButtonGroup", "Button"],
+        "required": [],
+        "props": {},
+        "content": ["children: Button children."],
+        "events": ["No component events; native handlers are forwarded to the fieldset."],
+        "examples": [
+          {
+            "title": "Outlined history controls",
+            "source": "<ButtonGroup aria-label=\"Editor history\" variant=\"outlined\" color=\"secondary\" size=\"small\">\n  <Button>Undo</Button>\n  <Button>Redo</Button>\n</ButtonGroup>"
+          }
+        ]
+      }
+    }
+  },
+  "IconButton": {
+    "purpose": "An accessible icon-only action or link. Supply an aria-label even when the icon is replaced by a loading indicator.",
+    "props": {
+      "aria-label": {
+        "type": "string",
+        "description": "Accessible name such as Search or Settings."
+      },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "default"
+      },
+      "size": { "type": "string", "enum": ["small", "medium", "large"], "default": "medium" },
+      "edge": {
+        "enum": [false, "start", "end"],
+        "default": false,
+        "description": "Use a negative logical margin to align the specified edge."
+      },
+      "disabled": { "type": "boolean", "default": false },
+      "loading": {
+        "enum": [true, false, null],
+        "default": false,
+        "description": "Replace the icon with a progress indicator, set aria-busy and disable activation."
+      },
+      "inflated": {
+        "type": "boolean",
+        "default": false,
+        "description": "Enable dome shading; render ClayLighting once in the document."
+      },
+      "href": {
+        "type": "string",
+        "description": "A nonempty URL renders an anchor. A disabled or loading anchor omits href and leaves the tab order."
+      },
+      "target": { "type": "string", "description": "Native link target; use with href." },
+      "rel": { "type": "string", "description": "Native link relationship; use with href." },
+      "type": {
+        "enum": ["button", "submit", "reset", null],
+        "default": "button",
+        "description": "Native button type, ignored for a link."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["IconButton"],
+        "required": ["aria-label"],
+        "props": {},
+        "content": [
+          "Default slot: the icon.",
+          "loading-indicator: optional replacement for the accessible spinner; provide its accessible name."
+        ],
+        "events": [
+          "Native click. Removing href prevents disabled link navigation but does not suppress custom DOM click listeners."
+        ],
+        "examples": [
+          {
+            "title": "Icon link",
+            "source": "<IconButton aria-label=\"Search docs\" href=\"/search\">\n  <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><circle cx=\"10\" cy=\"10\" r=\"6\" /><path d=\"m14 14 5 5\" /></svg>\n</IconButton>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["IconButton"],
+        "required": ["aria-label"],
+        "props": {},
+        "content": [
+          "children: the icon.",
+          "loadingIndicator: optional snippet replacing the accessible spinner; provide its accessible name."
+        ],
+        "events": [
+          "onclick(event: MouseEvent): native click, not invoked while disabled or loading."
+        ],
+        "examples": [
+          {
+            "title": "Icon link",
+            "source": "<IconButton aria-label=\"Search docs\" href=\"/search\">\n  <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><circle cx=\"10\" cy=\"10\" r=\"6\" /><path d=\"m14 14 5 5\" /></svg>\n</IconButton>"
+          }
+        ]
+      }
+    }
+  },
+  "List": {
+    "purpose": "A semantic list of ListItems. Name it with subheader (a visible heading that is also its accessible name) or aria-label. Dense spacing also reduces the height of ListItemButtons inside.",
+    "props": {
+      "subheader": {
+        "type": "string",
+        "description": "Visible heading above the items. Also the list's accessible name unless aria-label or aria-labelledby is set; it is not counted as an item."
+      },
+      "dense": {
+        "type": "boolean",
+        "default": false,
+        "description": "Use tighter gaps and compact action rows."
+      },
+      "disablePadding": {
+        "type": "boolean",
+        "default": false,
+        "description": "Remove the list's outer block padding."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["List", "ListItem", "ListItemButton", "ListItemIcon", "ListItemText", "Card"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: ListItem children."],
+        "events": ["No component events; native list attributes are forwarded."],
+        "examples": [
+          {
+            "title": "Subheader and two-line items",
+            "source": "<List subheader=\"Plans\" style=\"max-width: 360px\">\n  <ListItem divider>\n    <ListItemText primary=\"Starter\" secondary=\"One project, community support\" />\n  </ListItem>\n  <ListItem divider>\n    <ListItemText primary=\"Pro\" secondary=\"Unlimited projects, email support\" />\n  </ListItem>\n  <ListItem>\n    <ListItemText primary=\"Team\" secondary=\"Shared workspaces and roles\" />\n  </ListItem>\n</List>"
+          },
+          {
+            "title": "Navigation in a card",
+            "source": "---\nconst folders = [\n  { href: '/inbox', label: 'Inbox', icon: 'M22 12h-6l-2 3h-4l-2-3H2M5.5 5h13L22 12v7H2v-7z', current: true },\n  { href: '/sent', label: 'Sent', icon: 'm22 2-7 20-4-9-9-4ZM22 2 11 13' },\n  { href: '/starred', label: 'Starred', icon: 'm12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2-6.2 3.2 1.2-6.8-5-4.9 6.9-1z' },\n];\n---\n<Card style=\"max-width: 320px; padding: 8px\">\n  <List aria-label=\"Mail folders\" disablePadding>\n    {folders.map((folder) => (\n      <ListItem>\n        <ListItemButton href={folder.href} selected={folder.current}>\n          <ListItemIcon>\n            <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d={folder.icon} /></svg>\n          </ListItemIcon>\n          <ListItemText primary={folder.label} />\n        </ListItemButton>\n      </ListItem>\n    ))}\n  </List>\n</Card>"
+          },
+          {
+            "title": "Dense grouped settings",
+            "source": "<Card style=\"max-width: 320px; padding: 8px\">\n  <List subheader=\"Account\" dense>\n    <ListItem><ListItemButton href=\"/profile\"><ListItemText primary=\"Profile\" /></ListItemButton></ListItem>\n    <ListItem><ListItemButton href=\"/security\"><ListItemText primary=\"Security\" /></ListItemButton></ListItem>\n  </List>\n  <List subheader=\"Workspace\" dense>\n    <ListItem><ListItemButton href=\"/members\"><ListItemText primary=\"Members\" /></ListItemButton></ListItem>\n    <ListItem><ListItemButton href=\"/billing\"><ListItemText primary=\"Billing\" /></ListItemButton></ListItem>\n  </List>\n</Card>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["List", "ListItem", "ListItemButton", "ListItemIcon", "ListItemText", "Card"],
+        "required": [],
+        "props": {},
+        "content": ["children: ListItem children."],
+        "events": ["No component events; native list attributes and handlers are forwarded."],
+        "examples": [
+          {
+            "title": "Subheader and two-line items",
+            "source": "<List subheader=\"Plans\" style=\"max-width: 360px\">\n  <ListItem divider>\n    <ListItemText primary=\"Starter\" secondary=\"One project, community support\" />\n  </ListItem>\n  <ListItem divider>\n    <ListItemText primary=\"Pro\" secondary=\"Unlimited projects, email support\" />\n  </ListItem>\n  <ListItem>\n    <ListItemText primary=\"Team\" secondary=\"Shared workspaces and roles\" />\n  </ListItem>\n</List>"
+          },
+          {
+            "title": "Navigation in a card",
+            "source": "<script>\n  const folders = [\n    { href: '/inbox', label: 'Inbox', icon: 'M22 12h-6l-2 3h-4l-2-3H2M5.5 5h13L22 12v7H2v-7z', current: true },\n    { href: '/sent', label: 'Sent', icon: 'm22 2-7 20-4-9-9-4ZM22 2 11 13' },\n    { href: '/starred', label: 'Starred', icon: 'm12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8-6.2-3.2-6.2 3.2 1.2-6.8-5-4.9 6.9-1z' },\n  ];\n</script>\n\n<Card style=\"max-width: 320px; padding: 8px\">\n  <List aria-label=\"Mail folders\" disablePadding>\n    {#each folders as folder (folder.href)}\n      <ListItem>\n        <ListItemButton href={folder.href} selected={folder.current}>\n          <ListItemIcon>\n            <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d={folder.icon} /></svg>\n          </ListItemIcon>\n          <ListItemText primary={folder.label} />\n        </ListItemButton>\n      </ListItem>\n    {/each}\n  </List>\n</Card>"
+          },
+          {
+            "title": "Dense grouped settings",
+            "source": "<Card style=\"max-width: 320px; padding: 8px\">\n  <List subheader=\"Account\" dense>\n    <ListItem><ListItemButton href=\"/profile\"><ListItemText primary=\"Profile\" /></ListItemButton></ListItem>\n    <ListItem><ListItemButton href=\"/security\"><ListItemText primary=\"Security\" /></ListItemButton></ListItem>\n  </List>\n  <List subheader=\"Workspace\" dense>\n    <ListItem><ListItemButton href=\"/members\"><ListItemText primary=\"Members\" /></ListItemButton></ListItem>\n    <ListItem><ListItemButton href=\"/billing\"><ListItemText primary=\"Billing\" /></ListItemButton></ListItem>\n  </List>\n</Card>"
+          }
+        ]
+      }
+    }
+  },
+  "ListItem": {
+    "purpose": "A native li row. Put a ListItemButton inside for a clickable row (the row then drops its own padding automatically) and a separate trailing control in the secondary action, never inside the button.",
+    "props": {
+      "disablePadding": {
+        "type": "boolean",
+        "default": false,
+        "description": "Remove row padding. Not needed around a ListItemButton: rows whose direct child is one drop their padding automatically."
+      },
+      "disableGutters": {
+        "type": "boolean",
+        "default": false,
+        "description": "Remove only horizontal padding."
+      },
+      "divider": {
+        "type": "boolean",
+        "default": false,
+        "description": "Draw a divider below the row."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["List", "ListItem", "ListItemButton", "ListItemText", "Button", "IconButton"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: row content.", "secondary-action: optional trailing action."],
+        "events": ["No component events; use native listeners."],
+        "examples": [
+          {
+            "title": "Row with a secondary action",
+            "source": "<List aria-label=\"Contacts\" style=\"max-width: 400px\">\n  <ListItem divider>\n    <ListItemText primary=\"Ada Lovelace\" secondary=\"ada@example.com\" />\n    <Button slot=\"secondary-action\" variant=\"outlined\" size=\"small\" href=\"/contacts/ada\">Edit</Button>\n  </ListItem>\n  <ListItem>\n    <ListItemText primary=\"Grace Hopper\" secondary=\"grace@example.com\" />\n    <Button slot=\"secondary-action\" variant=\"outlined\" size=\"small\" href=\"/contacts/grace\">Edit</Button>\n  </ListItem>\n</List>"
+          },
+          {
+            "title": "Clickable row with a separate action",
+            "source": "<List aria-label=\"Drafts\" style=\"max-width: 400px\">\n  <ListItem>\n    <ListItemButton href=\"/drafts/quarterly-report\">\n      <ListItemText primary=\"Quarterly report\" secondary=\"Edited 2 hours ago\" />\n    </ListItemButton>\n    <IconButton slot=\"secondary-action\" size=\"small\" aria-label=\"Delete Quarterly report\">\n      <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14\" /></svg>\n    </IconButton>\n  </ListItem>\n  <ListItem>\n    <ListItemButton href=\"/drafts/launch-notes\">\n      <ListItemText primary=\"Launch notes\" secondary=\"Edited yesterday\" />\n    </ListItemButton>\n    <IconButton slot=\"secondary-action\" size=\"small\" aria-label=\"Delete Launch notes\">\n      <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14\" /></svg>\n    </IconButton>\n  </ListItem>\n</List>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["List", "ListItem", "ListItemButton", "ListItemText", "Button", "IconButton"],
+        "required": [],
+        "props": {},
+        "content": ["children: row content.", "secondaryAction: optional trailing action snippet."],
+        "events": ["No component events; native handlers are forwarded."],
+        "examples": [
+          {
+            "title": "Row with a secondary action",
+            "source": "<List aria-label=\"Contacts\" style=\"max-width: 400px\">\n  <ListItem divider>\n    <ListItemText primary=\"Ada Lovelace\" secondary=\"ada@example.com\" />\n    {#snippet secondaryAction()}<Button variant=\"outlined\" size=\"small\" href=\"/contacts/ada\">Edit</Button>{/snippet}\n  </ListItem>\n  <ListItem>\n    <ListItemText primary=\"Grace Hopper\" secondary=\"grace@example.com\" />\n    {#snippet secondaryAction()}<Button variant=\"outlined\" size=\"small\" href=\"/contacts/grace\">Edit</Button>{/snippet}\n  </ListItem>\n</List>"
+          },
+          {
+            "title": "Clickable row with a separate action",
+            "source": "<script>\n  let drafts = $state([\n    { href: '/drafts/quarterly-report', title: 'Quarterly report', edited: 'Edited 2 hours ago' },\n    { href: '/drafts/launch-notes', title: 'Launch notes', edited: 'Edited yesterday' },\n  ]);\n</script>\n\n<List aria-label=\"Drafts\" style=\"max-width: 400px\">\n  {#each drafts as draft (draft.href)}\n    <ListItem>\n      <ListItemButton href={draft.href}>\n        <ListItemText primary={draft.title} secondary={draft.edited} />\n      </ListItemButton>\n      {#snippet secondaryAction()}\n        <IconButton size=\"small\" aria-label={`Delete ${draft.title}`} onclick={() => (drafts = drafts.filter((d) => d !== draft))}>\n          <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14\" /></svg>\n        </IconButton>\n      {/snippet}\n    </ListItem>\n  {/each}\n</List>"
+          }
+        ]
+      }
+    }
+  },
+  "ListItemButton": {
+    "purpose": "The full-width interactive part of a ListItem: an href makes it a link, otherwise it is a native button. Hover raises it out of the surface and selected presses it in, like a selected Tab. Keep any secondary control next to it, not inside.",
+    "props": {
+      "selected": {
+        "type": "boolean",
+        "default": false,
+        "description": "Style the current item and default aria-current to page for a link or true for a button."
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disable the button or omit href and remove a link from the tab order."
+      },
+      "dense": {
+        "type": "boolean",
+        "default": false,
+        "description": "Use compact row height even outside a dense List."
+      },
+      "disableGutters": {
+        "type": "boolean",
+        "default": false,
+        "description": "Remove horizontal padding."
+      },
+      "href": { "type": "string", "description": "A nonempty URL renders a native anchor." },
+      "target": { "type": "string", "description": "Native link target; use with href." },
+      "rel": { "type": "string", "description": "Native link relationship; use with href." },
+      "type": {
+        "enum": ["button", "submit", "reset", null],
+        "default": "button",
+        "description": "Native button type, ignored for a link."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["List", "ListItem", "ListItemButton", "ListItemText", "Card"],
+        "required": [],
+        "props": {},
+        "content": [
+          "Default slot: non-interactive row content; use ListItemIcon and ListItemText for alignment."
+        ],
+        "events": [
+          "Native click. Removing href prevents disabled link navigation but does not suppress custom DOM click listeners."
+        ],
+        "examples": [
+          {
+            "title": "Navigation with the current page",
+            "source": "<Card style=\"max-width: 320px; padding: 8px\">\n  <List aria-label=\"Settings pages\" disablePadding>\n    <ListItem><ListItemButton href=\"/settings/profile\" selected><ListItemText primary=\"Profile\" /></ListItemButton></ListItem>\n    <ListItem><ListItemButton href=\"/settings/notifications\"><ListItemText primary=\"Notifications\" /></ListItemButton></ListItem>\n    <ListItem><ListItemButton href=\"/settings/privacy\"><ListItemText primary=\"Privacy\" /></ListItemButton></ListItem>\n  </List>\n</Card>"
+          },
+          {
+            "title": "Action rows and a disabled row",
+            "source": "<Card style=\"max-width: 320px; padding: 8px\">\n  <List aria-label=\"Document actions\" disablePadding>\n    <ListItem><ListItemButton><ListItemText primary=\"Duplicate\" /></ListItemButton></ListItem>\n    <ListItem><ListItemButton><ListItemText primary=\"Move to folder\" /></ListItemButton></ListItem>\n    <ListItem>\n      <ListItemButton disabled><ListItemText primary=\"Share\" secondary=\"Available after saving\" /></ListItemButton>\n    </ListItem>\n  </List>\n</Card>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["List", "ListItem", "ListItemButton", "ListItemText", "Card"],
+        "required": [],
+        "props": {},
+        "content": [
+          "children: non-interactive row content; use ListItemIcon and ListItemText for alignment."
+        ],
+        "events": ["onclick(event: MouseEvent): native click, not invoked while disabled."],
+        "examples": [
+          {
+            "title": "Navigation with the current page",
+            "source": "<Card style=\"max-width: 320px; padding: 8px\">\n  <List aria-label=\"Settings pages\" disablePadding>\n    <ListItem><ListItemButton href=\"/settings/profile\" selected><ListItemText primary=\"Profile\" /></ListItemButton></ListItem>\n    <ListItem><ListItemButton href=\"/settings/notifications\"><ListItemText primary=\"Notifications\" /></ListItemButton></ListItem>\n    <ListItem><ListItemButton href=\"/settings/privacy\"><ListItemText primary=\"Privacy\" /></ListItemButton></ListItem>\n  </List>\n</Card>"
+          },
+          {
+            "title": "Single selection",
+            "source": "<script>\n  const views = ['Day', 'Week', 'Month'];\n  let view = $state('Week');\n</script>\n\n<Card style=\"max-width: 320px; padding: 8px\">\n  <List aria-label=\"Calendar view\" disablePadding>\n    {#each views as option (option)}\n      <ListItem>\n        <ListItemButton selected={view === option} onclick={() => (view = option)}>\n          <ListItemText primary={option} />\n        </ListItemButton>\n      </ListItem>\n    {/each}\n    <ListItem>\n      <ListItemButton disabled><ListItemText primary=\"Year\" secondary=\"Coming soon\" /></ListItemButton>\n    </ListItem>\n  </List>\n</Card>"
+          }
+        ]
+      }
+    }
+  },
+  "ListItemIcon": {
+    "purpose": "Give leading icons or avatars a shared width so list labels line up. Decorative by default (aria-hidden) because the row's text names it; give it an aria-label to have it announced.",
+    "props": {},
+    "bridges": {
+      "astro": {
+        "imports": ["List", "ListItem", "ListItemIcon", "ListItemText", "Avatar"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: icon (typically inline SVG) or Avatar."],
+        "events": ["No component events."],
+        "examples": [
+          {
+            "title": "Leading icons",
+            "source": "<List aria-label=\"Notifications\" style=\"max-width: 360px\">\n  <ListItem>\n    <ListItemIcon>\n      <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0\" /></svg>\n    </ListItemIcon>\n    <ListItemText primary=\"Alerts\" secondary=\"Sounds and banners\" />\n  </ListItem>\n  <ListItem>\n    <ListItemIcon>\n      <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4\" /></svg>\n    </ListItemIcon>\n    <ListItemText primary=\"Security\" secondary=\"Sign-in and devices\" />\n  </ListItem>\n</List>"
+          },
+          {
+            "title": "Avatars",
+            "source": "<List aria-label=\"Team\" style=\"max-width: 360px\">\n  <ListItem divider>\n    <ListItemIcon><Avatar alt=\"Ada Lovelace\" size=\"small\" /></ListItemIcon>\n    <ListItemText primary=\"Ada Lovelace\" secondary=\"Owner\" />\n  </ListItem>\n  <ListItem>\n    <ListItemIcon><Avatar alt=\"Grace Hopper\" size=\"small\" /></ListItemIcon>\n    <ListItemText primary=\"Grace Hopper\" secondary=\"Editor\" />\n  </ListItem>\n</List>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["List", "ListItem", "ListItemIcon", "ListItemText", "Avatar"],
+        "required": [],
+        "props": {},
+        "content": ["children: icon (typically inline SVG) or Avatar."],
+        "events": ["No component events."],
+        "examples": [
+          {
+            "title": "Leading icons",
+            "source": "<List aria-label=\"Notifications\" style=\"max-width: 360px\">\n  <ListItem>\n    <ListItemIcon>\n      <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 0 0 3.4 0\" /></svg>\n    </ListItemIcon>\n    <ListItemText primary=\"Alerts\" secondary=\"Sounds and banners\" />\n  </ListItem>\n  <ListItem>\n    <ListItemIcon>\n      <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 11h14v10H5zM8 11V7a4 4 0 0 1 8 0v4\" /></svg>\n    </ListItemIcon>\n    <ListItemText primary=\"Security\" secondary=\"Sign-in and devices\" />\n  </ListItem>\n</List>"
+          },
+          {
+            "title": "Avatars",
+            "source": "<List aria-label=\"Team\" style=\"max-width: 360px\">\n  <ListItem divider>\n    <ListItemIcon><Avatar alt=\"Ada Lovelace\" size=\"small\" /></ListItemIcon>\n    <ListItemText primary=\"Ada Lovelace\" secondary=\"Owner\" />\n  </ListItem>\n  <ListItem>\n    <ListItemIcon><Avatar alt=\"Grace Hopper\" size=\"small\" /></ListItemIcon>\n    <ListItemText primary=\"Grace Hopper\" secondary=\"Editor\" />\n  </ListItem>\n</List>"
+          }
+        ]
+      }
+    }
+  },
+  "ListItemText": {
+    "purpose": "Give a list row primary text and an optional secondary line. The phrasing-content root is valid inside a native button or link.",
+    "props": {
+      "primary": {
+        "type": "string",
+        "description": "The main label. Falls back to the default content when omitted."
+      },
+      "secondary": { "type": "string", "description": "An optional detail line." }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["List", "ListItem", "ListItemText"],
+        "required": [],
+        "props": {},
+        "content": [
+          "Default slot: fallback primary content.",
+          "primary and secondary: named slots override the corresponding string props."
+        ],
+        "events": ["No component events."],
+        "examples": [
+          {
+            "title": "Primary and secondary text",
+            "source": "<List aria-label=\"Invoices\" style=\"max-width: 360px\">\n  <ListItem divider>\n    <ListItemText primary=\"October invoice\" secondary=\"Due November 15\" />\n  </ListItem>\n  <ListItem>\n    <ListItemText primary=\"September invoice\" secondary=\"Paid by card\" />\n  </ListItem>\n</List>"
+          },
+          {
+            "title": "Custom primary content",
+            "source": "<List aria-label=\"Invoices\" style=\"max-width: 360px\">\n  <ListItem>\n    <ListItemText secondary=\"Paid by card\">\n      <span slot=\"primary\"><strong>September invoice</strong> · $42.00</span>\n    </ListItemText>\n  </ListItem>\n</List>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["List", "ListItem", "ListItemText"],
+        "required": [],
+        "props": {},
+        "content": [
+          "children: fallback primary content.",
+          "primary and secondary also accept snippets for custom content."
+        ],
+        "events": ["No component events."],
+        "examples": [
+          {
+            "title": "Primary and secondary text",
+            "source": "<List aria-label=\"Invoices\" style=\"max-width: 360px\">\n  <ListItem divider>\n    <ListItemText primary=\"October invoice\" secondary=\"Due November 15\" />\n  </ListItem>\n  <ListItem>\n    <ListItemText primary=\"September invoice\" secondary=\"Paid by card\" />\n  </ListItem>\n</List>"
+          },
+          {
+            "title": "Custom primary content",
+            "source": "<List aria-label=\"Invoices\" style=\"max-width: 360px\">\n  <ListItem>\n    <ListItemText secondary=\"Paid by card\">\n      {#snippet primary()}<strong>September invoice</strong> · $42.00{/snippet}\n    </ListItemText>\n  </ListItem>\n</List>"
+          }
+        ]
+      }
+    }
+  }
+}

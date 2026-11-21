@@ -1,0 +1,21 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { tabIds, tabPanelRecipe, type TabValue } from "@claymo/core";
+
+interface Props extends Omit<HTMLAttributes<"div">, "role"> {
+  tabsId: string;
+  value: TabValue;
+  selected?: boolean;
+}
+
+const { tabsId, value, selected, class: className, ...rest } = Astro.props;
+const recipe = tabPanelRecipe({
+  ids: tabIds(tabsId),
+  value,
+  selected: selected ? value : undefined,
+});
+---
+
+<div {...rest} {...recipe.attrs} class:list={[recipe.className, className]}>
+  <slot />
+</div>

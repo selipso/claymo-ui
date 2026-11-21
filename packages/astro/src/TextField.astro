@@ -1,0 +1,157 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { Color, Size } from "@claymo/core";
+import { textFieldDefaults, textFieldRecipe, type TextFieldOption } from "@claymo/core/input";
+import { instanceId } from "./ids.ts";
+
+type Value = string | number | null;
+
+type Props = Omit<HTMLAttributes<"input">, "color" | "size" | "value"> & {
+  variant?: "outlined" | "filled";
+  label?: string;
+  helperText?: string;
+  error?: boolean;
+  fullWidth?: boolean;
+  rows?: number;
+  cols?: number;
+  wrap?: HTMLAttributes<"textarea">["wrap"];
+  size?: Exclude<Size, "large">;
+  color?: Color;
+} & (
+    | { select?: false; multiline?: boolean; value?: Value; defaultValue?: Value; options?: never }
+    | {
+        select: true;
+        multiline?: false;
+        value?: Value;
+        defaultValue?: Value;
+        options: readonly TextFieldOption[];
+      }
+    | { select: true; multiline?: false; value?: never; defaultValue?: never; options?: never }
+  );
+
+const {
+  variant,
+  label,
+  helperText,
+  error = false,
+  required,
+  disabled,
+  fullWidth = false,
+  multiline = false,
+  rows = textFieldDefaults.rows,
+  cols,
+  wrap,
+  select = false,
+  options,
+  size,
+  color,
+  type = textFieldDefaults.type,
+  id: idProp,
+  class: className,
+  placeholder,
+  value,
+  defaultValue,
+  "aria-describedby": describedBy,
+  "aria-invalid": invalid,
+  ...rest
+} = Astro.props;
+const id = idProp ?? instanceId("clay-tf");
+const start = Astro.slots.has("start-adornment");
+const end = Astro.slots.has("end-adornment");
+const recipe = textFieldRecipe({
+  id,
+  variant,
+  size,
+  color,
+  error,
+  disabled,
+  fullWidth,
+  select,
+  multiline,
+  hasStart: start,
+  hasEnd: end,
+  helperText,
+  describedBy,
+});
+const initial = value === undefined ? defaultValue : value;
+const chevronSize = size === "small" ? 16 : 20;
+const control = {
+  ...rest,
+  class: "clay clay-text-field__input",
+  id,
+  required,
+  disabled,
+  ...recipe.input,
+  "aria-invalid": invalid ?? recipe.input["aria-invalid"],
+} as const;
+---
+
+<div class:list={["clay-text-field", className]} {...recipe.root}>
+  {label && (
+    <label class="clay-text-field__label" for={id}>
+      {label}
+      {required && <span aria-hidden="true"> *</span>}
+    </label>
+  )}
+  <div class="clay-text-field__control" {...recipe.control}>
+    {start && (
+      <span class="clay-text-field__adornment clay-text-field__adornment--start">
+        <slot name="start-adornment" />
+      </span>
+    )}
+    {multiline ? (
+      <textarea
+        {...control}
+        {placeholder}
+        {rows}
+        {cols}
+        {wrap}
+      >{String(initial ?? "").replace(/^\n/, "\n\n")}</textarea>
+    ) : select ? (
+      <>
+        <select {...control}>
+          {options ? (
+            options.map((option) => (
+              <option
+                value={option.value}
+                disabled={option.disabled}
+                selected={initial != null && String(option.value) === String(initial)}
+              >
+                {option.label}
+              </option>
+            ))
+          ) : (
+            <slot />
+          )}
+        </select>
+        <svg
+          class="clay-text-field__chevron"
+          aria-hidden="true"
+          width={chevronSize}
+          height={chevronSize}
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </>
+    ) : (
+      <input {...control} {type} {placeholder} value={initial} />
+    )}
+    {end && (
+      <span class="clay-text-field__adornment clay-text-field__adornment--end">
+        <slot name="end-adornment" />
+      </span>
+    )}
+  </div>
+  {helperText && (
+    <p class="clay-text-field__helper" id={recipe.helperId}>
+      {error && <span aria-hidden="true">!&nbsp;</span>}
+      {helperText}
+    </p>
+  )}
+</div>

@@ -1,0 +1,554 @@
+.clay-alert {
+  --clay-radius: 22px;
+  --clay-d: 6px;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-sizing: border-box;
+  padding: 12px 16px 12px 28px;
+  font: 400 1rem/1.4 var(--clay-font);
+}
+.clay-alert__icon {
+  display: inline-flex;
+  flex: none;
+  padding-top: 3px;
+  line-height: 0;
+}
+.clay-alert__message {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 4px 0;
+}
+.clay-alert__action {
+  display: flex;
+  flex: none;
+  align-items: center;
+  margin-inline-start: auto;
+}
+.clay-alert[data-variant="standard"] {
+  --clay-color: var(--clay-surface);
+  color: var(--clay-ink);
+}
+.clay-alert[data-variant="standard"]::before {
+  content: "";
+  position: absolute;
+  inset-block: 14px;
+  inset-inline-start: 12px;
+  border-inline-start: var(--clay-border-width) solid var(--c-ink);
+}
+.clay-alert:is([data-variant="standard"], [data-variant="outlined"]) > .clay-alert__icon {
+  color: var(--c-ink);
+}
+.clay-alert[data-variant="filled"] {
+  --clay-focus: var(--c-on);
+  --clay-color: var(--c);
+  color: var(--c-on);
+}
+.clay-alert[data-variant="outlined"] {
+  --clay-color: var(--clay-surface);
+  color: var(--clay-ink);
+  border: var(--clay-border-width) solid var(--c-ink);
+  padding-block: calc(12px - var(--clay-border-width));
+  padding-inline-start: calc(16px - var(--clay-border-width));
+}
+.clay-alert__close {
+  --clay-color: var(--clay-surface);
+  --clay-radius: 999px;
+  --clay-d: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 0;
+  color: var(--clay-ink);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.clay-alert[data-variant="filled"] > .clay-alert__action > .clay-alert__close {
+  --clay-color: var(--c);
+  color: var(--c-on);
+}
+
+.clay-chip {
+  --clay-radius: 999px;
+  --clay-d: 4px;
+  --clay-color: var(--c);
+  --clay-chip-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-height: var(--clay-chip-height);
+  max-width: 100%;
+  color: var(--c-on);
+  font: 600 0.875rem/1 var(--clay-font);
+  vertical-align: middle;
+}
+.clay-chip[data-size="small"] {
+  --clay-chip-height: 28px;
+  --clay-d: 3px;
+  font-size: 0.8125rem;
+}
+.clay-chip[data-variant="outlined"] {
+  --clay-color: var(--clay-surface);
+  color: var(--c-ink);
+  border: var(--clay-border-width) solid var(--c-ink);
+}
+.clay-chip[data-color="inherit"] {
+  --clay-color: var(--clay-surface);
+  color: inherit;
+}
+.clay-chip__body {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-sizing: border-box;
+  align-self: stretch;
+  min-width: 0;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.clay-chip[data-size="small"] > .clay-chip__body {
+  padding: 0 10px;
+}
+button.clay-chip__body {
+  cursor: pointer;
+}
+.clay-chip[data-deletable] > .clay-chip__body {
+  padding-inline-end: 6px;
+}
+.clay-chip__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clay-chip__lead {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  line-height: 0;
+}
+.clay-chip__icon {
+  font-size: 1.125rem;
+  margin-inline-start: -4px;
+}
+.clay-chip__avatar {
+  margin-inline-start: -10px;
+}
+.clay-chip .clay-chip__avatar .clay-avatar {
+  width: calc(var(--clay-chip-height) - 8px);
+  height: calc(var(--clay-chip-height) - 8px);
+  font-size: 0.75rem;
+}
+.clay-chip__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  box-sizing: border-box;
+  width: 22px;
+  height: 22px;
+  margin-inline-end: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background-color var(--clay-motion-duration) var(--clay-motion-easing);
+}
+.clay-chip[data-size="small"] > .clay-chip__remove {
+  width: 20px;
+  height: 20px;
+  margin-inline-end: 4px;
+}
+.clay-chip__remove:hover:not(:disabled) {
+  background: color-mix(in oklab, currentColor, transparent 82%);
+}
+:is(.clay-chip__body, .clay-chip__remove):disabled {
+  cursor: not-allowed;
+}
+:is(.clay-chip__body, .clay-chip__remove):focus-visible {
+  outline: 3px solid var(--clay-focus);
+  outline-offset: 2px;
+}
+:is(.clay-alert, .clay-chip)[hidden]:not([hidden="until-found"]) {
+  display: none;
+}
+
+.clay-button-group {
+  --clay-group-color: var(--c);
+  --clay-group-on: var(--c-on);
+  --clay-group-ink: var(--c-ink);
+  --clay-group-radius: 22px;
+  --clay-group-inner-radius: var(--clay-group-radius);
+  --clay-group-depth: 6px;
+  --clay-color: var(--clay-group-color);
+  --clay-radius: var(--clay-group-radius);
+  --clay-d: var(--clay-group-depth);
+  display: inline-flex;
+  box-sizing: border-box;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--clay-group-on);
+  vertical-align: middle;
+}
+.clay-button-group[data-size="small"] {
+  --clay-group-radius: 14px;
+  --clay-group-depth: 4px;
+}
+.clay-button-group[data-size="large"] {
+  --clay-group-radius: 26px;
+  --clay-group-depth: 8px;
+}
+.clay-button-group[data-orientation="vertical"] {
+  flex-direction: column;
+}
+.clay-button-group[data-full-width] {
+  display: flex;
+  width: 100%;
+}
+/* The fieldset disables native controls, which dim themselves. */
+.clay-button-group:disabled {
+  opacity: 1;
+  cursor: auto;
+}
+.clay-button-group[data-variant="contained"][data-color="inherit"] {
+  --clay-group-color: var(--clay-surface);
+  color: inherit;
+}
+.clay-button-group[data-variant="outlined"] {
+  --clay-color: var(--clay-surface);
+  --clay-group-inner-radius: calc(var(--clay-group-radius) - var(--clay-border-width));
+  color: var(--clay-group-ink);
+  border: var(--clay-border-width) solid var(--clay-group-ink);
+}
+.clay-button-group[data-no-elevation] {
+  box-shadow: var(--clay-insets);
+}
+.clay-button-group[data-variant="text"] {
+  background: transparent;
+  box-shadow: none;
+  color: var(--clay-group-ink);
+}
+
+/* Stop at nested groups; managed buttons can be inside a wrapper. The scope and the
+ * root/child classes keep these overrides stronger than standalone button states. */
+@scope (.clay-button-group) to (.clay-button-group) {
+  :scope .clay-button.clay-button {
+    --c: var(--clay-group-color);
+    --c-on: var(--clay-group-on);
+    --c-ink: var(--clay-group-ink);
+    --clay-color: var(--clay-group-color);
+    --clay-d: var(--clay-group-depth);
+    min-height: 48px;
+    padding: 0 28px;
+    font-size: 1rem;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    transform: none;
+    color: var(--clay-group-on);
+  }
+  :scope .clay-button[data-inflated]::before {
+    content: none;
+  }
+  :scope[data-size="small"] .clay-button.clay-button {
+    min-height: 36px;
+    padding: 0 16px;
+    font-size: 0.875rem;
+  }
+  :scope[data-size="large"] .clay-button.clay-button {
+    min-height: 56px;
+    padding: 0 36px;
+    font-size: 1.125rem;
+  }
+  :scope[data-full-width] .clay-button.clay-button {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  :scope:is([data-variant="outlined"], [data-variant="text"]) .clay-button.clay-button {
+    --clay-color: var(--clay-surface);
+    color: var(--clay-group-ink);
+  }
+  :scope[data-variant="contained"][data-color="inherit"] .clay-button.clay-button {
+    color: inherit;
+  }
+  :scope[data-orientation="horizontal"] .clay-button.clay-button:first-child {
+    border-start-start-radius: var(--clay-group-inner-radius);
+    border-end-start-radius: var(--clay-group-inner-radius);
+  }
+  :scope[data-orientation="horizontal"] .clay-button.clay-button:last-child {
+    border-start-end-radius: var(--clay-group-inner-radius);
+    border-end-end-radius: var(--clay-group-inner-radius);
+  }
+  :scope[data-orientation="vertical"] .clay-button.clay-button:first-child {
+    border-start-start-radius: var(--clay-group-inner-radius);
+    border-start-end-radius: var(--clay-group-inner-radius);
+  }
+  :scope[data-orientation="vertical"] .clay-button.clay-button:last-child {
+    border-end-start-radius: var(--clay-group-inner-radius);
+    border-end-end-radius: var(--clay-group-inner-radius);
+  }
+  :scope[data-orientation="horizontal"] .clay-button.clay-button:not(:first-child) {
+    border-inline-start: var(--clay-border-width) solid var(--clay-edge);
+  }
+  :scope[data-orientation="vertical"] .clay-button.clay-button:not(:first-child) {
+    border-block-start: var(--clay-border-width) solid var(--clay-edge);
+  }
+  :scope:where([data-variant="contained"])
+    .clay-button.clay-button:is(:hover, :focus-visible):not(:disabled, [aria-disabled="true"]) {
+    --clay-color: var(--clay-group-color);
+    background: color-mix(in oklab, var(--clay-color), var(--clay-group-on) 14%);
+    box-shadow: none;
+    transform: none;
+  }
+  :scope:where([data-variant="outlined"], [data-variant="text"])
+    .clay-button.clay-button:is(:hover, :focus-visible):not(:disabled, [aria-disabled="true"]) {
+    background: color-mix(in oklab, var(--clay-surface), var(--clay-group-ink) 10%);
+    box-shadow: none;
+    transform: none;
+  }
+  :scope .clay-button.clay-button:active:not(:disabled, [aria-disabled="true"]) {
+    box-shadow: inset 2px 3px 8px var(--clay-shade);
+    transform: none;
+  }
+  :scope .clay-button.clay-button:focus-visible {
+    z-index: 1;
+  }
+}
+
+.clay-icon-button {
+  corner-shape: round;
+  --clay-radius: 999px;
+  --clay-d: 5px;
+  --clay-color: var(--c);
+  --clay-icon-button-size: 44px;
+  --clay-icon-button-edge: -12px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  box-sizing: border-box;
+  width: var(--clay-icon-button-size);
+  height: var(--clay-icon-button-size);
+  padding: 0;
+  border: 0;
+  color: var(--c-on);
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.clay-icon-button[data-size="small"] {
+  --clay-icon-button-size: 36px;
+  --clay-icon-button-edge: -3px;
+  --clay-d: 4px;
+}
+.clay-icon-button[data-size="large"] {
+  --clay-icon-button-size: 52px;
+  --clay-d: 6px;
+}
+.clay-icon-button[data-edge="start"] {
+  margin-inline-start: var(--clay-icon-button-edge);
+}
+.clay-icon-button[data-edge="end"] {
+  margin-inline-end: var(--clay-icon-button-edge);
+}
+.clay-icon-button[data-color="inherit"] {
+  --clay-color: var(--clay-surface);
+  color: inherit;
+}
+.clay-icon-button__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  line-height: 0;
+}
+.clay-icon-button[data-size="small"] > .clay-icon-button__icon {
+  font-size: 1.25rem;
+}
+.clay-icon-button[data-size="large"] > .clay-icon-button__icon {
+  font-size: 1.75rem;
+}
+.clay-icon-button__icon svg {
+  width: 1em;
+  height: 1em;
+}
+.clay-icon-button__spinner {
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: clay-icon-button-spin 0.8s linear infinite;
+  flex: none;
+}
+.clay-icon-button[data-loading] {
+  cursor: progress;
+  opacity: 1;
+}
+.clay-icon-button[data-loading]:disabled {
+  opacity: 0.85;
+}
+@keyframes clay-icon-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .clay-icon-button__spinner {
+    animation: none;
+    border-right-color: currentColor;
+  }
+}
+
+.clay-list {
+  --clay-list-row-height: 48px;
+  --clay-list-gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--clay-list-gap);
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.clay-list[data-dense] {
+  --clay-list-row-height: 36px;
+  --clay-list-gap: 2px;
+}
+.clay-list[data-padded] {
+  padding-block: 8px;
+}
+/* Names the list (aria-label) and heads it visually; hidden from the item count. */
+.clay-list__subheader {
+  padding: 8px 16px 4px;
+  color: var(--clay-ink-muted);
+  font: 600 0.75rem/1.5 var(--clay-font);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.clay-list-item {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  color: var(--clay-ink);
+}
+.clay-list-item[data-padded] {
+  padding-block: 8px;
+}
+.clay-list-item[data-padded][data-gutters] {
+  padding-inline: 16px;
+}
+/* A row that holds a ListItemButton lets the button supply the padding, so `disablePadding` is
+ * optional there. Declared after the gutters rule, which has the same specificity. */
+.clay-list-item[data-padded]:has(> .clay-list-item-button) {
+  padding: 0;
+}
+.clay-list-item[data-divider] {
+  border-block-end: var(--clay-border-width) solid var(--clay-edge);
+}
+.clay-list-item__secondary-action {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  margin-inline-start: auto;
+}
+/* Beside a full-width button: a little space from it, the row's gutter from the edge. */
+.clay-list-item:has(> .clay-list-item-button) > .clay-list-item__secondary-action {
+  margin-inline: 8px 16px;
+}
+.clay-list-item-button {
+  --clay-color: var(--clay-surface);
+  --clay-radius: 18px;
+  --clay-d: 4px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--clay-list-row-height, 48px);
+  padding: 6px 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--clay-ink);
+  font: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.clay-list-item-button[data-dense] {
+  --clay-list-row-height: 36px;
+}
+.clay-list-item-button[data-gutters] {
+  padding-inline: 16px;
+}
+.clay-list-item-button:is(:hover, :focus-visible):not(:disabled, [aria-disabled="true"]) {
+  background: var(--clay-color);
+  box-shadow: var(--clay-raised);
+}
+.clay-list-item-button[data-selected],
+.clay-list-item-button[data-selected]:is(:hover, :focus-visible):not(
+    :disabled,
+    [aria-disabled="true"]
+  ) {
+  background: var(--clay-color);
+  box-shadow: var(--clay-well);
+}
+.clay-list-item-button[data-selected] {
+  font-weight: 600;
+}
+.clay-list-item-icon {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  min-width: 40px;
+  color: inherit;
+  font-size: 1.5rem;
+  line-height: 0;
+}
+.clay-list-item-icon svg {
+  width: 1em;
+  height: 1em;
+}
+.clay-list-item-text {
+  display: block;
+  flex: 1 1 auto;
+  min-width: 0;
+  margin: 0;
+}
+.clay-list-item-text__primary {
+  display: block;
+  color: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.clay-list-item-text__secondary {
+  display: block;
+  color: var(--clay-ink-muted);
+  font-size: 0.875rem;
+  line-height: 1.43;
+}

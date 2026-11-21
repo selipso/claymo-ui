@@ -1,0 +1,321 @@
+.clay-app-bar {
+  --clay-focus: var(--c-on);
+  --clay-color: var(--c);
+  /* Asymmetric like the drawer: the top edge is nearly flush, but slightly rounded so the
+   * clay shadow wraps its corners instead of ending in a hard point. */
+  --clay-app-bar-radius: 28px;
+  --clay-app-bar-edge-radius: 12px;
+  --clay-radius: var(--clay-app-bar-edge-radius) var(--clay-app-bar-edge-radius)
+    var(--clay-app-bar-radius) var(--clay-app-bar-radius);
+  --clay-d: 8px;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 64px;
+  padding-inline: 16px;
+  color: var(--c-on);
+}
+/* Keep clay shading while inheriting the text color. */
+.clay-app-bar[data-color="inherit"] {
+  --clay-color: var(--clay-surface);
+  color: inherit;
+}
+.clay-app-bar[data-color="transparent"] {
+  --clay-focus: inherit;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+}
+.clay-app-bar[data-position="static"] {
+  position: static;
+}
+.clay-app-bar[data-position="relative"] {
+  position: relative;
+}
+.clay-app-bar[data-position="sticky"] {
+  position: sticky;
+  inset-block-start: 0;
+}
+.clay-app-bar[data-position="fixed"] {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+}
+.clay-app-bar[data-position="absolute"] {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+}
+
+/* More specific than Paper's radius regardless of stylesheet order. */
+.clay-paper.clay-card {
+  --clay-radius: 32px;
+}
+/* Header, content and actions share one inline padding, so their edges line up. Rows step
+ * 24px in from the card's edges and 16px (content) or 8px (actions) between each other. */
+.clay-card-header,
+.clay-card-content,
+.clay-card-actions {
+  box-sizing: border-box;
+  padding-inline: var(--clay-card-padding, 24px);
+}
+.clay-card-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-block: var(--clay-card-padding, 24px) 0;
+}
+.clay-card-content {
+  padding-block: 16px;
+}
+.clay-card-content:first-child {
+  padding-block-start: var(--clay-card-padding, 24px);
+}
+.clay-card-content > :first-child {
+  margin-block-start: 0;
+}
+.clay-card-content > :last-child {
+  margin-block-end: 0;
+}
+.clay-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding-block: 8px var(--clay-card-padding, 24px);
+}
+.clay-card-actions[data-no-spacing] {
+  gap: 0;
+}
+/* The clay shading darkens the bottom edge, so the last row needs a little more room than
+ * the first to look balanced: half the card's depth. */
+.clay-card > :is(.clay-card-header, .clay-card-content, .clay-card-actions):last-child {
+  padding-block-end: calc(var(--clay-card-padding, 24px) + var(--clay-d) / 2);
+}
+.clay-card-header__avatar,
+.clay-card-header__action {
+  display: flex;
+  flex: none;
+  align-items: center;
+}
+.clay-card-header__text {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+.clay-card-header__title {
+  font: 600 1.25rem/1.3 var(--clay-font);
+  color: var(--clay-ink);
+}
+.clay-card-header__subheader {
+  font: 400 0.9375rem/1.4 var(--clay-font);
+  color: var(--clay-ink-muted);
+}
+
+.clay-divider {
+  flex: none;
+  box-sizing: border-box;
+  margin: 0;
+  border: 0;
+}
+.clay-divider[data-orientation="horizontal"] {
+  width: 100%;
+  border-block-start: var(--clay-border-width) solid var(--clay-edge);
+}
+.clay-divider[data-orientation="horizontal"][data-variant="inset"] {
+  width: auto;
+  margin-inline-start: 72px;
+}
+.clay-divider[data-orientation="horizontal"][data-variant="middle"] {
+  width: auto;
+  margin-inline: 16px;
+}
+.clay-divider[data-orientation="vertical"] {
+  width: var(--clay-border-width);
+  height: 100%;
+  min-height: 1em;
+  border-inline-start: var(--clay-border-width) solid var(--clay-edge);
+}
+.clay-divider[data-orientation="vertical"][data-flex-item] {
+  height: auto;
+  align-self: stretch;
+}
+.clay-divider[data-orientation="vertical"]:is([data-variant="inset"], [data-variant="middle"]) {
+  margin-block: 8px;
+}
+
+.clay-typography {
+  margin: 0;
+  font-family: var(--clay-font);
+  font-weight: 400;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.clay-typography[data-gutter-bottom] {
+  margin-block-end: 0.35em;
+}
+.clay-typography[data-no-wrap] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.clay-typography[data-no-wrap]:is(span, label) {
+  display: inline-block;
+  max-inline-size: 100%;
+}
+.clay-typography[data-align="left"] {
+  text-align: left;
+}
+.clay-typography[data-align="center"] {
+  text-align: center;
+}
+.clay-typography[data-align="right"] {
+  text-align: right;
+}
+.clay-typography[data-align="justify"] {
+  text-align: justify;
+}
+.clay-typography[data-variant="h1"] {
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1.15;
+}
+.clay-typography[data-variant="h2"] {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.clay-typography[data-variant="h3"] {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.clay-typography[data-variant="h4"] {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.clay-typography[data-variant="h5"] {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+.clay-typography[data-variant="h6"] {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.clay-typography[data-variant="subtitle1"] {
+  font-weight: 600;
+}
+.clay-typography[data-variant="subtitle2"] {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.clay-typography[data-variant="body2"] {
+  font-size: 0.875rem;
+}
+.clay-typography[data-variant="inherit"] {
+  font: inherit;
+}
+.clay-typography[data-variant="button"] {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.clay-typography[data-variant="caption"] {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+.clay-typography[data-variant="overline"] {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+/* The default caption and overline elements need a box for vertical margins. */
+.clay-typography:is([data-variant="caption"], [data-variant="overline"]) {
+  display: inline-block;
+}
+.clay-typography:is([data-tcolor="text.primary"], [data-tcolor="textPrimary"]) {
+  color: var(--clay-ink);
+}
+.clay-typography:is(
+  [data-tcolor="text.secondary"],
+  [data-tcolor="textSecondary"],
+  [data-tcolor="text.disabled"],
+  [data-tcolor="textDisabled"]
+) {
+  color: var(--clay-ink-muted);
+}
+.clay-typography[data-tcolor="primary"] {
+  color: var(--clay-primary-ink);
+}
+.clay-typography[data-tcolor="secondary"] {
+  color: var(--clay-secondary-ink);
+}
+.clay-typography[data-tcolor="error"] {
+  color: var(--clay-error-ink);
+}
+.clay-typography[data-tcolor="warning"] {
+  color: var(--clay-warning-ink);
+}
+.clay-typography[data-tcolor="success"] {
+  color: var(--clay-success-ink);
+}
+.clay-typography[data-tcolor="info"] {
+  color: var(--clay-info-ink);
+}
+
+.clay-accordion {
+  box-sizing: border-box;
+  width: 100%;
+  color: var(--clay-ink);
+}
+.clay-accordion__summary {
+  --clay-radius: 24px;
+  --clay-d: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  box-sizing: border-box;
+  min-height: 56px;
+  padding: 8px 20px;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.clay-accordion__summary::-webkit-details-marker {
+  display: none;
+}
+.clay-accordion__summary[data-disabled] {
+  cursor: not-allowed;
+}
+.clay-accordion__title {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.clay-accordion__chevron {
+  display: inline-flex;
+  flex: none;
+  line-height: 0;
+  transition: transform var(--clay-motion-duration) var(--clay-motion-easing);
+}
+.clay-accordion[open] > .clay-accordion__summary > .clay-accordion__chevron {
+  transform: rotate(180deg);
+}
+.clay-accordion__content {
+  --clay-color: var(--clay-page);
+  --clay-radius: 20px;
+  --clay-d: 5px;
+  box-sizing: border-box;
+  margin-top: 12px;
+  padding: 16px 20px;
+  box-shadow: var(--clay-well);
+}

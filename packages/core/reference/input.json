@@ -1,0 +1,561 @@
+{
+  "TextField": {
+    "purpose": "A clay-styled native text input, textarea or select. Use label or supply an accessible name. Native form and validation attributes are forwarded to the actual control; class styles the field wrapper. The visual error prop does not change browser validation.",
+    "props": {
+      "label": { "type": "string", "description": "Visible label associated with the control id." },
+      "id": { "type": "string", "description": "Control id; generated if omitted." },
+      "name": { "type": "string", "description": "Native form field name." },
+      "form": {
+        "type": "string",
+        "description": "Id of the associated form when the control is outside it."
+      },
+      "type": {
+        "type": "string",
+        "default": "text",
+        "description": "Native input type; only used for the input mode."
+      },
+      "placeholder": { "type": "string", "description": "Native input or textarea placeholder." },
+      "variant": { "type": "string", "enum": ["outlined", "filled"], "default": "outlined" },
+      "size": { "type": "string", "enum": ["small", "medium"], "default": "medium" },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "primary"
+      },
+      "helperText": {
+        "type": "string",
+        "description": "Helper or error text, included in the control's aria-describedby."
+      },
+      "error": {
+        "type": "boolean",
+        "default": false,
+        "description": "Applies error styling and aria-invalid; not a validation rule."
+      },
+      "required": {
+        "type": "boolean",
+        "default": false,
+        "description": "Displays an asterisk and enables native required validation."
+      },
+      "disabled": { "type": "boolean", "default": false },
+      "fullWidth": { "type": "boolean", "default": false },
+      "multiline": {
+        "type": "boolean",
+        "default": false,
+        "description": "Render a textarea instead of an input."
+      },
+      "rows": {
+        "type": "number",
+        "default": 3,
+        "description": "Visible textarea rows; the textarea is vertically resizable."
+      },
+      "select": {
+        "type": "boolean",
+        "default": false,
+        "description": "Render a native select instead of an input."
+      },
+      "options": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["value", "label"],
+          "properties": {
+            "value": { "type": ["string", "number"] },
+            "label": { "type": "string" },
+            "disabled": { "type": "boolean" }
+          }
+        },
+        "description": "Data-driven native options for select mode, as an alternative to option/optgroup markup."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["TextField", "Button"],
+        "required": [],
+        "props": {
+          "value": {
+            "type": ["string", "number", "null"],
+            "description": "SSR starting value and form reset default. Overrides defaultValue. In select mode, use with options."
+          },
+          "defaultValue": {
+            "type": ["string", "number", "null"],
+            "description": "SSR starting value and form reset default when value is omitted. In select mode, use with options."
+          }
+        },
+        "content": [
+          "start-adornment and end-adornment named slots: icon-sized content at the inline edges.",
+          "Default slot in select mode: native option/optgroup elements when options is not used. With slotted options, mark the starting option selected instead of supplying value/defaultValue."
+        ],
+        "events": [
+          "Native input and change events on the form control; no component callback prop."
+        ],
+        "examples": [
+          {
+            "title": "Text and select fields",
+            "source": "<form>\n  <TextField label=\"Display name\" name=\"displayName\" required helperText=\"Shown on your profile\" />\n  <TextField label=\"Shelf\" name=\"shelf\" select defaultValue=\"paper\" options={[{ value: 'paper', label: 'Paper' }, { value: 'digital', label: 'Digital' }]} />\n  <Button type=\"submit\">Save</Button>\n</form>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["TextField"],
+        "required": [],
+        "props": {
+          "value": {
+            "type": ["string", "number", "null"],
+            "description": "Live value; supports bind:value. Native number inputs bind a number, or undefined when empty."
+          },
+          "defaultValue": {
+            "type": ["string", "number", "null"],
+            "description": "Initial value when value is omitted, and native form reset default. In select mode, match an option's value and type."
+          }
+        },
+        "content": [
+          "startAdornment and endAdornment snippets: icon-sized content at the inline edges.",
+          "children snippet: native option/optgroup elements in select mode when options is not used."
+        ],
+        "events": [
+          "oninput(event) and onchange(event): native event handlers on the control.",
+          "onChange(event): callback following input for input/textarea, or change for select."
+        ],
+        "examples": [
+          {
+            "title": "Text and select fields",
+            "source": "<script lang=\"ts\">\n  let shelf = $state('paper');\n</script>\n\n<form>\n  <TextField label=\"Display name\" name=\"displayName\" required helperText=\"Shown on your profile\" />\n  <TextField label=\"Shelf\" name=\"shelf\" select bind:value={shelf} defaultValue=\"paper\">\n    <option value=\"paper\">Paper</option>\n    <option value=\"digital\">Digital</option>\n  </TextField>\n</form>"
+          }
+        ]
+      }
+    }
+  },
+  "Slider": {
+    "purpose": "A single-thumb, horizontal native range input with a clay track. Name it with aria-label; native form attributes are forwarded to the range input and class styles the wrapper.",
+    "props": {
+      "aria-label": { "type": "string", "description": "Accessible name for the range input." },
+      "name": { "type": "string", "description": "Native form field name." },
+      "form": {
+        "type": "string",
+        "description": "Id of its associated form when the slider is outside it."
+      },
+      "min": {
+        "type": "number",
+        "default": 0,
+        "description": "Minimum value and start of the step grid."
+      },
+      "max": {
+        "type": "number",
+        "default": 100,
+        "description": "Maximum bound; if off-grid, the last valid step is the selectable upper endpoint."
+      },
+      "step": { "type": "number", "default": 1, "description": "Positive increment from min." },
+      "marks": {
+        "type": "boolean",
+        "default": false,
+        "description": "Show valid ticks when there are at most 20 step intervals."
+      },
+      "valueLabelDisplay": {
+        "type": "string",
+        "enum": ["off", "auto", "on"],
+        "default": "off",
+        "description": "Visual-only numeric bubble. Auto reveals it on hover or focus."
+      },
+      "size": { "type": "string", "enum": ["small", "medium"], "default": "medium" },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "primary"
+      },
+      "disabled": { "type": "boolean", "default": false },
+      "defaultValue": {
+        "type": "number",
+        "description": "Starting value when value is omitted. Defaults to min (0 by default)."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Slider", "Button"],
+        "required": ["aria-label"],
+        "props": {
+          "value": {
+            "type": "number",
+            "description": "SSR starting value and native reset default; overrides defaultValue when present."
+          }
+        },
+        "content": [],
+        "events": [
+          "Native input and change events on the range input. The client script only updates visual fill, label and tick states, including after form reset. If setting the value in script, dispatch input to synchronize those visuals."
+        ],
+        "examples": [
+          {
+            "title": "Reset a volume slider",
+            "source": "<form>\n  <Slider name=\"volume\" aria-label=\"Volume\" defaultValue={25} step={25} marks valueLabelDisplay=\"on\" />\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["Slider", "Button"],
+        "required": ["aria-label"],
+        "props": {
+          "value": { "type": "number", "description": "Live numeric value; supports bind:value." },
+          "defaultValue": {
+            "type": "number",
+            "description": "Starting value when value is omitted, and native reset default. Defaults to min."
+          }
+        },
+        "content": [],
+        "events": [
+          "oninput(event): native input handler, called first.",
+          "onChange(event, value): Svelte callback on every input with the numeric value.",
+          "onchange(event): native committed change event on the input."
+        ],
+        "examples": [
+          {
+            "title": "Reset a volume slider",
+            "source": "<script lang=\"ts\">\n  let volume = $state(25);\n</script>\n\n<form>\n  <Slider name=\"volume\" aria-label=\"Volume\" bind:value={volume} defaultValue={25} step={25} marks valueLabelDisplay=\"on\" />\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
+          }
+        ]
+      }
+    }
+  },
+  "Switch": {
+    "purpose": "A clay toggle rendered as a native checkbox with the switch role. Supply a visible label, FormControlLabel, or aria-label. Native input attributes, including form, id and ARIA, pass through.",
+    "props": {
+      "checked": {
+        "type": "boolean",
+        "default": false,
+        "description": "Starting checkedness in Astro; live checkedness in Svelte, which supports bind:checked."
+      },
+      "defaultChecked": {
+        "type": "boolean",
+        "default": false,
+        "description": "Starting checkedness when checked is omitted; native reset default in Svelte. In Astro, checked takes precedence for both initial and reset state."
+      },
+      "name": { "type": "string", "description": "Native form field name." },
+      "value": {
+        "type": ["string", "number"],
+        "default": "on",
+        "description": "Submitted when checked and enabled, as text; does not control checkedness."
+      },
+      "required": {
+        "type": "boolean",
+        "default": false,
+        "description": "Native validation requires the switch to be checked."
+      },
+      "disabled": { "type": "boolean", "default": false },
+      "size": { "type": "string", "enum": ["small", "medium"], "default": "medium" },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "primary"
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Switch", "FormControlLabel"],
+        "required": [],
+        "props": {},
+        "content": [],
+        "events": ["Native input and change events on the checkbox; no component callback prop."],
+        "examples": [
+          {
+            "title": "Email alerts switch",
+            "source": "<FormControlLabel label=\"Email alerts\">\n  <Switch slot=\"control\" name=\"alerts\" value=\"yes\" defaultChecked />\n</FormControlLabel>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["Switch", "FormControlLabel"],
+        "required": [],
+        "props": {},
+        "content": [],
+        "events": [
+          "onchange(event): native change handler, called first.",
+          "onChange(event, checked): Svelte callback with the current checkedness. Use bind:checked for live state and form resets."
+        ],
+        "examples": [
+          {
+            "title": "Email alerts switch",
+            "source": "<script lang=\"ts\">\n  let alerts = $state(true);\n</script>\n\n<FormControlLabel label=\"Email alerts\">\n  {#snippet control()}<Switch name=\"alerts\" value=\"yes\" bind:checked={alerts} defaultChecked />{/snippet}\n</FormControlLabel>"
+          }
+        ]
+      }
+    }
+  },
+  "FormControlLabel": {
+    "purpose": "Give one native Checkbox, Radio or Switch a visible, clickable label. Set name, value, checked and required on the wrapped control. Native label attributes, including class and for, are forwarded to the label element.",
+    "props": {
+      "labelPlacement": {
+        "type": "string",
+        "enum": ["end", "start", "top", "bottom"],
+        "default": "end"
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Dims the label and disables the wrapped control (native fieldset in Astro; Claymo context in Svelte)."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["FormControlLabel", "Switch"],
+        "required": [],
+        "props": {
+          "label": {
+            "type": "string",
+            "description": "Visible text used when the label slot is not supplied."
+          }
+        },
+        "content": [
+          "control named slot (or default slot): one labelable form control.",
+          "label named slot: visible label content, optionally in place of the label prop."
+        ],
+        "events": [
+          "Listen to native input/change on the wrapped control; no component callback prop."
+        ],
+        "examples": [
+          {
+            "title": "Label before the switch",
+            "source": "<FormControlLabel label=\"Notifications\" labelPlacement=\"start\">\n  <Switch slot=\"control\" name=\"notifications\" />\n</FormControlLabel>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["FormControlLabel", "Switch"],
+        "required": ["label"],
+        "props": {
+          "label": {
+            "type": "string",
+            "description": "Visible text; a Svelte snippet is also accepted in markup."
+          }
+        },
+        "content": ["Required control snippet: render a Checkbox, Radio or Switch to label."],
+        "events": ["Use the wrapped control's native handlers or its onChange callback."],
+        "examples": [
+          {
+            "title": "Label before the switch",
+            "source": "<FormControlLabel label=\"Notifications\" labelPlacement=\"start\">\n  {#snippet control()}<Switch name=\"notifications\" />{/snippet}\n</FormControlLabel>"
+          }
+        ]
+      }
+    }
+  },
+  "Radio": {
+    "purpose": "A clay-styled native radio input. Name it using a wrapping label, FormControlLabel, or aria-label. Native radios with a non-empty shared name and the same form owner act as a group, with native arrow-key and validation behavior.",
+    "props": {
+      "value": {
+        "type": ["string", "number"],
+        "description": "Option value; serialized as text on native form submission."
+      },
+      "name": {
+        "type": "string",
+        "description": "Native radio name. In Svelte a RadioGroup supplies the name unless overridden; in Astro use an explicit shared name for standalone/slotted radios."
+      },
+      "checked": {
+        "type": "boolean",
+        "default": false,
+        "description": "Initial checkedness in Astro and standalone checked prop in Svelte; ignored in Svelte RadioGroup."
+      },
+      "defaultChecked": {
+        "type": "boolean",
+        "default": false,
+        "description": "Standalone reset default and starting state if checked is omitted. In Astro checked takes precedence for both initial and reset state."
+      },
+      "required": {
+        "type": "boolean",
+        "default": false,
+        "description": "Native validation requires a selection in the radio group."
+      },
+      "disabled": { "type": "boolean", "default": false },
+      "size": { "type": "string", "enum": ["small", "medium"], "default": "medium" },
+      "color": {
+        "type": "string",
+        "enum": [
+          "default",
+          "inherit",
+          "primary",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning"
+        ],
+        "default": "primary"
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Radio", "FormControlLabel"],
+        "required": ["value"],
+        "props": {},
+        "content": [],
+        "events": [
+          "Native input and change events on the newly selected radio; no component callback prop."
+        ],
+        "examples": [
+          {
+            "title": "Radio selected by default",
+            "source": "<FormControlLabel label=\"Paper\">\n  <Radio slot=\"control\" name=\"format\" value=\"paper\" defaultChecked />\n</FormControlLabel>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["Radio", "FormControlLabel"],
+        "required": ["value"],
+        "props": {},
+        "content": [],
+        "events": [
+          "onchange(event): native change handler on the newly selected radio, called first.",
+          "onChange(event, value): Svelte callback with the supplied option value. Bind RadioGroup value for reactive group selection."
+        ],
+        "examples": [
+          {
+            "title": "Radio selected by default",
+            "source": "<FormControlLabel label=\"Paper\">\n  {#snippet control()}<Radio name=\"format\" value=\"paper\" defaultChecked />{/snippet}\n</FormControlLabel>"
+          }
+        ]
+      }
+    }
+  },
+  "RadioGroup": {
+    "purpose": "Lay out a set of labeled native radios with an accessible group name. Provide aria-label or aria-labelledby. A shared non-empty name and the same form owner are what make radios mutually exclusive and keyboard navigable.",
+    "props": {
+      "row": {
+        "type": "boolean",
+        "default": false,
+        "description": "Lay out radios in a wrapping row instead of a column."
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Disable the radios as a group (native fieldset in Astro; Radio context in Svelte)."
+      },
+      "options": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["value", "label"],
+          "properties": {
+            "value": { "type": ["string", "number"] },
+            "label": { "type": "string" },
+            "disabled": { "type": "boolean" },
+            "color": {
+              "type": "string",
+              "enum": [
+                "default",
+                "inherit",
+                "primary",
+                "secondary",
+                "success",
+                "error",
+                "info",
+                "warning"
+              ]
+            },
+            "size": { "type": "string", "enum": ["small", "medium"] }
+          }
+        },
+        "description": "Data-driven mode emits labeled native radios with SSR name and checked attributes. Use unique serialized option values."
+      },
+      "form": {
+        "type": "string",
+        "description": "Data-driven mode: id of the associated form when the radios are outside it."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["RadioGroup", "Button"],
+        "required": [],
+        "props": {
+          "name": {
+            "type": "string",
+            "description": "Shared native name in data-driven mode; generated from id or a unique id if omitted. Set a name explicitly to read it reliably from FormData."
+          },
+          "value": {
+            "type": ["string", "number"],
+            "description": "Data-driven mode: initial checked option and native reset default, matched by serialized value. Overrides defaultValue."
+          },
+          "defaultValue": {
+            "type": ["string", "number"],
+            "description": "Data-driven mode: initial checked option and native reset default when value is omitted."
+          },
+          "required": {
+            "type": "boolean",
+            "default": false,
+            "description": "Data-driven mode: require a selection for native validation. For slotted radios, apply required to a child radio instead."
+          }
+        },
+        "content": [
+          "Use options or the default slot, not both. In slot mode, give every Radio the same explicit name and form owner; set checked/defaultChecked on the selected Radio and required on a child Radio if needed. No name, value, defaultValue, required or form group props are injected into slotted radios."
+        ],
+        "events": [
+          "Native change bubbles from the newly checked radio; read event.target.value (a string). There is no client upgrade or component callback."
+        ],
+        "examples": [
+          {
+            "title": "Reset a radio group",
+            "source": "<form>\n  <RadioGroup name=\"format\" aria-label=\"Preferred format\" required defaultValue=\"paper\" options={[{ value: 'paper', label: 'Paper' }, { value: 'digital', label: 'Digital' }]} />\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["RadioGroup", "Radio", "FormControlLabel", "Button"],
+        "required": [],
+        "props": {
+          "name": {
+            "type": "string",
+            "description": "Shared native name given to child Radio components; generated if omitted. Set explicitly to read it reliably from FormData."
+          },
+          "value": {
+            "type": ["string", "number"],
+            "description": "Live selected value, matched by serialized value. Supports bind:value."
+          },
+          "defaultValue": {
+            "type": ["string", "number"],
+            "description": "Initial selection when value is omitted, and native reset default. Without defaultValue, form reset restores the starting value."
+          },
+          "required": {
+            "type": "boolean",
+            "default": false,
+            "description": "Pass required to the child radios for native validation."
+          }
+        },
+        "content": [
+          "Use options or a children snippet, not both. Supply Radio components with unique serialized values, usually wrapped with FormControlLabel. Group context passes through the label wrappers."
+        ],
+        "events": [
+          "onChange(event, value): called after a user selects a new Radio; value retains the Radio prop's string or number type. Form reset updates bind:value without firing onChange."
+        ],
+        "examples": [
+          {
+            "title": "Reset a radio group",
+            "source": "<script lang=\"ts\">\n  let format = $state('paper');\n</script>\n\n<form>\n  <RadioGroup name=\"format\" aria-label=\"Preferred format\" bind:value={format} defaultValue=\"paper\" required>\n    <FormControlLabel label=\"Paper\">\n      {#snippet control()}<Radio value=\"paper\" />{/snippet}\n    </FormControlLabel>\n    <FormControlLabel label=\"Digital\">\n      {#snippet control()}<Radio value=\"digital\" />{/snippet}\n    </FormControlLabel>\n  </RadioGroup>\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
+          }
+        ]
+      }
+    }
+  }
+}

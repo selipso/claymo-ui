@@ -1,0 +1,162 @@
+/* ------------------------------------------------------------------ *
+ * Motion. Every Claymo transition reads these tokens; a preset only sets values.
+ *
+ * Choose a preset for an element and everything inside it with
+ *   data-motion="<preset>"  or  class="clay-motion-<preset>"
+ * on <html> (the whole app), any container (a region), or through a component's
+ * `motion` prop. Without one, everything uses `subtle`.
+ *
+ * Each preset starts from the defaults below and changes a few values, so a nested
+ * preset never inherits its parent's distances. Override single tokens anywhere the
+ * same way (e.g. `.toolbar { --clay-motion-duration: 120ms; }`).
+ *
+ * Presets keep every duration at or under 300ms and never overshoot.
+ * ------------------------------------------------------------------ */
+:root,
+[data-motion],
+.clay-motion-subtle,
+.clay-motion-ease-in-out,
+.clay-motion-expand-contract,
+.clay-motion-lift,
+.clay-motion-fade,
+.clay-motion-none,
+.clay-motion-lift-push,
+.clay-motion-squish {
+  /* Hover, focus, toggles and the release after a press. */
+  --clay-motion-duration: 150ms;
+  /* Going into :active; short so a press feels immediate. */
+  --clay-motion-duration-press: 90ms;
+  /* Dialogs, drawers, snackbars, badges and value changes appearing. */
+  --clay-motion-duration-enter: 200ms;
+  --clay-motion-easing: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Hover: travel, scale, and how much the outer shadow grows (× depth). */
+  --clay-motion-hover-y: -1px;
+  --clay-motion-hover-scale: 1;
+  --clay-motion-hover-elevation: 1.15;
+
+  /* Press: travel, scale per axis, outer shadow kept and inset depth (× depth). */
+  --clay-motion-press-y: 1px;
+  --clay-motion-press-scale-x: 0.98;
+  --clay-motion-press-scale-y: 0.98;
+  --clay-motion-press-drop: 0.4;
+  --clay-motion-press-sink: 1;
+
+  /* Entering overlays and indicators start this far away and this small. */
+  --clay-motion-enter-y: 8px;
+  --clay-motion-enter-scale: 0.98;
+}
+
+/* Recommended alternatives ------------------------------------------ */
+
+/* Symmetric curve, slightly slower: calm, deliberate interfaces. */
+[data-motion="ease-in-out"],
+.clay-motion-ease-in-out {
+  --clay-motion-duration: 200ms;
+  --clay-motion-duration-press: 120ms;
+  --clay-motion-duration-enter: 240ms;
+  --clay-motion-easing: cubic-bezier(0.45, 0, 0.55, 1);
+}
+
+/* Grows toward the pointer, contracts when pressed; no vertical travel. */
+[data-motion="expand-contract"],
+.clay-motion-expand-contract {
+  --clay-motion-duration: 180ms;
+  --clay-motion-hover-y: 0px;
+  --clay-motion-hover-scale: 1.02;
+  --clay-motion-press-y: 0px;
+  --clay-motion-press-scale-x: 0.97;
+  --clay-motion-press-scale-y: 0.97;
+  --clay-motion-enter-y: 0px;
+  --clay-motion-enter-scale: 0.94;
+}
+
+/* Rises with a deeper shadow; settles back without scaling. */
+[data-motion="lift"],
+.clay-motion-lift {
+  --clay-motion-duration: 180ms;
+  --clay-motion-hover-y: -2px;
+  --clay-motion-hover-elevation: 1.35;
+  --clay-motion-press-y: 0px;
+  --clay-motion-press-scale-x: 1;
+  --clay-motion-press-scale-y: 1;
+}
+
+/* No movement: state changes as shadow and color only. */
+[data-motion="fade"],
+.clay-motion-fade {
+  --clay-motion-duration: 200ms;
+  --clay-motion-hover-y: 0px;
+  --clay-motion-hover-elevation: 1.25;
+  --clay-motion-press-y: 0px;
+  --clay-motion-press-scale-x: 1;
+  --clay-motion-press-scale-y: 1;
+  --clay-motion-enter-y: 0px;
+  --clay-motion-enter-scale: 1;
+}
+
+/* Instant: states still show, nothing animates. */
+[data-motion="none"],
+.clay-motion-none {
+  --clay-motion-duration: 0s;
+  --clay-motion-duration-press: 0s;
+  --clay-motion-duration-enter: 0s;
+  --clay-motion-hover-y: 0px;
+  --clay-motion-press-y: 0px;
+  --clay-motion-press-scale-x: 1;
+  --clay-motion-press-scale-y: 1;
+  --clay-motion-enter-y: 0px;
+  --clay-motion-enter-scale: 1;
+}
+
+/* Expressive: physical objects -------------------------------------- */
+
+/* A real key: rises under the pointer, then sinks into the surface when pressed,
+ * its drop shadow disappearing and the inset shading deepening. */
+[data-motion="lift-push"],
+.clay-motion-lift-push {
+  --clay-motion-duration: 160ms;
+  --clay-motion-duration-press: 70ms;
+  --clay-motion-hover-y: -3px;
+  --clay-motion-hover-elevation: 1.5;
+  --clay-motion-press-y: 2px;
+  --clay-motion-press-scale-x: 1;
+  --clay-motion-press-scale-y: 1;
+  --clay-motion-press-drop: 0;
+  --clay-motion-press-sink: 1.6;
+}
+
+/* Soft clay: flattens and widens under a press, then slowly regains its shape. */
+[data-motion="squish"],
+.clay-motion-squish {
+  --clay-motion-duration: 260ms;
+  --clay-motion-duration-press: 100ms;
+  --clay-motion-easing: cubic-bezier(0.3, 0, 0.2, 1);
+  --clay-motion-hover-y: 0px;
+  --clay-motion-hover-scale: 1.01;
+  --clay-motion-press-y: 1px;
+  --clay-motion-press-scale-x: 1.04;
+  --clay-motion-press-scale-y: 0.93;
+  --clay-motion-enter-scale: 0.94;
+}
+
+/* The visitor's preference wins over every preset: no travel, no duration. Hover
+ * and press movement are also scoped to no-preference where they are declared. */
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  [data-motion],
+  .clay-motion-subtle,
+  .clay-motion-ease-in-out,
+  .clay-motion-expand-contract,
+  .clay-motion-lift,
+  .clay-motion-fade,
+  .clay-motion-none,
+  .clay-motion-lift-push,
+  .clay-motion-squish {
+    --clay-motion-duration: 0s;
+    --clay-motion-duration-press: 0s;
+    --clay-motion-duration-enter: 0s;
+    --clay-motion-enter-y: 0px;
+    --clay-motion-enter-scale: 1;
+  }
+}

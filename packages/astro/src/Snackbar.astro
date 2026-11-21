@@ -1,0 +1,73 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import type { MotionPreset } from "@claymo/core";
+import {
+  snackbarAnchorOrigin,
+  snackbarAutoHideDuration,
+  type SnackbarAnchorOrigin,
+} from "@claymo/core/overlays";
+
+/**
+ * Target this Snackbar's id with `commandfor` and `command="--clay-show"` / `command="--clay-hide"`,
+ * or add/remove `data-clay-open` from a client script.
+ * Timeout, Escape and click-away fire cancelable `clay-request-close` with `detail.reason`.
+ * Slots: default (replaces the message bar), `action` (alongside the message in the default bar).
+ */
+type Props = Omit<HTMLAttributes<"div">, "role"> & {
+  open?: boolean;
+  message?: string;
+  autoHideDuration?: number | null;
+  resumeHideDuration?: number;
+  disableWindowBlurListener?: boolean;
+  anchorOrigin?: SnackbarAnchorOrigin;
+  /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
+  motion?: MotionPreset;
+};
+
+const {
+  open = false,
+  message,
+  autoHideDuration = snackbarAutoHideDuration,
+  resumeHideDuration,
+  disableWindowBlurListener = false,
+  anchorOrigin = snackbarAnchorOrigin,
+  motion,
+  class: className,
+  ...rest
+} = Astro.props;
+---
+
+<div
+  class:list={["clay-snackbar", className]}
+  role="status"
+  aria-live="polite"
+  aria-atomic="true"
+  data-vertical={anchorOrigin.vertical}
+  data-horizontal={anchorOrigin.horizontal}
+  data-clay-snackbar
+  data-clay-open={open ? "" : undefined}
+  data-clay-auto-hide={autoHideDuration ?? undefined}
+  data-clay-resume-hide={resumeHideDuration}
+  data-clay-ignore-window-blur={disableWindowBlurListener ? "" : undefined}
+  data-motion={motion}
+  {...rest}
+>
+  <div class="clay-snackbar__wrapper" hidden={!open} inert={!open}>
+    <slot>
+      <div class="clay clay-snackbar__bar">
+        <span class="clay-snackbar__message">{message}</span>
+        {Astro.slots.has("action") && (
+          <div class="clay-snackbar__action">
+            <slot name="action" />
+          </div>
+        )}
+      </div>
+    </slot>
+  </div>
+</div>
+
+<script>
+  import { upgradeSnackbars } from "@claymo/core/behavior/overlays";
+  import { onEveryPage } from "./lifecycle.ts";
+  onEveryPage(upgradeSnackbars);
+</script>

@@ -1,0 +1,446 @@
+{
+  "AppBar": {
+    "purpose": "A clay header for branding, navigation and top-level actions. The clay default is sticky and remains in document flow; choose fixed or absolute for an overlay.",
+    "props": {
+      "position": {
+        "type": "string",
+        "enum": ["static", "sticky", "fixed", "absolute", "relative"],
+        "default": "sticky"
+      },
+      "color": {
+        "type": "string",
+        "enum": [
+          "primary",
+          "default",
+          "inherit",
+          "secondary",
+          "success",
+          "error",
+          "info",
+          "warning",
+          "transparent"
+        ],
+        "default": "primary",
+        "description": "Theme palette color. Inherit keeps a clay surface with inherited text color; transparent removes the fill and clay shadow."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["AppBar"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: header content."],
+        "events": [],
+        "examples": [
+          {
+            "title": "Static app bar",
+            "source": "<AppBar position=\"static\" color=\"default\">\n  <h1>Collection</h1>\n  <nav aria-label=\"Main\"><a href=\"/settings\">Settings</a></nav>\n</AppBar>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["AppBar"],
+        "required": [],
+        "props": {},
+        "content": ["children: header content."],
+        "events": [],
+        "examples": [
+          {
+            "title": "Static app bar",
+            "source": "<AppBar position=\"static\" color=\"default\">\n  <h1>Collection</h1>\n  <nav aria-label=\"Main\"><a href=\"/settings\">Settings</a></nav>\n</AppBar>"
+          }
+        ]
+      }
+    }
+  },
+  "Card": {
+    "purpose": "A rounded Paper surface for related content and actions. Compose with CardHeader, CardContent and CardActions.",
+    "props": {
+      "as": {
+        "type": "string",
+        "enum": ["div", "section", "article", "nav", "aside", "header"],
+        "default": "div"
+      },
+      "variant": { "type": "string", "enum": ["elevation", "outlined"], "default": "elevation" },
+      "elevation": {
+        "type": "integer",
+        "enum": [0, 1, 2, 3],
+        "description": "Depth level. Defaults to 1, or 2 when raised. An outlined card is flat."
+      },
+      "raised": {
+        "type": "boolean",
+        "default": false,
+        "description": "Increase the default elevation when elevation is not explicitly set."
+      },
+      "inflated": {
+        "type": "boolean",
+        "default": false,
+        "description": "Opt into SVG dome shading; render ClayLighting once on the page. Ignored on outlined and zero-elevation cards."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Card", "CardHeader", "CardContent", "CardActions", "Button"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: surface content."],
+        "events": [],
+        "examples": [
+          {
+            "title": "Raised billing card",
+            "source": "<Card as=\"article\" raised style=\"max-width: 420px\">\n  <CardHeader title=\"Billing\" subheader=\"Updated today\" />\n  <CardContent>\n    <p>Your November statement is ready. The balance of $42.00 is due on December 15.</p>\n  </CardContent>\n  <CardActions>\n    <Button href=\"/statements/latest\">View statement</Button>\n    <Button variant=\"text\">Remind me later</Button>\n  </CardActions>\n</Card>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["Card", "CardHeader", "CardContent", "CardActions", "Button"],
+        "required": [],
+        "props": {},
+        "content": ["children: surface content."],
+        "events": [],
+        "examples": [
+          {
+            "title": "Raised billing card",
+            "source": "<Card as=\"article\" raised style=\"max-width: 420px\">\n  <CardHeader title=\"Billing\" subheader=\"Updated today\" />\n  <CardContent>\n    <p>Your November statement is ready. The balance of $42.00 is due on December 15.</p>\n  </CardContent>\n  <CardActions>\n    <Button href=\"/statements/latest\">View statement</Button>\n    <Button variant=\"text\">Remind me later</Button>\n  </CardActions>\n</Card>"
+          }
+        ]
+      }
+    }
+  },
+  "CardActions": {
+    "purpose": "Padded flex row for a card's actions. Wraps where space is limited.",
+    "props": {
+      "disableSpacing": {
+        "type": "boolean",
+        "default": false,
+        "description": "Remove the 8px gap between actions."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Card", "CardContent", "CardActions", "Button"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: buttons, links or other actions."],
+        "events": [],
+        "examples": [
+          {
+            "title": "Save and discard actions",
+            "source": "<Card style=\"max-width: 420px\">\n  <CardContent><p>Save your changes before leaving this page.</p></CardContent>\n  <CardActions>\n    <Button size=\"small\">Save</Button>\n    <Button size=\"small\" variant=\"outlined\">Discard</Button>\n  </CardActions>\n</Card>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["Card", "CardContent", "CardActions", "Button"],
+        "required": [],
+        "props": {},
+        "content": ["children: buttons, links or other actions."],
+        "events": [],
+        "examples": [
+          {
+            "title": "Save and discard actions",
+            "source": "<Card style=\"max-width: 420px\">\n  <CardContent><p>Save your changes before leaving this page.</p></CardContent>\n  <CardActions>\n    <Button size=\"small\">Save</Button>\n    <Button size=\"small\" variant=\"outlined\">Discard</Button>\n  </CardActions>\n</Card>"
+          }
+        ]
+      }
+    }
+  },
+  "CardContent": {
+    "purpose": "Padded content region for a Card. Accepts native div attributes.",
+    "props": {},
+    "bridges": {
+      "astro": {
+        "imports": ["Card", "CardContent"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: main card content."],
+        "events": [],
+        "examples": [
+          {
+            "title": "Card content with padding",
+            "source": "<Card style=\"max-width: 420px\">\n  <CardContent>\n    <p>Billing information appears here. Content keeps the same side padding as the card's header and actions.</p>\n  </CardContent>\n</Card>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["Card", "CardContent"],
+        "required": [],
+        "props": {},
+        "content": ["children: main card content."],
+        "events": [],
+        "examples": [
+          {
+            "title": "Card content with padding",
+            "source": "<Card style=\"max-width: 420px\">\n  <CardContent>\n    <p>Billing information appears here. Content keeps the same side padding as the card's header and actions.</p>\n  </CardContent>\n</Card>"
+          }
+        ]
+      }
+    }
+  },
+  "CardHeader": {
+    "purpose": "Card title and secondary text with optional leading avatar and trailing action.",
+    "props": {
+      "title": {
+        "type": "string",
+        "description": "Plain text title; for markup use the bridge's slot or snippet."
+      },
+      "subheader": {
+        "type": "string",
+        "description": "Plain secondary text; for markup use the bridge's slot or snippet."
+      },
+      "disableTypography": {
+        "type": "boolean",
+        "default": false,
+        "description": "Render the title and subheader without their built-in typography wrappers."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Card", "CardHeader", "Avatar", "Button"],
+        "required": [],
+        "props": {},
+        "content": [
+          "Named slots: avatar, title, subheader, action. The title and subheader slots take precedence over text props."
+        ],
+        "events": [],
+        "examples": [
+          {
+            "title": "Header with avatar and action",
+            "source": "<Card style=\"max-width: 420px\">\n  <CardHeader title=\"Ada Lovelace\" subheader=\"Updated today\">\n    <Avatar slot=\"avatar\" alt=\"Ada Lovelace\" />\n    <Button slot=\"action\" variant=\"text\" size=\"small\" href=\"/settings\">Edit</Button>\n  </CardHeader>\n</Card>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["Card", "CardHeader", "Avatar", "Button"],
+        "required": [],
+        "props": {},
+        "content": [
+          "Optional avatar and action snippets. Both title and subheader can be passed as snippets instead of strings."
+        ],
+        "events": [],
+        "examples": [
+          {
+            "title": "Header with avatar and action",
+            "source": "<Card style=\"max-width: 420px\">\n  <CardHeader title=\"Ada Lovelace\" subheader=\"Updated today\">\n    {#snippet avatar()}<Avatar alt=\"Ada Lovelace\" />{/snippet}\n    {#snippet action()}<Button variant=\"text\" size=\"small\" href=\"/settings\">Edit</Button>{/snippet}\n  </CardHeader>\n</Card>"
+          }
+        ]
+      }
+    }
+  },
+  "Divider": {
+    "purpose": "Native horizontal rule used to separate sections or, with vertical orientation, items in a row.",
+    "props": {
+      "orientation": {
+        "type": "string",
+        "enum": ["horizontal", "vertical"],
+        "default": "horizontal"
+      },
+      "flexItem": {
+        "type": "boolean",
+        "default": false,
+        "description": "Stretch a vertical divider across the height of its flex row."
+      },
+      "variant": {
+        "type": "string",
+        "enum": ["fullWidth", "inset", "middle"],
+        "default": "fullWidth",
+        "description": "Full span, a leading inset, or equal space on both ends. Vertical inset and middle both add top and bottom margins."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Divider"],
+        "required": [],
+        "props": {},
+        "content": ["No content slots; Divider is a void element."],
+        "events": [],
+        "examples": [
+          {
+            "title": "Vertical divider between links",
+            "source": "<div style=\"display: flex; gap: 0.75rem;\">\n  <a href=\"/settings\">Settings</a>\n  <Divider orientation=\"vertical\" flexItem />\n  <a href=\"/support\">Support</a>\n</div>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["Divider"],
+        "required": [],
+        "props": {},
+        "content": ["No snippets; Divider is a void element."],
+        "events": [],
+        "examples": [
+          {
+            "title": "Vertical divider between links",
+            "source": "<div style=\"display: flex; gap: 0.75rem;\">\n  <a href=\"/settings\">Settings</a>\n  <Divider orientation=\"vertical\" flexItem />\n  <a href=\"/support\">Support</a>\n</div>"
+          }
+        ]
+      }
+    }
+  },
+  "Typography": {
+    "purpose": "Apply the clay type scale to readable text. Use as or variantMapping to choose semantic HTML independently of visual styling.",
+    "props": {
+      "variant": {
+        "type": "string",
+        "enum": [
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6",
+          "subtitle1",
+          "subtitle2",
+          "body1",
+          "body2",
+          "caption",
+          "overline",
+          "inherit",
+          "button"
+        ],
+        "default": "body1"
+      },
+      "as": {
+        "type": "string",
+        "enum": ["h1", "h2", "h3", "h4", "h5", "h6", "p", "span", "div", "label", "legend"],
+        "description": "Override the rendered tag. By default headings map to h1–h6, button/caption/overline to span, and other variants to p."
+      },
+      "variantMapping": {
+        "type": "object",
+        "additionalProperties": {
+          "type": "string",
+          "enum": ["h1", "h2", "h3", "h4", "h5", "h6", "p", "span", "div", "label", "legend"]
+        },
+        "description": "Optional variant-to-tag overrides. Explicit as takes precedence."
+      },
+      "color": {
+        "type": "string",
+        "enum": [
+          "inherit",
+          "text.primary",
+          "text.secondary",
+          "text.disabled",
+          "textPrimary",
+          "textSecondary",
+          "textDisabled",
+          "primary",
+          "secondary",
+          "error",
+          "success",
+          "info",
+          "warning"
+        ],
+        "default": "inherit",
+        "description": "Palette ink color. Both the dotted and camelCase text names are accepted."
+      },
+      "align": {
+        "type": "string",
+        "enum": ["inherit", "left", "center", "right", "justify"],
+        "default": "inherit"
+      },
+      "gutterBottom": {
+        "type": "boolean",
+        "default": false,
+        "description": "Add space after the text."
+      },
+      "noWrap": {
+        "type": "boolean",
+        "default": false,
+        "description": "Keep text on one line and show an ellipsis when width is constrained."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Typography"],
+        "required": [],
+        "props": {},
+        "content": ["Default slot: text and inline markup."],
+        "events": [],
+        "examples": [
+          {
+            "title": "Heading with supporting text",
+            "source": "<Typography variant=\"h4\" as=\"h2\" gutterBottom>Account settings</Typography>\n<Typography color=\"text.secondary\">Manage your profile and notifications.</Typography>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["Typography"],
+        "required": [],
+        "props": {},
+        "content": ["children: text and inline markup."],
+        "events": [],
+        "examples": [
+          {
+            "title": "Heading with supporting text",
+            "source": "<Typography variant=\"h4\" as=\"h2\" gutterBottom>Account settings</Typography>\n<Typography color=\"text.secondary\">Manage your profile and notifications.</Typography>"
+          }
+        ]
+      }
+    }
+  },
+  "Accordion": {
+    "purpose": "A native details disclosure with a visible summary and a clay content well. Collapsed content stays mounted. The optional native name attribute groups panels so only one opens at a time.",
+    "props": {
+      "defaultExpanded": {
+        "type": "boolean",
+        "default": false,
+        "description": "Start open when expanded is not supplied. Only read at initial render."
+      },
+      "disabled": {
+        "type": "boolean",
+        "default": false,
+        "description": "Prevent activation of the summary without forcing the panel closed."
+      }
+    },
+    "bridges": {
+      "astro": {
+        "imports": ["Accordion"],
+        "required": [],
+        "props": {
+          "expanded": {
+            "type": "boolean",
+            "description": "Explicit initial open state. Overrides defaultExpanded. After render the browser owns the native open property."
+          }
+        },
+        "content": [
+          "Use the summary named slot for the visible disclosure label.",
+          "Default slot: collapsible content."
+        ],
+        "events": [
+          "Native toggle on the root details element, including programmatic changes. Read details.open for the current state."
+        ],
+        "examples": [
+          {
+            "title": "Track accordion expansion",
+            "source": "<Accordion id=\"billing-details\" defaultExpanded>\n  <span slot=\"summary\">Billing details</span>\n  <p>Your billing information is up to date.</p>\n</Accordion>\n<p>Billing details: <output id=\"billing-state\">open</output></p>\n<script>\n  const details = document.querySelector<HTMLDetailsElement>('#billing-details')!;\n  const state = document.getElementById('billing-state')!;\n  details.addEventListener('toggle', () => {\n    state.textContent = details.open ? 'open' : 'closed';\n  });\n</script>"
+          }
+        ]
+      },
+      "svelte": {
+        "imports": ["Accordion"],
+        "required": [],
+        "props": {
+          "expanded": {
+            "type": "boolean",
+            "description": "Current open state. Supports bind:expanded and overrides defaultExpanded."
+          },
+          "onChange": {
+            "description": "Optional callback (event: Event, expanded: boolean) => void for native changes; own parent-driven expanded changes do not invoke it."
+          }
+        },
+        "content": [
+          "summary: required snippet containing the disclosure label.",
+          "children: collapsible content."
+        ],
+        "events": [
+          "onChange(event, expanded) reports a native state change; ontoggle exposes the native event, including programmatic changes."
+        ],
+        "examples": [
+          {
+            "title": "Track accordion expansion",
+            "source": "<script lang=\"ts\">\n  let expanded = $state(true);\n  let changes = $state(0);\n</script>\n<Accordion bind:expanded onChange={() => changes++}>\n  {#snippet summary()}Billing details{/snippet}\n  <p>Your billing information is up to date.</p>\n</Accordion>\n<p>Billing details: {expanded ? 'open' : 'closed'}. Native changes: {changes}.</p>"
+          }
+        ]
+      }
+    }
+  }
+}

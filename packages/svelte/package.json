@@ -1,0 +1,48 @@
+{
+  "name": "@claymo/svelte",
+  "version": "0.1.0",
+  "description": "Svelte 5 bridge for the Claymo claymorphic design system.",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "svelte-package -i src/lib -o dist",
+    "prepack": "npm run build",
+    "check": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings"
+  },
+  "dependencies": {
+    "@claymo/core": "0.1.0"
+  },
+  "peerDependencies": {
+    "svelte": "^5.57.0"
+  },
+  "devDependencies": {
+    "@sveltejs/package": "^2.5.0",
+    "svelte": "^5.57.3",
+    "svelte-check": "^4.7.8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/selipso/claymo-ui.git",
+    "directory": "packages/svelte"
+  },
+  "homepage": "https://github.com/selipso/claymo-ui#readme",
+  "bugs": {
+    "url": "https://github.com/selipso/claymo-ui/issues"
+  }
+}

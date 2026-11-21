@@ -1,0 +1,16 @@
+/* Opt-in page defaults: brand font, page colours and the focus ring on every element.
+ * Import after claymo.css when Claymo owns the page; skip it when embedding in a host design. */
+@import "@fontsource/source-sans-3/400.css";
+@import "@fontsource/source-sans-3/600.css";
+
+body {
+  margin: 0;
+  background: var(--clay-page);
+  color: var(--clay-ink);
+  font: 400 1rem/1.5 var(--clay-font);
+}
+
+:focus-visible {
+  outline: 3px solid var(--clay-focus);
+  outline-offset: 3px;
+}

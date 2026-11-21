@@ -1,0 +1,26 @@
+.clay-paper {
+  --clay-radius: 28px;
+  box-sizing: border-box;
+  color: var(--clay-ink);
+}
+.clay-paper[data-elevation="0"] {
+  --clay-d: 0px;
+}
+.clay-paper[data-elevation="1"] {
+  --clay-d: 6px;
+}
+.clay-paper[data-elevation="2"] {
+  --clay-d: 10px;
+}
+.clay-paper[data-elevation="3"] {
+  --clay-d: 16px;
+}
+.clay-paper[data-square] {
+  --clay-radius: 0px;
+}
+.clay-paper[data-flat] {
+  box-shadow: none;
+}
+.clay-paper[data-variant="outlined"] {
+  border: var(--clay-border-width) solid var(--clay-edge);
+}

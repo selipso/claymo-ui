@@ -1,0 +1,77 @@
+---
+// Two pages joined by Astro's ClientRouter: the second page's controls arrive by DOM swap,
+// so they only work if every Claymo controller re-upgrades on `astro:page-load`.
+import { ClientRouter } from "astro:transitions";
+import "@claymo/core/claymo.css";
+import {
+  Accordion,
+  Button,
+  Checkbox,
+  Dialog,
+  Slider,
+  Snackbar,
+  Tabs,
+  Tooltip,
+} from "@claymo/astro";
+
+export function getStaticPaths() {
+  return [{ params: { page: "one" } }, { params: { page: "two" } }];
+}
+const { page } = Astro.params;
+const next = page === "one" ? "two" : "one";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Navigation {page}</title>
+    <link rel="icon" href="data:," />
+    <ClientRouter />
+  </head>
+  <body>
+    <h1>Page {page}</h1>
+    <a href={`/nav/${next}/`}>Go to page {next}</a>
+    <div transition:persist="navigation-tooltip">
+      <Tooltip id="persisted-tip" title="Persistent tip" open>
+        <button type="button">Persistent trigger</button>
+      </Tooltip>
+    </div>
+    {page === "one" && (
+      <>
+        <Tooltip id="page-tip" title="Page-only tip" open>
+          <button type="button">Page-only trigger</button>
+        </Tooltip>
+        <Snackbar id="page-toast" message="Page-only toast" open autoHideDuration={null} />
+      </>
+    )}
+    <Tabs
+      aria-label="Sections"
+      value="a"
+      tabs={[
+        { value: "a", label: "Alpha" },
+        { value: "b", label: "Bravo" },
+      ]}
+    >
+      <p slot="a">Alpha panel</p>
+      <p slot="b">Bravo panel</p>
+    </Tabs>
+    <label>
+      <Checkbox name="mixed" indeterminate /> Mixed
+    </label>
+    <Accordion disabled>
+      <span slot="summary">Locked</span>
+      <p>Locked content</p>
+    </Accordion>
+    <form>
+      <Slider name="level" aria-label="Level" defaultValue={20} step={20} valueLabelDisplay="on" />
+      <button type="reset">Reset level</button>
+    </form>
+    <Button commandfor="nav-dialog" command="show-modal">
+      Open dialog
+    </Button>
+    <Dialog id="nav-dialog" title="Navigation dialog">
+      <p>Dialog body</p>
+    </Dialog>
+  </body>
+</html>
