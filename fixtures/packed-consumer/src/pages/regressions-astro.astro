@@ -1,6 +1,6 @@
 ---
 import Page from "../layouts/Page.astro";
-import { Button, Dialog, Tab, TabPanel, Tabs, Tooltip } from "@claymo/astro";
+import { Button, DataTable, Dialog, Tab, TabPanel, Tabs, Tooltip } from "@claymo/astro";
 
 const tabs = [
   { value: "a", label: "Alpha" },
@@ -9,6 +9,14 @@ const tabs = [
 ---
 
 <Page title="Astro regressions">
+  <DataTable
+    label="Assigned sites"
+    rows={[{ id: "Reef" }, { id: "Harbor" }]}
+    quickFilterValue="reef"
+    checkboxSelection
+    rowSelectionModel={["Off-page site"]}
+  />
+
   {["First copy", "Second copy"].map((name) => (
     <section aria-label={name}>
       <Tabs aria-label="Details" value="a" tabs={tabs}>

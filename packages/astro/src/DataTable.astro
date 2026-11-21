@@ -98,6 +98,8 @@ const span = view.columns.length + (checkboxSelection ? 1 : 0);
   data-filter-mode={filterMode}
   data-pagination-mode={paginationMode}
   data-row-count={rowCount}
+  data-quick-filter-value={!quickFilter && quickFilterValue ? quickFilterValue : undefined}
+  data-selection={selected.size ? JSON.stringify([...selected]) : undefined}
   data-clickable-rows={clickableRows ? "" : undefined}
 >
   {hasToolbar && (

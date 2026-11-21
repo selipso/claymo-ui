@@ -82,6 +82,8 @@ Svelte: `renderCell` takes a snippet.
 
 Sort, search, page and selection are models. Astro renders every row on the server and its page script updates them; events bubble from the root with the model in `detail`. Svelte binds them.
 
+`quickFilterValue` filters rows even without a search box. Select all acts on rows matching the filter across client pages (only the supplied page in server mode); it preserves selected IDs outside that set.
+
 | Model               | Astro event                        | Svelte                                                |
 | ------------------- | ---------------------------------- | ----------------------------------------------------- |
 | `sortModel`         | `clay-sort-model-change`           | `bind:sortModel`, `onSortModelChange`                 |

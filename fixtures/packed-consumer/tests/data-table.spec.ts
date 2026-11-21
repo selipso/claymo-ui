@@ -117,6 +117,21 @@ for (const bridge of ["astro", "svelte"]) {
   });
 }
 
+test("astro keeps the supplied filter and off-page selection across interactions", async ({
+  page,
+}) => {
+  await page.goto("/regressions-astro/");
+  const region = page.getByRole("region", { name: "Assigned sites" });
+  const all = region.getByRole("checkbox", { name: "Select all rows" });
+  await all.check();
+  await expect(region.getByRole("checkbox", { name: "Select Reef" })).toBeChecked();
+  await expect(region.locator('tr[data-id="Harbor"] input')).not.toBeChecked();
+  await all.uncheck();
+  await expect(page.locator(".clay-data-table__selected")).toHaveText("1 selected");
+  await region.getByRole("button", { name: "id", exact: true }).click();
+  await expect(region.getByRole("rowheader")).toHaveText(["Reef"]);
+});
+
 test("astro shows loading and custom empty states", async ({ page }) => {
   await open(page, "astro", 7);
   const loading = page.getByRole("region", { name: "Reports, loading" });

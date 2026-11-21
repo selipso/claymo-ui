@@ -114,15 +114,13 @@ function attachDataTable(root: HTMLElement) {
   const selectedStatus = root.querySelector<HTMLElement>(".clay-data-table__selected");
 
   let sortModel = initialSort(headers);
-  let quickFilterValue = filterInput?.value ?? "";
+  let quickFilterValue = filterInput?.value ?? root.dataset.quickFilterValue ?? "";
   let paginationModel: DataTablePaginationModel | undefined =
     pageSize && displayed
       ? { page: Number(displayed.dataset.page), pageSize: Number(pageSize.value) }
       : undefined;
-  let selected = rows
-    .filter((row) => row.hasAttribute("data-selected"))
-    .map((row) => row.dataset.id!);
-  let ordered = rows;
+  let selected: string[] = root.dataset.selection ? JSON.parse(root.dataset.selection) : [];
+  let ordered = quickFilterValue || sortModel.length ? queryRows() : rows;
 
   const emit = <Detail>(name: string, detail: Detail) =>
     root.dispatchEvent(new CustomEvent(name, { bubbles: true, detail }));
@@ -165,8 +163,8 @@ function attachDataTable(root: HTMLElement) {
       next.disabled = paginationModel.page >= pageCount(count(), paginationModel.pageSize) - 1;
   }
 
-  function render() {
-    ordered = dataTableOrder(rows, {
+  function queryRows() {
+    return dataTableOrder(rows, {
       search: (row) => row.dataset.search ?? "",
       key: (row, field) => keys.get(row)?.get(field) ?? "",
       sortModel,
@@ -174,6 +172,10 @@ function attachDataTable(root: HTMLElement) {
       sortingMode,
       filterMode,
     });
+  }
+
+  function render() {
+    ordered = queryRows();
     renderPagination();
     const visible = new Set(
       paginationModel ? pageSlice(ordered, paginationModel, paginationMode) : ordered,
