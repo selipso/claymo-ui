@@ -69,7 +69,7 @@
    ---
 
    <!doctype html>
-   <html lang="en" data-palette="tidal" data-theme="light">
+   <html lang="en" data-palette="reef" data-theme="light">
      <head>
        <meta charset="utf-8" />
        <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -81,7 +81,7 @@
    </html>
    ```
 
-   Omit `data-palette` for Archive Teal and `data-theme` to follow the system color scheme. See [Theming](./theming.md) for the other values.
+   Omit `data-palette` for Tidal Pool and `data-theme` to follow the system color scheme. See [Theming](./theming.md) for the other values.
 
 4. Render a component in `src/pages/index.astro`:
 
@@ -136,7 +136,7 @@
    {@render children()}
    ```
 
-3. Add `data-palette` and `data-theme` to the opening `<html>` tag in `src/app.html`, for example `<html lang="en" data-palette="tidal" data-theme="light">`. Keep the rest of the SvelteKit template. Import components by name from `@claymo/svelte` in your routes.
+3. Add `data-palette` and `data-theme` to the opening `<html>` tag in `src/app.html`, for example `<html lang="en" data-palette="reef" data-theme="light">`. Keep the rest of the SvelteKit template. Import components by name from `@claymo/svelte` in your routes.
 
 ## Set up a coding agent
 

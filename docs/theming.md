@@ -33,14 +33,14 @@ Set `data-palette` on `<html>` for the whole page or on a container to theme one
 
 Every palette follows the claymorphism backdrop rule: a clean, near-neutral page (OKLCH chroma ≤ 0.015) under pastel clay surfaces in the palette's hue (chroma ≥ 0.06, at least 4× the page, ΔE ≥ 0.08), with text inks at 4.5:1 and edges and focus at 3:1 on both. The rule is enforced by tests; follow it when you override `--clay-page` or `--clay-surface`.
 
-| `data-palette`      | Palette         | Colors                                        |
-| ------------------- | --------------- | --------------------------------------------- |
-| Omitted (`default`) | Archive Teal    | Deep teal and steel blue on cool mint         |
-| `tidal`             | Tidal Pool      | Lagoon teal and terracotta coral on pale aqua |
-| `sorbet`            | Sunset Sorbet   | Electric magenta and Capri cyan on peach      |
-| `orbit`             | Lunar Orbit     | Ultraviolet and solar citron on lavender      |
-| `atelier`           | Cobalt Atelier  | Klein cobalt and marigold on ice blue         |
-| `canopy`            | Tropical Canopy | Malachite jade and neon orchid on mint        |
+| `data-palette`      | Palette         | Colors                                          |
+| ------------------- | --------------- | ----------------------------------------------- |
+| Omitted (`default`) | Tidal Pool      | Lagoon teal and terracotta coral on pale aqua   |
+| `reef`              | Coral Reef      | Coral pink and lagoon turquoise on pastel coral |
+| `sorbet`            | Sunset Sorbet   | Electric magenta and Capri cyan on peach        |
+| `orbit`             | Lunar Orbit     | Ultraviolet and solar citron on lavender        |
+| `atelier`           | Cobalt Atelier  | Klein cobalt and marigold on ice blue           |
+| `canopy`            | Tropical Canopy | Malachite jade and neon orchid on mint          |
 
 Use the playground's palette and mode controls while viewing `/gallery/` to compare the palettes in light and dark.
 
@@ -59,17 +59,13 @@ Set the `inflated` prop on supported components or add `data-inflated` to a raw 
 
 ## Palette provenance
 
-Archive Teal borrows from the draft Biblioplex brand reference (`biblioplex/docs/brand.md` on the `branding` branch), including primary teal, the dark page color, and Source Sans 3. Other token values were chosen for the prototype and are not brand-approved.
+The draft Biblioplex brand reference (`biblioplex/docs/brand.md` on the `branding` branch) supplied Source Sans 3 and the 3px focus ring. No palette uses its colors since Tidal Pool became the default and Coral Reef replaced Archive Teal, the palette that carried the documented teal. All palette colors are prototype choices, not brand-approved.
 
-| Token or value                                                                            | Source or decision                                                                                                                                   |
-| ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--clay-primary` `#008282`                                                                | Documented primary color                                                                                                                             |
-| Dark `--clay-ink` `#e8f3f2`, `--clay-focus` `#f3ead2`, and `--clay-primary-ink` `#55c9c5` | Documented colors assigned to new roles here; `#55c9c5` was documented only as a toggle border.                                                      |
-| Source Sans 3 (400 and 600), 3px focus ring                                               | Documented                                                                                                                                           |
-| `--clay-page` and `--clay-surface` in every palette and mode                              | Derived from the palette hue by the backdrop rule above, replacing the prototype tints                                                               |
-| `--clay-ink-muted`, `--clay-edge`, light `--clay-focus` `#006969`                         | Prototype values. `#006969` was documented as a primary hover shade; Parchment `#f3ead2` had only about 1.06:1 contrast as a ring on the light page. |
-| Remaining `*-on` and `*-ink` colors                                                       | Hand-picked to target 4.5:1 text contrast                                                                                                            |
-| `secondary`, `success`, `error`, `warning`, and `info` fills                              | Prototype hues near the Orbital Seal blue, green, and red, darkened where needed so white text reaches 4.5:1.                                        |
-| Documented but unused in those roles                                                      | `#102629` (dark page), `#193639`, `#456063`, `#789495`, `#006969` as hover, Source Serif 4, Ink `#343240`, and Parchment as a surface                |
+| Token or value                                                                 | Source or decision                                                                                                                                                                         |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Source Sans 3 (400 and 600), 3px focus ring                                    | Documented                                                                                                                                                                                 |
+| `--clay-page` and `--clay-surface` in every palette and mode                   | Derived from the palette hue by the backdrop rule above                                                                                                                                    |
+| Role fills, `*-on`, `*-ink`, `--clay-ink-muted`, `--clay-edge`, `--clay-focus` | Chosen per palette theme (Coral Reef: coral pink, lagoon turquoise, sea grass, yellow tang, fire coral, deep ocean) to meet 4.5:1 text and 3:1 edge and focus contrast; tests enforce both |
+| Documented but unused                                                          | Primary `#008282`, dark page `#102629`, `#193639`, `#456063`, `#789495`, `#006969`, Source Serif 4, Ink `#343240`, and Parchment `#f3ead2`                                                 |
 
 The draft brand rules say not to recolor status colors in the host app. Claymo defines its own for the prototype; an integrating app should set `--clay-success`, `--clay-error`, and the other role tokens to its own approved values.

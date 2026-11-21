@@ -50,7 +50,7 @@ The server wraps `@claymo/core/reference`. Import it directly in Node 22.12+ to 
 import { getComponent, getSetup, listComponents, listThemes } from "@claymo/core/reference";
 
 const themes = listThemes();
-const setup = getSetup("astro", "tidal", "system", true); // Enable Svelte islands
+const setup = getSetup("astro", "reef", "system", true); // Enable Svelte islands
 const names = listComponents("astro");
 const button = getComponent("astro", "Button");
 ```

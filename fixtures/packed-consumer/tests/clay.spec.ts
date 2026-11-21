@@ -1,6 +1,10 @@
+import { readFileSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
 
-const palettes = ["default", "tidal", "sorbet", "orbit", "atelier", "canopy"];
+// Written by check-mcp.mjs from the installed server's list_themes response.
+const palettes: string[] = JSON.parse(readFileSync("mcp-themes.json", "utf8")).map(
+  ({ palette }: { palette: string }) => palette,
+);
 
 /** OKLCH of an element's background and of every box-shadow color, as the browser renders them. */
 const measure = (page: Page, selector: string) =>

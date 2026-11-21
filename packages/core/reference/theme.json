@@ -13,12 +13,12 @@
   },
   "palettes": {
     "default": {
-      "label": "Archive Teal",
-      "description": "Deep teal primary and steel-blue secondary on cool mint surfaces. Calm and neutral; the root tokens."
-    },
-    "tidal": {
       "label": "Tidal Pool",
-      "description": "Lagoon teal primary and terracotta coral secondary on pale aqua. Fresh and coastal."
+      "description": "Lagoon teal primary and terracotta coral secondary on pale aqua clay. Fresh and coastal; the root tokens."
+    },
+    "reef": {
+      "label": "Coral Reef",
+      "description": "Coral pink primary and lagoon turquoise secondary on pastel coral clay, with sea-grass, yellow-tang and deep-ocean status colors. Warm and lively."
     },
     "sorbet": {
       "label": "Sunset Sorbet",

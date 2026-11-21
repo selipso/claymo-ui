@@ -16,50 +16,7 @@
   --clay-border-width: 1px;
   --clay-highlight: white;
 
-  --clay-page: light-dark(#f2faf9, #0e1415);
-  --clay-surface: light-dark(#9deee8, #004c54);
-  --clay-ink: light-dark(#102629, #e8f3f2);
-  --clay-ink-muted: light-dark(#3f5a5d, #b7d0cf);
-  --clay-edge: light-dark(#5a7e80, #7aa3a5);
-  --clay-focus: light-dark(#006969, #f3ead2);
-
-  --clay-primary: #008282;
-  --clay-primary-on: #ffffff;
-  --clay-secondary: #2c6a9a;
-  --clay-secondary-on: #ffffff;
-  --clay-success: #2f7a52;
-  --clay-success-on: #ffffff;
-  --clay-error: #b5443b;
-  --clay-error-on: #ffffff;
-  --clay-warning: #e0a526;
-  --clay-warning-on: #102629;
-  --clay-info: #1f6f8b;
-  --clay-info-on: #ffffff;
-
-  --clay-primary-ink: light-dark(#006060, #55c9c5);
-  --clay-secondary-ink: light-dark(#275f8a, #8fc2ec);
-  --clay-success-ink: light-dark(#2a6e4a, #7fd0a0);
-  --clay-error-ink: light-dark(#a63b32, #fe978c);
-  --clay-warning-ink: light-dark(#865805, #f0c060);
-  --clay-info-ink: light-dark(#1b6280, #7cc5e0);
-}
-:root[data-theme="light"] {
-  color-scheme: light;
-}
-:root[data-theme="dark"] {
-  color-scheme: dark;
-}
-:root,
-::backdrop {
-  --clay-backdrop: rgb(0 0 0 / 55%);
-}
-
-/* ------------------------------------------------------------------ *
- * Aesthetic palettes. :root defines default status tokens; palettes
- * override primary, secondary, and status tokens together so each
- * theme forms a holistic, collision-free light/dark palette.
- * ------------------------------------------------------------------ */
-[data-palette="tidal"] {
+  /* Default palette: Tidal Pool. */
   --clay-page: light-dark(#f2faf9, #0e1415);
   --clay-surface: light-dark(#9deee6, #034b57);
   --clay-ink: light-dark(#0b2528, #eaf9f8);
@@ -84,6 +41,49 @@
   --clay-info: light-dark(#1c5ec7, #6ba6ff);
   --clay-info-on: light-dark(#ffffff, #051938);
   --clay-info-ink: light-dark(#164ca3, #a3c8ff);
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+:root,
+::backdrop {
+  --clay-backdrop: rgb(0 0 0 / 55%);
+}
+
+/* ------------------------------------------------------------------ *
+ * Aesthetic palettes. :root is Tidal Pool; each palette overrides every
+ * color token so it forms a holistic, collision-free light/dark palette.
+ * ------------------------------------------------------------------ */
+/* Coral Reef: coral pink, lagoon turquoise, sea grass, yellow tang, fire
+ * coral and deep-ocean blue, with deep-ocean navy text. */
+[data-palette="reef"] {
+  --clay-page: light-dark(#fdf6f6, #171111);
+  --clay-surface: light-dark(#fec5c8, #511f25);
+  --clay-ink: light-dark(#14283a, #fff0f1);
+  --clay-ink-muted: light-dark(#3b4f63, #ecc6cc);
+  --clay-edge: light-dark(#647689, #c0939a);
+  --clay-focus: light-dark(#0b6b75, #7ee8e4);
+  --clay-primary: light-dark(#ff7a8a, #ff8fa0);
+  --clay-primary-on: light-dark(#3b0a14, #3a0712);
+  --clay-primary-ink: light-dark(#a8283f, #ffb3bf);
+  --clay-secondary: light-dark(#0b7d87, #33d1cc);
+  --clay-secondary-on: light-dark(#ffffff, #032426);
+  --clay-secondary-ink: light-dark(#08656e, #7ee8e4);
+  --clay-success: light-dark(#1f7a4e, #4fd08a);
+  --clay-success-on: light-dark(#ffffff, #042612);
+  --clay-success-ink: light-dark(#17643f, #86e8b0);
+  --clay-error: light-dark(#c83a12, #ff6a45);
+  --clay-error-on: light-dark(#ffffff, #2b0700);
+  --clay-error-ink: light-dark(#a3300d, #ffa68f);
+  --clay-warning: light-dark(#f2b600, #ffc84a);
+  --clay-warning-on: light-dark(#261a00, #261a00);
+  --clay-warning-ink: light-dark(#7a5200, #ffd77a);
+  --clay-info: light-dark(#1d5fc4, #6aa8ff);
+  --clay-info-on: light-dark(#ffffff, #051938);
+  --clay-info-ink: light-dark(#1a4fa6, #a3c8ff);
 }
 [data-palette="sorbet"] {
   --clay-page: light-dark(#fcf7f2, #161114);

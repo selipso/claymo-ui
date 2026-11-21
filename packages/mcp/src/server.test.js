@@ -154,7 +154,7 @@ test("invalid input returns the valid choices", async () => {
   const client = await connect();
   assert.match(
     await errorText(client, "get_setup", { framework: "astro", palette: "neon" }),
-    /tidal/,
+    /reef/,
   );
   assert.match(await errorText(client, "list_components", {}), /astro|svelte/);
   assert.match(
