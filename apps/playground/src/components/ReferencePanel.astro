@@ -31,7 +31,7 @@ const rows = Object.entries(props.properties).map(([prop, schema]) => ({
         loading="lazy"
         data-example
       ></iframe>
-      <Code code={source} lang={framework} wrap />
+      <Code code={source} lang={framework === "solid" ? "tsx" : framework} wrap />
     </section>
   ))}
 

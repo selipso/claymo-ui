@@ -1,0 +1,102 @@
+.collection-demo {
+  min-height: 100vh;
+
+  .body {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    padding: 24px;
+  }
+  .perm {
+    display: none;
+    position: sticky;
+    top: 88px;
+  }
+  .main {
+    flex: 1;
+    min-width: 0;
+  }
+  .menu-btn {
+    display: inline-flex;
+  }
+  .spacer {
+    flex: 1;
+  }
+  .stack {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding-top: 16px;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+    gap: 24px;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 4px 4px 20px;
+  }
+  .form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    max-width: 640px;
+  }
+  .fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 8px;
+  }
+  .fieldset legend {
+    font-weight: 600;
+    margin-bottom: 8px;
+    padding: 0;
+  }
+  .indent {
+    display: grid;
+    margin-left: 24px;
+  }
+  .bar-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .switches {
+    display: grid;
+    gap: 8px;
+  }
+  .actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .actions .clay-button[data-variant="text"] {
+    margin-left: 0;
+  }
+  .view-group .clay-button.clay-button[aria-pressed="true"] {
+    --clay-color: var(--clay-primary);
+    background: var(--clay-primary);
+    color: var(--clay-primary-on);
+  }
+  /* Beside the site sidebar, the demo's own permanent drawer needs a wider viewport. */
+  @media (min-width: 1200px) {
+    .perm {
+      display: block;
+    }
+    .menu-btn {
+      display: none;
+    }
+  }
+}

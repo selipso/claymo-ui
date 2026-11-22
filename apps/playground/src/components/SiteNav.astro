@@ -70,13 +70,15 @@ const sections: { id: string; title: string; dense?: boolean; links: NavLink[] }
   // instead of being server-rendered per page.
   function markCurrent(nav: HTMLElement) {
     const here = withSlash(location.pathname);
-    for (const link of nav.querySelectorAll<HTMLAnchorElement>("a[href]")) {
-      const current =
-        withSlash(link.pathname) === here && link.closest(".site-nav__panel") !== null;
-      link.toggleAttribute("data-selected", current);
-      if (!current) link.removeAttribute("aria-current");
+    for (const link of nav.querySelectorAll<HTMLAnchorElement>(".site-nav__panel a[href]")) {
+      const path = withSlash(link.pathname);
+      const current = path === here;
+      const showcase = path === "/demo/" || path === "/gallery/";
+      const withinShowcase = showcase && here.startsWith(path);
+      link.toggleAttribute("data-selected", current || withinShowcase);
+      if (!current && !withinShowcase) link.removeAttribute("aria-current");
       else {
-        link.setAttribute("aria-current", "page");
+        link.setAttribute("aria-current", current ? "page" : "location");
         link.scrollIntoView({ block: "nearest" });
       }
     }

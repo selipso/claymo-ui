@@ -55,7 +55,7 @@ Use the playground's palette and mode controls while viewing `/gallery/` to comp
 
 ## Inflated lighting
 
-Set the `inflated` prop on supported components or add `data-inflated` to a raw `.clay` surface. Render `ClayLighting` from either bridge once in the page layout. Without a bridge, put the `CLAY_LIGHTING_SVG` export from `@claymo/core` in the document as SVG markup. This supplies the `#clay-lit` filter; don't hide it with `display: none`.
+Set `inflated` on a supported component or add `data-inflated` to a raw `.clay` surface. Render `ClayLighting` once in the page layout, from whichever bridge owns it. Without a bridge, insert the `CLAY_LIGHTING_SVG` export from `@claymo/core` as SVG markup. This supplies the `#clay-lit` filter; don't hide it with `display: none`.
 
 ## Palette provenance
 

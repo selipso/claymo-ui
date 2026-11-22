@@ -1,9 +1,10 @@
-export type Framework = "astro" | "svelte";
+export type Framework = "astro" | "svelte" | "solid";
 export type Mode = "system" | "light" | "dark";
 export const frameworks: readonly Framework[];
 export const modes: readonly Mode[];
 export const palettes: readonly string[];
 export const motionPresets: readonly string[];
+/** Sorted public component names for the selected bridge, not the MCP tool's name/purpose pairs. */
 export function listComponents(framework: Framework): string[];
 
 /** A complete, runnable file: imports of the components it renders, then the markup. */
@@ -43,6 +44,7 @@ export interface ThemeChoice {
   description: string;
   colors: { light: ThemeColors; dark: ThemeColors };
 }
+/** Palette entries only; modes, overrides and motion are exported separately via modes and theme. */
 export function listThemes(): ThemeChoice[];
 
 export interface Setup {

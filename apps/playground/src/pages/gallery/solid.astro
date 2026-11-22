@@ -1,0 +1,29 @@
+---
+import { theme } from "@claymo/core/reference";
+import Showcase from "../../layouts/Showcase.astro";
+import "../../demo/gallery.css";
+
+const motionPresets = Object.entries(theme.motion.presets).map(([value, preset]) => ({
+  value,
+  ...preset,
+}));
+---
+
+<Showcase title="Gallery · Solid" route="gallery" framework="solid">
+  <div data-solid-gallery data-presets={JSON.stringify(motionPresets)}></div>
+  <noscript>
+    <p>The Solid component gallery requires JavaScript.</p>
+  </noscript>
+</Showcase>
+
+<script>
+  import { createComponent } from "solid-js";
+  import Gallery, { type MotionChoice } from "../../demo/GallerySolid";
+  import { mountSolid } from "../../lib/mount-solid";
+
+  mountSolid("[data-solid-gallery]", (host) =>
+    createComponent(Gallery, {
+      motionPresets: JSON.parse(host.dataset.presets!) as MotionChoice[],
+    }),
+  );
+</script>

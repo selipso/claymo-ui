@@ -5,7 +5,7 @@
 - Prefer native elements (`button`, `a`, `input`, `select`, `textarea`, `dialog`, `details`, `progress`). Use ARIA for semantics that HTML doesn't provide, such as `switch`, `tablist`, `tooltip`, and `status`.
 - Fields, checkbox and radio edges, and slider tracks use `--clay-edge` to target at least 3:1 against the page. Text color pairs target 4.5:1.
 - Claymo surfaces have a visible 3px keyboard focus ring. The optional page stylesheet extends it to all elements.
-- Both bridges honor `prefers-reduced-motion: reduce`. It overrides every [motion preset](./motion.md): Claymo's transitions, hover lift, press scaling, entrances and loading animations stop, without overriding styles on your content. Loading indicators remain visible and controls still show their current state. Apply the preference separately to any motion your app adds.
+- All bridges honor `prefers-reduced-motion: reduce` through the shared stylesheet. It overrides every [motion preset](./motion.md) without hiding loading or control states. Apply the preference separately to motion your app adds.
 - Hover and press change surface depth with a short shadow transition on interactive elements only; static surfaces don't animate their shadows.
 - In forced colors, clay surfaces use a `ButtonText` border in place of shadows. Some component indicators still need fallbacks (see below).
 - Default-size controls are at least 48px tall. `size="small"` is a dense 36px option.
@@ -22,7 +22,7 @@
 
 Core unit tests cover recipes and state; MCP unit tests cover the agent workflow. The playground end-to-end suite runs against the dev server and checks navigation, the persistent sidebar, theme changes, and live examples.
 
-Packed-consumer verification runs `publint`, then installs npm tarballs outside the workspace. It checks bridge export parity, invokes the installed `claymo-mcp` binary, type-checks and builds every Astro and Svelte example it returns, and builds a separate SvelteKit app from the generated setup. Headless Chromium, Firefox, and WebKit exercise interaction, forms, compound widgets, display semantics, reduced motion, and theming in both bridges, including whether each palette and mode renders the colors `list_themes` reports. See [Getting started](./getting-started.md) for commands.
+Packed-consumer verification installs tarballs outside the workspace, compares exports with MCP, and compiles the framework examples. The Astro/Svelte fixture exercises keyboard, forms, overlays, display semantics and themes; the SvelteKit fixture checks prerendered HTML and CSS. The Solid fixture exercises the DOM build, SSR and hydration. See [Getting started](./getting-started.md) for commands.
 
 ### Historical playground audit
 

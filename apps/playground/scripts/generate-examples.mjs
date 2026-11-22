@@ -9,6 +9,7 @@ const sources = new URL("../src/examples/", import.meta.url);
 const pages = new URL("../src/pages/examples/", import.meta.url);
 
 for (const framework of frameworks) {
+  const extension = framework === "solid" ? "tsx" : framework;
   const examples = listComponents(framework).flatMap((name) =>
     getComponent(framework, name).examples.map(({ source }, index) => ({
       name,
@@ -19,14 +20,14 @@ for (const framework of frameworks) {
   syncGenerated(
     sources,
     framework,
-    examples.map(({ slug, source }) => [`${slug}.${framework}`, source]),
+    examples.map(({ slug, source }) => [`${slug}.${extension}`, source]),
   );
   syncGenerated(
     pages,
     framework,
     examples.map(({ name, slug }) => [
       `${slug}.astro`,
-      page(framework, name, `${slug}.${framework}`),
+      page(framework, name, `${slug}.${extension}`),
     ]),
   );
 }
@@ -49,12 +50,28 @@ function syncGenerated(root, framework, files) {
 }
 
 function page(framework, name, file) {
+  const title = JSON.stringify(`${name} example (${framework})`);
+  if (framework === "solid")
+    return `---
+import Frame from "../../../layouts/Frame.astro";
+---
+
+<Frame title=${title}><div data-solid-example></div></Frame>
+
+<script>
+  import { createComponent } from "solid-js";
+  import Example from "../../../examples/${framework}/${file}";
+  import { mountSolid } from "../../../lib/mount-solid";
+  mountSolid("[data-solid-example]", () => createComponent(Example, {}));
+</script>
+`;
+
   const hydrate = framework === "svelte" ? " client:load" : "";
   return `---
 import Frame from "../../../layouts/Frame.astro";
 import Example from "../../../examples/${framework}/${file}";
 ---
 
-<Frame title=${JSON.stringify(`${name} example (${framework})`)}><Example${hydrate} /></Frame>
+<Frame title=${title}><Example${hydrate} /></Frame>
 `;
 }

@@ -1,24 +1,24 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
+import { frameworks } from "@claymo/core/reference";
 
 /** @typedef {{ dependencies?: Record<string, string>, devDependencies?: Record<string, string> }} Manifest */
 
 /**
  * The Claymo bridge a project uses, from its package.json dependencies, or undefined when unclear.
- * An installed bridge wins; otherwise SvelteKit means svelte and an Astro site (with or without
- * Svelte islands) means astro.
+ * An installed bridge wins; otherwise prefer app frameworks over island dependencies.
  * @param {Manifest} manifest
- * @returns {"astro" | "svelte" | undefined}
+ * @returns {import("@claymo/core/reference").Framework | undefined}
  */
 export function detectFramework(manifest) {
   const deps = { ...manifest.dependencies, ...manifest.devDependencies };
-  const bridges = /** @type {const} */ (["astro", "svelte"]).filter(
-    (name) => `@claymo/${name}` in deps,
-  );
+  const bridges = frameworks.filter((name) => `@claymo/${name}` in deps);
   if (bridges.length === 1) return bridges[0];
   if ("@sveltejs/kit" in deps) return "svelte";
+  if ("@solidjs/start" in deps) return "solid";
   if ("astro" in deps) return "astro";
   if ("svelte" in deps) return "svelte";
+  if ("solid-js" in deps || "@solidjs/web" in deps) return "solid";
   return undefined;
 }
 

@@ -533,6 +533,7 @@
         "type": "array",
         "items": {
           "type": "object",
+          "required": ["field", "sort"],
           "properties": {
             "field": {
               "type": "string"
@@ -626,7 +627,25 @@
       },
       "localeText": {
         "type": "object",
-        "description": "Override UI strings: noRowsLabel, noResultsOverlayLabel, loadingLabel, toolbarQuickFilterLabel, toolbarQuickFilterPlaceholder, checkboxSelectionSelectAllRows, checkboxSelectionSelectRow ({row}), footerRowSelected ({count}), paginationRowsPerPage, paginationDisplayedRows ({from}, {to}, {count}), paginationPrevious, paginationNext."
+        "properties": {
+          "noRowsLabel": { "type": "string" },
+          "noResultsOverlayLabel": { "type": "string" },
+          "loadingLabel": { "type": "string" },
+          "toolbarQuickFilterLabel": { "type": "string" },
+          "toolbarQuickFilterPlaceholder": { "type": "string" },
+          "checkboxSelectionSelectAllRows": { "type": "string" },
+          "checkboxSelectionSelectRow": { "type": "string", "description": "Includes {row}." },
+          "footerRowSelected": { "type": "string", "description": "Includes {count}." },
+          "paginationRowsPerPage": { "type": "string" },
+          "paginationDisplayedRows": {
+            "type": "string",
+            "description": "Includes {from}, {to}, and {count}."
+          },
+          "paginationPrevious": { "type": "string" },
+          "paginationNext": { "type": "string" }
+        },
+        "additionalProperties": false,
+        "description": "Optional overrides for the table's rendered UI strings."
       }
     },
     "bridges": {

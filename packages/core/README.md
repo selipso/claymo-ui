@@ -1,6 +1,6 @@
 # @claymo/core
 
-The framework-independent foundation of Claymo, a claymorphic design system: the stylesheet, design tokens, recipes, DOM behavior and the component reference. Use it through [`@claymo/astro`](https://www.npmjs.com/package/@claymo/astro) or [`@claymo/svelte`](https://www.npmjs.com/package/@claymo/svelte), or use the CSS on its own.
+The framework-independent foundation of Claymo: styles, design tokens, recipes, DOM behavior, and the component reference. Use it through `@claymo/astro`, `@claymo/svelte`, or `@claymo/solid`, or use the CSS on its own.
 
 | Export                                                                     | Contents                                                                            |
 | -------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |

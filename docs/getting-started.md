@@ -11,24 +11,24 @@
    npm start
    ```
 
-   Installation builds core and the Svelte package. `npm start` (also `npm run dev`) serves the playground at <http://localhost:4321> using workspace source. Edit the packages, docs, or playground and see changes without rebuilding the packages by hand.
+   Installation builds core, Svelte and Solid. `npm start` serves the playground at <http://localhost:4321> using workspace packages.
 
-2. Explore the playground. Docs and reference pages use server-rendered theme controls; the demos and Svelte previews hydrate where needed. The sidebar stays in place across navigation. Theme changes also reach open tabs and previews.
+2. Explore the playground. Astro serves the docs shell; Svelte islands hydrate and Solid previews mount in the browser. Theme changes also reach open tabs and previews.
 
-   | Route                 | Contents                                                                   |
-   | --------------------- | -------------------------------------------------------------------------- |
-   | `/`                   | Claymo overview                                                            |
-   | `/docs/<slug>/`       | Guides and the release runbook                                             |
-   | `/components/`        | Component index                                                            |
-   | `/components/<name>/` | Reference from `@claymo/core/reference` and live Astro and Svelte previews |
-   | `/demo/`              | Settings and dashboard screens composed from Claymo components             |
-   | `/gallery/`           | Component variants and states                                              |
-   | `/lab/`               | Clay surface techniques and browser support                                |
+   | Route                          | Contents                                                           |
+   | ------------------------------ | ------------------------------------------------------------------ |
+   | `/`                            | Claymo overview                                                    |
+   | `/docs/<slug>/`                | Guides and the release runbook                                     |
+   | `/components/`                 | Component index                                                    |
+   | `/components/<name>/`          | Shared reference and live Astro, Svelte, and Solid previews        |
+   | `/demo/`, `/demo/solid/`       | The collection dashboard and settings workflow in Svelte and Solid |
+   | `/gallery/`, `/gallery/solid/` | Component variants, states, and motion in Svelte and Solid         |
+   | `/lab/`                        | Clay surface techniques and browser support                        |
 
 3. Run the checks that cover your change. Before running browser tests for the first time, install the browsers with `npx playwright install chromium firefox webkit`.
 
    ```sh
-   npm run check        # TypeScript, Svelte, and Astro checks across workspaces
+   npm run check        # Reference/type parity, then TypeScript, Svelte, and Astro checks
    npm test             # Core and MCP unit tests
    npm run test:e2e     # Playwright against the playground dev server (sidebar, theme, docs, live examples)
    npm run test:packed  # Lint, pack, and test tarballs in fresh framework consumers
@@ -137,6 +137,33 @@
    ```
 
 3. Add `data-palette` and `data-theme` to the opening `<html>` tag in `src/app.html`, for example `<html lang="en" data-palette="reef" data-theme="light">`. Keep the rest of the SvelteKit template. Import components by name from `@claymo/svelte` in your routes.
+
+## Use Claymo in Solid 2
+
+The Solid workspace targets `solid-js` and `@solidjs/web` 2.0.3 or later 2.x, not Solid 1. Until `@claymo/solid` is published, use this branch's workspace or packed tarballs (see the [runbook](./RUNBOOK.md)).
+
+1. In a Solid 2 Vite app, use `@claymo/solid` with the matching `@claymo/core`. Import `@claymo/core/claymo.css` in your app entry; add `@claymo/core/page.css` if Claymo should style the page.
+2. Use `@solidjs/vite-plugin` 3 and set `"jsx": "preserve"`, `"jsxImportSource": "@solidjs/web"` in `tsconfig.json`. Use `render` from `@solidjs/web` to mount the app. For server-rendered markup use its `hydrate` entry instead.
+3. Import components by name in `.tsx` files:
+
+   ```tsx
+   import { createSignal } from "solid-js";
+   import { Button, Dialog } from "@claymo/solid";
+
+   export default function Settings() {
+     const [open, setOpen] = createSignal(false);
+     return (
+       <>
+         <Button onClick={() => setOpen(true)}>Settings</Button>
+         <Dialog title="Settings" open={open()} onClose={() => setOpen(false)} dismissible>
+           Account settings
+         </Dialog>
+       </>
+     );
+   }
+   ```
+
+For complete starter files use MCP `get_setup` with `framework: "solid"`. See the [Solid 2 migration guide](https://v2.solidjs.com/migration/from-solid-1) for the renderer split and lifecycle changes.
 
 ## Set up a coding agent
 

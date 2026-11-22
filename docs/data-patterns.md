@@ -1,6 +1,6 @@
 # Data patterns
 
-Tables, detail and edit dialogs, and tag pickers built from `DataTable`, `Dialog` and `Autocomplete`. Each pattern below has a runnable Astro and Svelte example on the component page (`/components/data-table/`, `/components/autocomplete/`, `/components/dialog/`), served through [MCP](./mcp.md) and type-checked and browser-tested in fresh consumers.
+Tables, detail and edit dialogs, and tag pickers use `DataTable`, `Dialog` and `Autocomplete`. The component pages (`/components/data-table/`, `/components/autocomplete/`, `/components/dialog/`) serve runnable framework-specific examples from the same [MCP](./mcp.md) reference.
 
 ## Table or DataTable
 
@@ -37,7 +37,7 @@ Wrapper components that composed MUI `Table`, `TablePagination` and `Dialog` map
 
 ## Columns
 
-A column is a field name or an object. The same definitions work in both bridges except `renderCell`.
+A column is a field name or an object. The same definitions work across bridges except `renderCell`, which returns framework-specific markup.
 
 | Key                                        | Effect                                                                               |
 | ------------------------------------------ | ------------------------------------------------------------------------------------ |
@@ -80,7 +80,7 @@ Svelte: `renderCell` takes a snippet.
 
 ## State and events
 
-Sort, search, page and selection are models. Astro renders every row on the server and its page script updates them; events bubble from the root with the model in `detail`. Svelte binds them.
+Sort, search, page and selection are models. Astro renders the supplied rows and emits model changes as bubbling events. Svelte binds the models. Solid can own a model in a signal: pass `paginationModel={page()}` and `onPaginationModelChange={setPage}` together, or omit the model to keep pagination internal.
 
 With `pagination` enabled, omit `paginationModel` for the default first page of 10 rows. If you supply it, include both numbers: `paginationModel={{ page: 0, pageSize: 25 }}`.
 

@@ -1,32 +1,32 @@
 # Frameworks
 
-Both bridges expose the same component catalog as named exports from `@claymo/astro` and `@claymo/svelte`. Astro renders native HTML on the server and loads a controller where needed. Svelte renders the same controls with reactive bindings. React, Angular, and Solid bridges are not shipped.
+Astro, Svelte 5, and Solid 2 expose the same component names through `@claymo/astro`, `@claymo/svelte`, and `@claymo/solid`. Astro enhances server-rendered HTML with DOM controllers. Svelte uses bindings; Solid uses reactive props, signals and JSX. React and Angular bridges are not included.
 
-| Category                | Components                                                                                                                    |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| Actions                 | `Button`, `IconButton`, `ButtonGroup`, `Chip`, `Badge`, `Avatar`, `Tooltip`                                                   |
-| Inputs                  | `TextField` (text, multiline, select), `Checkbox`, `Radio`, `RadioGroup`, `FormControlLabel`, `Switch`, `Slider`              |
-| Surfaces                | `Paper`, `Card`, `CardHeader`, `CardContent`, `CardActions`, `Accordion`, `Divider`, `Table`                                  |
-| Feedback                | `Alert`, `Snackbar`, `LinearProgress`, `CircularProgress`, `Skeleton`                                                         |
-| Navigation and overlays | `AppBar`, `Drawer`, `Tabs`, `Tab`, `TabPanel`, `Dialog`, `List`, `ListItem`, `ListItemButton`, `ListItemIcon`, `ListItemText` |
-| Content                 | `Typography`                                                                                                                  |
+| Category                | Components                                                                                                                       |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Actions                 | `Button`, `IconButton`, `ButtonGroup`, `Chip`, `Badge`, `Avatar`, `Tooltip`                                                      |
+| Inputs                  | `Autocomplete`, `TextField` (text, multiline, select), `Checkbox`, `Radio`, `RadioGroup`, `FormControlLabel`, `Switch`, `Slider` |
+| Surfaces                | `Paper`, `Card`, `CardHeader`, `CardContent`, `CardActions`, `Accordion`, `Divider`, `Table`, `DataTable`, `ClayLighting`        |
+| Feedback                | `Alert`, `Snackbar`, `LinearProgress`, `CircularProgress`, `Skeleton`                                                            |
+| Navigation and overlays | `AppBar`, `Drawer`, `Tabs`, `Tab`, `TabPanel`, `Dialog`, `List`, `ListItem`, `ListItemButton`, `ListItemIcon`, `ListItemText`    |
+| Content                 | `Typography`                                                                                                                     |
 
-See [Getting started](./getting-started.md) for stylesheet setup. The component pages at `/components/` have props, content, events, and examples in both frameworks. The same reference is available through [MCP](./mcp.md).
+See [Getting started](./getting-started.md) for stylesheet setup. Each component page shows the props, content, events, and live examples for each framework. The same reference is available through [MCP](./mcp.md).
 
 ## Content, state, and forms
 
-| Concern                  | Astro                                                                     | Svelte                                                                         |
-| ------------------------ | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| Text and default content | Text props and default slot                                               | Text props and children                                                        |
-| Named markup             | Named slots, e.g. `start-icon`, `summary`, `actions`                      | Snippets, e.g. `startIcon`, `summary`, `actions`                               |
-| State                    | Props describe the initial render                                         | `bind:checked`, `bind:value`, `bind:expanded`, and `bind:open` where supported |
-| Events                   | Native `input`, `change`, or `toggle`; component-specific `clay-*` events | Callbacks such as `onChange`, `onClose`, and `onDelete`                        |
+| Concern      | Astro                                        | Svelte                                                    | Solid 2                                                         |
+| ------------ | -------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------- |
+| Body         | Default slot                                 | `children` snippet                                        | JSX children                                                    |
+| Named markup | Named slot, e.g. `start-icon`                | Named snippet, e.g. `startIcon`                           | Named JSX prop, e.g. `startIcon={<Icon />}`                     |
+| State        | Props set the initial render                 | `bind:value`, `bind:checked`, `bind:open` where supported | Pass signal values and update them from callbacks               |
+| Events       | Native DOM events and `clay-*` custom events | Callback props                                            | Callback props; native DOM handlers use Solid's JSX event types |
 
-`TextField` and `RadioGroup` accept an `options` array in both bridges. You can also supply projected native options or compose controls instead of passing an array. Use `defaultValue` or `defaultChecked` for initial form values and native reset defaults where supported.
+`TextField` and `RadioGroup` accept an `options` array. You can also supply native options or compose controls instead. Use `defaultValue` or `defaultChecked` for initial form values and native reset defaults where supported.
 
 ## Tabs
 
-Both bridges export `Tabs`, `Tab`, and `TabPanel`. Astro supports two forms:
+All three bridges export `Tabs`, `Tab`, and `TabPanel`. Astro supports two forms:
 
 - **Data mode:** pass a `tabs` array of `{ value, label, disabled? }` objects. Put each panel's content in a named slot matching its tab's `value`. Set the initial selection with `value`.
 - **Composed mode:** put `Tab` children in the default slot and `TabPanel` children in the `panels` slot. Give `Tabs` an explicit, unique `id` and pass the same string as `tabsId` to every `Tab` and `TabPanel`. Set the parent's `value` and mark the matching tab and panel `selected` so the initial selection is correct before the client controller runs.
@@ -35,9 +35,9 @@ Both bridges export `Tabs`, `Tab`, and `TabPanel`. Astro supports two forms:
 
 In Astro, open a `Dialog` or temporary `Drawer` with a button whose `commandfor` matches the overlay's `id` and whose `command` is `show-modal`. Escape and backdrop clicks send a cancelable, non-bubbling `clay-request-close` on the overlay itself. Listen there and call `event.preventDefault()` to keep it open.
 
-In Svelte, bind `open` and optionally handle `onClose`. In either framework, a tooltip handles Escape only while focus or the pointer is on it.
+In Svelte, bind `open` and optionally handle `onClose`. In Solid, pass `open={open()}` and `onClose={() => setOpen(false)}` to keep the parent signal in sync.
 
-`dismissible` adds a close (X) button to a `Dialog` in both bridges; `closeText` sets its accessible name (default "Close"). It sends the same close request as Escape and the backdrop, with reason `closeButton`, so the same listener or `onClose` callback can keep the dialog open.
+`dismissible` adds a close (X) button to a `Dialog`; `closeText` sets its accessible name (default "Close"). It sends the same close request as Escape and the backdrop, with reason `closeButton`, so the same listener or callback can keep the dialog open.
 
 ## Lists
 
@@ -49,11 +49,11 @@ Compose `List` > `ListItem` > content. Inside a row, `ListItemIcon` (an icon or 
 
 ## Data tables
 
-`DataTable` takes `rows` and `columns` and adds sorting, search, pagination and checkbox selection with MUI X `DataGrid` prop names. Astro renders every row on the server and reports changes as `clay-*-change` events; Svelte binds `sortModel`, `quickFilterValue`, `paginationModel` and `rowSelectionModel`. `renderCell` is a snippet in Svelte and an inline markup function in Astro. See [Data patterns](./data-patterns.md) for the mapping from MUI v4 table wrappers.
+`DataTable` takes `rows` and `columns` and adds sorting, search, pagination and checkbox selection. Astro renders all supplied rows and emits `clay-*-change` events. Svelte can bind the four models. Solid accepts the models as reactive props and reports changes through callbacks such as `onPaginationModelChange`. `renderCell` is an inline markup function in Astro, a snippet in Svelte, and a function returning JSX in Solid. See [Data patterns](./data-patterns.md).
 
 ## Motion
 
-Both bridges accept the same `motion` prop on animated components (`<Button motion="lift">`). It renders `data-motion`, which also works as a plain attribute or `clay-motion-*` class on any element. See [Motion](./motion.md) for presets and tokens.
+All three bridges accept the same `motion` prop on animated components (`<Button motion="lift">`). It renders `data-motion`, which also works as a plain attribute or `clay-motion-*` class on any element. See [Motion](./motion.md) for presets and tokens.
 
 ## Astro navigation and event types
 

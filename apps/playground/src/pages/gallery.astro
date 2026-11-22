@@ -1,7 +1,8 @@
 ---
 import { theme } from "@claymo/core/reference";
-import Shell from "../layouts/Shell.astro";
+import Showcase from "../layouts/Showcase.astro";
 import Gallery from "../demo/Gallery.svelte";
+import "../demo/gallery.css";
 
 const motionPresets = Object.entries(theme.motion.presets).map(([value, preset]) => ({
   value,
@@ -9,6 +10,6 @@ const motionPresets = Object.entries(theme.motion.presets).map(([value, preset])
 }));
 ---
 
-<Shell title="Gallery">
+<Showcase title="Gallery" route="gallery" framework="svelte">
   <Gallery client:load {motionPresets} />
-</Shell>
+</Showcase>

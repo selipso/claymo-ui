@@ -1,0 +1,19 @@
+---
+import Showcase from "../../layouts/Showcase.astro";
+import "../../demo/app-demo.css";
+---
+
+<Showcase title="App demo · Solid" route="demo" framework="solid">
+  <div data-solid-demo></div>
+  <noscript>
+    <p>The Solid app demo requires JavaScript.</p>
+  </noscript>
+</Showcase>
+
+<script>
+  import { createComponent } from "solid-js";
+  import AppDemo from "../../demo/AppDemoSolid";
+  import { mountSolid } from "../../lib/mount-solid";
+
+  mountSolid("[data-solid-demo]", () => createComponent(AppDemo, {}));
+</script>

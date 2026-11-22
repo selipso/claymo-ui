@@ -23,7 +23,7 @@ Clients that use `mcpServers` (Claude Desktop, Cursor and others):
 { "mcpServers": { "claymo": { "command": "npx", "args": ["-y", "@claymo/mcp"] } } }
 ```
 
-Run the server in the project directory so it can detect the framework.
+Run the server in the project directory so it can detect Astro, Svelte, or Solid. Pass `--framework solid` to select Solid 2 in a mixed workspace. Solid setup returns a Vite starter; its examples are complete TSX components.
 
 ## Tools
 

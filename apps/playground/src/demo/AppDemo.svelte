@@ -5,6 +5,7 @@
   import LayoutDashboard from "@lucide/svelte/icons/layout-dashboard";
   import Settings from "@lucide/svelte/icons/settings";
   import { THEME_CHANGE_EVENT, readTheme, setTheme } from "../lib/theme";
+  import { formats, rows, type Shelf } from "./collection-data";
   import Save from "@lucide/svelte/icons/save";
   import Trash from "@lucide/svelte/icons/trash";
   import Plus from "@lucide/svelte/icons/plus";
@@ -75,21 +76,21 @@
   }
 
   // ---- dashboard (sample data)
-  const formats = ["Favorites", "Trade", "Wishlist", "Archive"];
-  let activeFormats = $state<string[]>(["Favorites"]);
-  let removedFormats = $state<string[]>([]);
-  const rows = [
-    { name: "Ember Sprite", set: "A1", qty: 4, price: "$1.50" },
-    { name: "Glass Compass", set: "B7", qty: 2, price: "$2.10" },
-    { name: "Quiet Tide", set: "C3", qty: 3, price: "$1.80" },
-    { name: "Lantern Moth", set: "A4", qty: 1, price: "$9.40" },
-    { name: "Iron Orchard", set: "D2", qty: 2, price: "$3.25" },
-  ];
+  let activeFormats = $state<Shelf[]>(["Favorites"]);
+  let removedFormats = $state<Shelf[]>([]);
+  const visibleRows = $derived(
+    activeFormats.length ? rows.filter((row) => activeFormats.includes(row.shelf)) : rows,
+  );
 
-  function toggleFormat(f: string) {
+  function toggleFormat(f: Shelf) {
     activeFormats = activeFormats.includes(f)
       ? activeFormats.filter((x) => x !== f)
       : [...activeFormats, f];
+  }
+
+  function removeFormat(format: Shelf) {
+    activeFormats = activeFormats.filter((item) => item !== format);
+    removedFormats = [...removedFormats, format];
   }
 
   // ---- settings form
@@ -146,7 +147,7 @@
   </List>
 {/snippet}
 
-<div class="shell">
+<div class="collection-demo">
   <AppBar>
     <span class="menu-btn">
       <IconButton aria-label="Open navigation" onclick={() => (drawerOpen = true)}>
@@ -252,7 +253,7 @@
                         clickable
                         onclick={() => toggleFormat(f)}
                         aria-pressed={activeFormats.includes(f)}
-                        onDelete={() => (removedFormats = [...removedFormats, f])}
+                        onDelete={() => removeFormat(f)}
                       />
                     {/each}
                     {#if removedFormats.length}
@@ -267,7 +268,7 @@
                       <tr><th>Item</th><th>Code</th><th>Qty</th><th>Price</th></tr>
                     </thead>
                     <tbody>
-                      {#each rows as r (r.name)}
+                      {#each visibleRows as r (r.name)}
                         <tr><td>{r.name}</td><td>{r.set}</td><td>{r.qty}</td><td>{r.price}</td></tr>
                       {/each}
                     </tbody>
@@ -461,107 +462,3 @@
     <Button color="error" onclick={() => (confirmOpen = false)}>Reset</Button>
   {/snippet}
 </Dialog>
-
-<style>
-  .shell {
-    min-height: 100vh;
-  }
-  .body {
-    display: flex;
-    gap: 24px;
-    align-items: flex-start;
-    padding: 24px;
-  }
-  .perm {
-    display: none;
-    position: sticky;
-    top: 88px;
-  }
-  .main {
-    flex: 1;
-    min-width: 0;
-  }
-  .menu-btn {
-    display: inline-flex;
-  }
-  .spacer {
-    flex: 1;
-  }
-  .stack {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
-    padding-top: 16px;
-  }
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
-    gap: 24px;
-  }
-  .row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 4px 4px 20px;
-  }
-  .form {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
-    max-width: 640px;
-  }
-  .fieldset {
-    border: 0;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 8px;
-  }
-  .fieldset legend {
-    font-weight: 600;
-    margin-bottom: 8px;
-    padding: 0;
-  }
-  .indent {
-    display: grid;
-    margin-left: 24px;
-  }
-  .bar-switch {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .switches {
-    display: grid;
-    gap: 8px;
-  }
-  .actions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-  .actions :global(.clay-button[data-variant="text"]) {
-    margin-left: 0;
-  }
-  :global(.view-group .clay-button.clay-button[aria-pressed="true"]) {
-    --clay-color: var(--clay-primary);
-    background: var(--clay-primary);
-    color: var(--clay-primary-on);
-  }
-  /* Beside the site sidebar, the demo's own permanent drawer needs a wider viewport. */
-  @media (min-width: 1200px) {
-    .perm {
-      display: block;
-    }
-    .menu-btn {
-      display: none;
-    }
-  }
-</style>

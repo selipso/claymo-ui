@@ -27,7 +27,7 @@ The nearest preset wins. Each preset starts from the defaults, so a nested prese
 | ------------- | -------------------------------------------------------------------- |
 | Whole app     | `<html data-motion="lift">`, next to `data-theme` and `data-palette` |
 | One region    | `data-motion="fade"` or `class="clay-motion-fade"` on any container  |
-| One component | The `motion` prop, with the same name in both bridges                |
+| One component | The same `motion` prop in every bridge                               |
 | One value     | A token, e.g. `.toolbar { --clay-motion-duration: 120ms; }`          |
 
 Astro:

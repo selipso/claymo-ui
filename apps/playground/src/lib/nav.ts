@@ -7,7 +7,7 @@ export interface NavLink {
 export const guides = [
   { slug: "index", label: "Introduction" },
   { slug: "getting-started", label: "Getting started" },
-  { slug: "frameworks", label: "Astro and Svelte" },
+  { slug: "frameworks", label: "Astro, Svelte and Solid" },
   { slug: "theming", label: "Theming" },
   { slug: "motion", label: "Motion" },
   { slug: "data-patterns", label: "Data patterns" },
@@ -21,6 +21,8 @@ export const showcase: NavLink[] = [
   { href: "/gallery/", label: "Gallery" },
   { href: "/lab/", label: "CSS lab" },
 ];
+
+export const frameworkLabels = { astro: "Astro", svelte: "Svelte", solid: "Solid" } as const;
 
 export function guideHref(slug: string): string {
   return slug === "index" ? "/" : `/docs/${slug}/`;

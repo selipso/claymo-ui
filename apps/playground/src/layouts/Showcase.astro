@@ -1,0 +1,45 @@
+---
+import { Button } from "@claymo/astro";
+import Shell from "./Shell.astro";
+import { frameworkLabels } from "../lib/nav";
+
+interface Props {
+  title: string;
+  route: "demo" | "gallery";
+  framework: "svelte" | "solid";
+}
+const { title, route, framework } = Astro.props;
+const choices = [
+  { value: "svelte", href: `/${route}/` },
+  { value: "solid", href: `/${route}/solid/` },
+] as const;
+---
+
+<Shell {title}>
+  <nav class="switch" aria-label="Showcase framework">
+    <span>Framework</span>
+    {choices.map(({ value, href }) => (
+      <Button
+        {href}
+        size="small"
+        variant={framework === value ? "contained" : "outlined"}
+        aria-current={framework === value ? "page" : undefined}
+      >
+        {frameworkLabels[value]}
+      </Button>
+    ))}
+  </nav>
+  <slot />
+</Shell>
+
+<style>
+  .switch {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+    font-weight: 600;
+    background: var(--clay-page);
+  }
+</style>

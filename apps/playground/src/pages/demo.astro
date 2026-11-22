@@ -1,8 +1,9 @@
 ---
-import Shell from "../layouts/Shell.astro";
+import Showcase from "../layouts/Showcase.astro";
 import AppDemo from "../demo/AppDemo.svelte";
+import "../demo/app-demo.css";
 ---
 
-<Shell title="App demo">
+<Showcase title="App demo" route="demo" framework="svelte">
   <AppDemo client:load />
-</Shell>
+</Showcase>

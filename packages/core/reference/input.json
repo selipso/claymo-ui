@@ -81,6 +81,43 @@
         "imports": ["TextField", "Button"],
         "required": [],
         "props": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "button",
+              "checkbox",
+              "color",
+              "date",
+              "datetime-local",
+              "email",
+              "file",
+              "hidden",
+              "image",
+              "month",
+              "number",
+              "password",
+              "radio",
+              "range",
+              "reset",
+              "search",
+              "submit",
+              "tel",
+              "text",
+              "time",
+              "url",
+              "week"
+            ],
+            "default": "text",
+            "description": "Native input type; only used for the input mode."
+          },
+          "cols": {
+            "type": "number",
+            "description": "Native visible character width in multiline mode."
+          },
+          "wrap": {
+            "type": ["string", "null"],
+            "description": "Native textarea wrapping attribute in multiline mode."
+          },
           "value": {
             "type": ["string", "number", "null"],
             "description": "SSR starting value and form reset default. Overrides defaultValue. In select mode, use with options."
@@ -272,6 +309,7 @@
     "purpose": "A single-thumb, horizontal native range input with a clay track. Name it with aria-label; native form attributes are forwarded to the range input and class styles the wrapper.",
     "props": {
       "aria-label": { "type": "string", "description": "Accessible name for the range input." },
+      "id": { "type": "string", "description": "Id of the native range input." },
       "name": { "type": "string", "description": "Native form field name." },
       "form": {
         "type": "string",
@@ -379,6 +417,7 @@
         "default": false,
         "description": "Starting checkedness when checked is omitted; native reset default in Svelte. In Astro, checked takes precedence for both initial and reset state."
       },
+      "id": { "type": "string", "description": "Id of the native switch input." },
       "name": { "type": "string", "description": "Native form field name." },
       "value": {
         "type": ["string", "number"],
