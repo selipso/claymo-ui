@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
-import { listComponents } from "@claymo/core/reference";
-import { guideHref, guides } from "../src/lib/nav";
+import { frameworks, getComponent, listComponents } from "@claymo/core/reference";
+import { componentHref, exampleSlug, guideHref, guides } from "../src/lib/nav";
 
 const sidebar = (page: Page) => page.locator("[data-site-nav]");
 
@@ -131,6 +131,92 @@ test("component pages run the Astro, Svelte and Solid examples live", async ({ p
 test("the component overview links every component", async ({ page }) => {
   await page.goto("/components/");
   await expect(page.locator("main .component-list a")).toHaveCount(listComponents("solid").length);
+});
+
+test("every component reference page renders all three frameworks without unknown prop types", async ({
+  page,
+}) => {
+  test.setTimeout(120_000);
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  for (const name of listComponents("astro")) {
+    await page.goto(componentHref(name));
+    await expect(page.getByRole("heading", { level: 1 }), name).toHaveText(name);
+    const tabs = page.getByRole("tablist", { name: "Framework" });
+    await expect(tabs.getByRole("tab"), name).toHaveCount(3);
+    // Props table cells must never fall back to `unknown` for callbacks or union types.
+    await expect(
+      page.locator("table td code", { hasText: /^unknown(\[\])?$/ }),
+      `${name} has an unknown prop type`,
+    ).toHaveCount(0);
+    expect(errors, name).toEqual([]);
+  }
+});
+
+test("every generated Astro, Svelte, and Solid example page renders without runtime errors", async ({
+  page,
+}) => {
+  test.setTimeout(180_000);
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  for (const framework of frameworks) {
+    for (const name of listComponents(framework)) {
+      const { examples } = getComponent(framework, name);
+      for (let index = 0; index < examples.length; index++) {
+        const url = `/examples/${framework}/${exampleSlug(name, index)}/`;
+        const response = await page.goto(url);
+        expect(response?.status(), url).toBe(200);
+        if (framework === "svelte") {
+          await expect(page.locator("astro-island[ssr]"), url).toHaveCount(0);
+        } else if (framework === "solid") {
+          await expect(page.locator("[data-solid-example] > *").first(), url).toBeAttached();
+        } else {
+          await expect(page.locator("body > *").first(), url).toBeAttached();
+        }
+        expect(errors, url).toEqual([]);
+      }
+    }
+  }
+});
+
+test("Svelte gallery and app demo respond to interactions, and CSS lab populates feature support", async ({
+  page,
+}) => {
+  await page.goto("/gallery/");
+  await expect(page.locator("astro-island[ssr]")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Component gallery" })).toBeVisible();
+  await page.getByRole("textbox", { name: "Outlined", exact: true }).fill("Svelte input");
+  await expect(page.getByText("Typed value: Svelte input")).toBeVisible();
+
+  const shelves = page.getByRole("combobox", { name: "Shelves" });
+  await shelves.fill("wish");
+  await shelves.press("ArrowDown");
+  await shelves.press("Enter");
+  await expect(page.getByRole("button", { name: "Remove Wishlist" })).toBeVisible();
+
+  const table = page.getByRole("region", { name: "DataTable", exact: true });
+  await expect(table.getByRole("row", { name: /Lantern Moth/ })).toHaveCount(0);
+  await table.getByRole("button", { name: "Go to next page" }).click();
+  await expect(table.getByRole("row", { name: /Lantern Moth/ })).toBeVisible();
+  await table.getByLabel("Search", { exact: true }).fill("Ember");
+  await expect(table.getByRole("row", { name: /Ember Sprite/ })).toBeVisible();
+  await expect(table.getByRole("row", { name: /Lantern Moth/ })).toHaveCount(0);
+
+  await page.goto("/demo/");
+  await expect(page.locator("astro-island[ssr]")).toHaveCount(0);
+  await page.getByRole("tab", { name: "Settings" }).click();
+  const email = page.getByRole("textbox", { name: /Email/ });
+  const save = page.getByRole("button", { name: "Save changes" });
+  await email.fill("not-an-email");
+  await save.click();
+  await expect(email).toHaveAttribute("aria-invalid", "true");
+  await email.fill("new@example.com");
+  await save.click();
+  await expect(page.getByRole("status")).toContainText("Settings saved");
+
+  await page.goto("/lab/");
+  await expect(page.getByRole("heading", { name: /Can CSS do claymorphism/ })).toBeVisible();
+  await expect(page.locator("#support-rows tr")).toHaveCount(3);
 });
 
 test("Solid app demo handles profile interactions and remounts after Astro navigation", async ({

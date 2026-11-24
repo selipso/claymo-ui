@@ -39,13 +39,13 @@ const showClose = dismissible && !hasAction;
 ---
 
 <div
-  data-motion={motion}
   {...rest}
   class:list={["clay clay-alert", className]}
   {role}
   data-color={color}
   data-variant={variant}
   data-clay-alert-close={showClose ? "" : undefined}
+  data-motion={motion}
 >
   {icon !== false && (
     <span class="clay-alert__icon" aria-hidden="true">

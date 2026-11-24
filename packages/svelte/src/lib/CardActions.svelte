@@ -3,7 +3,7 @@
   import type { HTMLAttributes } from "svelte/elements";
 
   interface Props extends HTMLAttributes<HTMLDivElement> {
-    /** Remove the 8px gap between actions. */
+    /** Remove the 12px gap between actions. */
     disableSpacing?: boolean;
     children?: Snippet;
   }
@@ -12,9 +12,9 @@
 </script>
 
 <div
+  {...rest}
   class={["clay-card-actions", className]}
   data-no-spacing={disableSpacing ? "" : undefined}
-  {...rest}
 >
   {@render children?.()}
 </div>

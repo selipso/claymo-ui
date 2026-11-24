@@ -1,5 +1,6 @@
 <script lang="ts" generics="Multiple extends boolean = false">
   import { onMount, untrack } from "svelte";
+  import type { HTMLAttributes } from "svelte/elements";
   import { afterFormReset } from "@claymo/core/behavior/input";
   import {
     addAutocompleteValue,
@@ -18,6 +19,10 @@
   import Chip from "./Chip.svelte";
 
   type Props = AutocompleteProps<Multiple> & {
+    class?: HTMLAttributes<HTMLDivElement>["class"];
+    /** Id of the associated form when the control is not nested in it. */
+    form?: string;
+    "aria-describedby"?: string;
     onChange?: (event: Event, value: AutocompleteValue<Multiple>) => void;
   };
 
@@ -26,7 +31,7 @@
     label,
     multiple,
     freeSolo = false,
-    value = $bindable(),
+    value,
     defaultValue,
     placeholder,
     helperText,
@@ -37,6 +42,9 @@
     size,
     id: idProp,
     name,
+    form,
+    "aria-describedby": describedBy,
+    class: className,
     filterSelectedOptions = false,
     noOptionsText = autocompleteDefaults.noOptionsText,
     addOptionText = autocompleteDefaults.addOptionText,
@@ -47,11 +55,14 @@
   const id = $derived(idProp ?? `clay-ac-${uid}`);
   const labelId = $derived(`${id}-label`);
   const listId = $derived(`${id}-listbox`);
-  const recipe = $derived(textFieldRecipe({ id, size, error, disabled, fullWidth, helperText }));
+  const recipe = $derived(
+    textFieldRecipe({ id, size, error, disabled, fullWidth, helperText, describedBy }),
+  );
   const normalized = $derived(normalizeAutocompleteOptions(options));
-  const initialValue = untrack(() => (value === undefined ? defaultValue : value));
+  const initialDefault = untrack(() => defaultValue);
+  let internal = $state(initialDefault);
   const selected = $derived(
-    autocompleteSelectedValues(value === undefined ? initialValue : value, !!multiple),
+    autocompleteSelectedValues(value === undefined ? internal : value, !!multiple),
   );
 
   let input = $state<HTMLInputElement>();
@@ -71,12 +82,13 @@
   const activeId = $derived(expanded && matches.items[active] ? `${listId}-${active}` : undefined);
 
   onMount(() => {
-    if (value === undefined && initialValue !== undefined) value = initialValue;
     if (input) {
       return afterFormReset(input, () => {
-        value = initialValue;
+        if (value === undefined) internal = initialDefault;
         close();
-        if (input) input.value = inputValue;
+        queueMicrotask(() => {
+          if (input) input.value = inputValue;
+        });
       });
     }
   });
@@ -91,6 +103,14 @@
     if (activeId) list?.children[active]?.scrollIntoView({ block: "nearest" });
   });
 
+  $effect(() => {
+    if (expanded && matches.items && list) list.scrollTop = 0;
+  });
+
+  $effect(() => {
+    if (disabled) close();
+  });
+
   function close() {
     open = false;
     active = -1;
@@ -101,7 +121,7 @@
     if (next === selected) return;
     // The shared runtime representation is converted using the same mode parameter as Props.
     const nextValue = autocompleteValue(next, !!multiple) as AutocompleteValue<Multiple>;
-    value = nextValue;
+    if (value === undefined) internal = nextValue;
     onChange?.(event, nextValue);
   }
 
@@ -162,7 +182,7 @@
   }
 </script>
 
-<div class="clay-text-field clay-autocomplete" {...recipe.root}>
+<div class={["clay-text-field clay-autocomplete", className]} {...recipe.root}>
   <label class="clay-text-field__label" id={labelId} for={id}>
     {label}{#if required}<span aria-hidden="true"> *</span>{/if}
   </label>
@@ -193,6 +213,7 @@
         required={required && selected.length === 0}
         {placeholder}
         {disabled}
+        {form}
         {...recipe.input}
         value={inputValue}
         onclick={() => (open = true)}
@@ -202,6 +223,7 @@
       />
     </div>
     <div class="clay clay-autocomplete__popup" hidden={!expanded}>
+      <!-- svelte-ignore a11y_interactive_supports_focus -->
       <div
         class="clay-autocomplete__list"
         bind:this={list}
@@ -209,6 +231,7 @@
         role="listbox"
         aria-labelledby={labelId}
         aria-multiselectable={multiple || undefined}
+        onmousedown={(event) => event.preventDefault()}
       >
         {#if expanded}
           {#each matches.items as item, index (item.value)}
@@ -245,7 +268,7 @@
   {/if}
   {#if name}
     {#each selected as item (item)}
-      <input type="hidden" {name} value={item} {disabled} />
+      <input type="hidden" {name} value={item} {disabled} {form} />
     {/each}
   {/if}
 </div>

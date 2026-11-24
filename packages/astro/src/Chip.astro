@@ -32,16 +32,23 @@ const {
   deletable = false,
   motion,
   onclick,
+  "aria-pressed": ariaPressed,
   class: className,
   ...rest
 } = Astro.props;
 const interactive = clickable || !!onclick;
 const Body = interactive ? "button" : "span";
-const bodyAttrs = interactive ? { type: "button" as const, disabled, onclick } : {};
+const bodyAttrs = interactive
+  ? {
+      type: "button" as const,
+      disabled,
+      "aria-pressed": ariaPressed,
+      onclick: disabled ? undefined : onclick,
+    }
+  : {};
 ---
 
 <span
-  data-motion={motion}
   {...rest}
   class:list={["clay clay-chip", className]}
   data-variant={variant}
@@ -51,6 +58,7 @@ const bodyAttrs = interactive ? { type: "button" as const, disabled, onclick } :
   data-clay-interactive={interactive ? "" : undefined}
   data-disabled={disabled ? "" : undefined}
   data-clay-chip-delete={deletable ? label : undefined}
+  data-motion={motion}
 >
   <Body class="clay-chip__body" {...bodyAttrs}>
     {Astro.slots.has("avatar") && (

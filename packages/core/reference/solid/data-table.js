@@ -52,6 +52,19 @@ export default {
         description:
           "({ id, row, rowIndex }, event: MouseEvent) => void. Makes rows clickable and the row header a keyboard button. Interactive controls inside a row keep their own behavior.",
       },
+      onSortModelChange: {
+        description: "(sortModel: DataTableSortModel) => void. Called when the user changes sort.",
+      },
+      onPaginationModelChange: {
+        description:
+          "(paginationModel: DataTablePaginationModel) => void. Called when page or page size changes.",
+      },
+      onQuickFilterValueChange: {
+        description: "(quickFilterValue: string) => void. Called when search text changes.",
+      },
+      onRowSelectionModelChange: {
+        description: "(rowSelectionModel: string[]) => void. Called when row selection changes.",
+      },
     },
     content: [
       "toolbar: JSX before the quick filter, e.g. bulk actions.",

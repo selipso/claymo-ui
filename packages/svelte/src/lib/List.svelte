@@ -23,12 +23,12 @@
 </script>
 
 <ul
+  {...rest}
   class={["clay-list", className]}
   data-dense={dense ? "" : undefined}
   data-padded={!disablePadding ? "" : undefined}
-  {...rest}
   role={rest.role ?? "list"}
-  aria-label={named ? rest["aria-label"] : subheader}
+  aria-label={named ? rest["aria-label"] : subheader || undefined}
 >
   {#if subheader}<li class="clay-list__subheader" aria-hidden="true">{subheader}</li>{/if}
   {@render children?.()}

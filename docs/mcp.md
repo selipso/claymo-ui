@@ -55,7 +55,7 @@ const names = listComponents("astro");
 const button = getComponent("astro", "Button");
 ```
 
-`props` describes component configuration. Use `content` and `events` for framework-specific JSX, slots, snippets, bindings and handlers. The repository checks the reference against component types with `npm run check:contracts`; examples are compiled in fresh consumers. See [Theming](./theming.md) for color roles.
+`props` describes component configuration and callback props. Use `content` and `events` for framework-specific JSX, slots, snippets, DOM events and callback signatures. The repository checks the reference against component types with `npm run check:contracts`; examples are compiled in fresh consumers. See [Theming](./theming.md) for color roles.
 
 To embed the MCP server in a Node process, connect it to a transport:
 

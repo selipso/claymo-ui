@@ -4,10 +4,21 @@ type Schema = Record<string, unknown>;
 export function propType(schema: Schema): string {
   if (Array.isArray(schema.enum))
     return schema.enum.map((value) => JSON.stringify(value)).join(" | ");
-  if (schema.type === "array")
-    return `${schema.items ? propType(schema.items as Schema) : "unknown"}[]`;
+  const variants = Array.isArray(schema.oneOf)
+    ? schema.oneOf
+    : Array.isArray(schema.anyOf)
+      ? schema.anyOf
+      : undefined;
+  if (variants) return variants.map((variant) => propType(variant as Schema)).join(" | ");
+  if (schema.type === "array") {
+    const inner = schema.items ? propType(schema.items as Schema) : "unknown";
+    return inner.includes(" | ") ? `(${inner})[]` : `${inner}[]`;
+  }
   if (Array.isArray(schema.type)) return schema.type.join(" | ");
-  return typeof schema.type === "string" ? schema.type : "unknown";
+  if (typeof schema.type === "string") return schema.type;
+  if (typeof schema.description === "string" && schema.description.includes("=>"))
+    return "function";
+  return "unknown";
 }
 
 /** The default as source text, or an empty string when the prop has none. */

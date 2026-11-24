@@ -211,4 +211,71 @@ for (const bridge of ["astro", "svelte"]) {
     await expect(page.locator("#dismiss-requests")).toHaveText("closeButton,closeButton");
     await expect(dialog).toBeHidden();
   });
+
+  test(`${bridge}: Chip forwards aria-pressed to button, loading links keep opacity, ButtonGroup handles legend, empty DataTable has colspan 1`, async ({
+    page,
+  }) => {
+    await load(page, `/regressions-${bridge}/`);
+    const checks = page.getByRole("region", { name: "Consistency checks" });
+    const chipButton = checks.getByRole("button", { name: "Pinned filter" });
+    await expect(chipButton).toHaveAttribute("aria-pressed", "true");
+    await expect(chipButton.locator("..")).not.toHaveAttribute("aria-pressed", "true");
+
+    const loadingLink = checks.locator("#loading-link");
+    await expect(loadingLink).toHaveAttribute("aria-disabled", "true");
+    expect(await loadingLink.evaluate((el) => Number(getComputedStyle(el).opacity))).toBeCloseTo(
+      0.85,
+      2,
+    );
+
+    const groupButtons = checks.locator("#legend-group .clay-button");
+    expect(
+      await groupButtons
+        .first()
+        .evaluate((el) => parseFloat(getComputedStyle(el).borderTopLeftRadius)),
+    ).toBeGreaterThan(0);
+    expect(
+      await groupButtons
+        .nth(1)
+        .evaluate((el) => parseFloat(getComputedStyle(el).borderTopLeftRadius)),
+    ).toBe(0);
+
+    const emptyCell = checks.getByRole("region", { name: "Empty inferred" }).locator("td");
+    await expect(emptyCell).toHaveAttribute("colspan", "1");
+  });
 }
+
+test("Svelte enforces controlled rejection and hydrates CSR defaultChecked", async ({ page }) => {
+  await load(page, "/regressions-svelte/");
+  const checks = page.getByRole("region", { name: "Consistency checks" });
+
+  const lockedCheckbox = checks.getByLabel("Locked unchecked");
+  await expect(lockedCheckbox).not.toBeChecked();
+  await lockedCheckbox.click();
+  await expect(lockedCheckbox).not.toBeChecked();
+
+  const lockedText = checks.getByRole("textbox", { name: "Locked text" });
+  await expect(lockedText).toHaveValue("locked");
+  await lockedText.fill("changed");
+  await expect(lockedText).toHaveValue("locked");
+
+  await checks.locator("#mount-csr-default").click();
+  await expect(checks.getByLabel("CSR default checked")).toBeChecked();
+});
+
+test("Astro form reset honors event.preventDefault()", async ({ page }) => {
+  await load(page, "/regressions-astro/");
+  const slider = page.getByRole("slider", { name: "Canceled reset slider" });
+  await slider.press("ArrowRight");
+  await expect(slider).toHaveValue("50");
+  await page.getByRole("button", { name: "Blocked reset" }).click();
+  await page.evaluate(() => new Promise((resolve) => setTimeout(resolve, 30)));
+  await expect
+    .poll(() => sliderState(slider))
+    .toEqual({
+      value: "50",
+      bubble: "50",
+      fill: "50",
+      activeTicks: 0,
+    });
+});

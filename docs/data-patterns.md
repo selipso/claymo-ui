@@ -78,21 +78,39 @@ Svelte: `renderCell` takes a snippet.
 <DataTable label="Orders" rows={orders} columns={[{ field: "id" }, { field: "status", renderCell: status }]} />
 ```
 
+Solid: `renderCell` returns JSX.
+
+```tsx
+<DataTable
+  label="Orders"
+  rows={orders}
+  columns={[
+    { field: "id" },
+    {
+      field: "status",
+      renderCell: ({ row }) => (
+        <Chip size="small" label={row.status} color={statusColor[row.status]} />
+      ),
+    },
+  ]}
+/>
+```
+
 ## State and events
 
-Sort, search, page and selection are models. Astro renders the supplied rows and emits model changes as bubbling events. Svelte binds the models. Solid can own a model in a signal: pass `paginationModel={page()}` and `onPaginationModelChange={setPage}` together, or omit the model to keep pagination internal.
+Sort, search, page and selection are models. Astro renders the supplied rows and emits model changes as bubbling events. Svelte and Solid can own a model in parent state: pass `paginationModel` and `onPaginationModelChange` together, or omit the model to keep pagination internal.
 
 With `pagination` enabled, omit `paginationModel` for the default first page of 10 rows. If you supply it, include both numbers: `paginationModel={{ page: 0, pageSize: 25 }}`.
 
 `quickFilterValue` filters rows even without a search box. Select all acts on rows matching the filter across client pages (only the supplied page in server mode); it preserves selected IDs outside that set.
 
-| Model               | Astro event                        | Svelte                                                |
-| ------------------- | ---------------------------------- | ----------------------------------------------------- |
-| `sortModel`         | `clay-sort-model-change`           | `bind:sortModel`, `onSortModelChange`                 |
-| `quickFilterValue`  | `clay-quick-filter-value-change`   | `bind:quickFilterValue`, `onQuickFilterValueChange`   |
-| `paginationModel`   | `clay-pagination-model-change`     | `bind:paginationModel`, `onPaginationModelChange`     |
-| `rowSelectionModel` | `clay-row-selection-model-change`  | `bind:rowSelectionModel`, `onRowSelectionModelChange` |
-| Row click           | `clay-row-click` (`clickableRows`) | `onRowClick`                                          |
+| Model               | Astro event                        | Svelte / Solid                                   |
+| ------------------- | ---------------------------------- | ------------------------------------------------ |
+| `sortModel`         | `clay-sort-model-change`           | `sortModel`, `onSortModelChange`                 |
+| `quickFilterValue`  | `clay-quick-filter-value-change`   | `quickFilterValue`, `onQuickFilterValueChange`   |
+| `paginationModel`   | `clay-pagination-model-change`     | `paginationModel`, `onPaginationModelChange`     |
+| `rowSelectionModel` | `clay-row-selection-model-change`  | `rowSelectionModel`, `onRowSelectionModelChange` |
+| Row click           | `clay-row-click` (`clickableRows`) | `onRowClick`                                     |
 
 Clickable rows make the row header a button for keyboard users. Clicks on links, buttons and inputs inside a row keep their own behavior.
 
@@ -106,6 +124,10 @@ Clickable rows make the row header a button for keyboard users. Clicks on links,
 ```
 
 ```svelte
+<DataTable label="Articles" rows={articles} onRowClick={({ row }) => openDetails(row)} />
+```
+
+```tsx
 <DataTable label="Articles" rows={articles} onRowClick={({ row }) => openDetails(row)} />
 ```
 
@@ -124,9 +146,12 @@ Set `paginationMode`, `sortingMode` and `filterMode` to `"server"` when your API
   paginationMode="server"
   sortingMode="server"
   filterMode="server"
-  bind:paginationModel
-  bind:sortModel
-  bind:quickFilterValue
+  {paginationModel}
+  {sortModel}
+  {quickFilterValue}
+  onPaginationModelChange={(next) => (paginationModel = next)}
+  onSortModelChange={(next) => (sortModel = next)}
+  onQuickFilterValueChange={(next) => (quickFilterValue = next)}
 />
 ```
 
@@ -134,9 +159,9 @@ Refetch in an `$effect` that reads the three models. In Astro, read the models f
 
 ## Dialog patterns
 
-| Need                        | Svelte                                                    | Astro                                                                         |
+| Need                        | Svelte / Solid                                            | Astro                                                                         |
 | --------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Open from code              | `bind:open`                                               | `dialog.showModal()` or a button with `commandfor` and `command="show-modal"` |
+| Open from code              | `open` + `onClose`                                        | `dialog.showModal()` or a button with `commandfor` and `command="show-modal"` |
 | Title, body, actions        | `title`, children, `actions` snippet                      | `title`, default slot, `slot="actions"`                                       |
 | Ask before discarding edits | `onClose`: leave `open` true to refuse                    | `clay-request-close`: `event.preventDefault()` to refuse                      |
 | Save a form                 | `<form id>` plus `<Button type="submit" form>` in actions | Same; `method="dialog"` closes after submit                                   |

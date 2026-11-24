@@ -58,7 +58,16 @@
       "svelte": {
         "imports": ["Alert"],
         "required": [],
-        "props": {},
+        "props": {
+          "icon": {
+            "type": "boolean",
+            "enum": [false],
+            "description": "Use false to hide the icon, or pass a snippet to replace it. Severity is announced even without a visible icon."
+          },
+          "onClose": {
+            "description": "Callback (event: MouseEvent) => void. Shows the default close button unless action is supplied. The owner decides how to hide the alert."
+          }
+        },
         "content": [
           "children: message.",
           "icon: optional snippet replacing the severity icon, or false to hide it.",
@@ -127,7 +136,8 @@
           "delete-icon: replaces the remove glyph."
         ],
         "events": [
-          "The body dispatches a native click when clickable. Listen on .clay-chip__body for label activation only.",
+          "The body dispatches a native click when clickable or when onclick is supplied. Listen on .clay-chip__body for label activation only.",
+          "Set aria-pressed to \"true\" or \"false\" on a toggle chip. It is forwarded to the interactive body button, not the wrapper.",
           "clay-delete: a bubbling, cancelable CustomEvent<{ label: string, originalEvent: MouseEvent | KeyboardEvent }> dispatched on the chip by the remove button or by Backspace/Delete on either button. The chip is hidden unless a listener calls preventDefault()."
         ],
         "examples": [
@@ -140,13 +150,18 @@
       "svelte": {
         "imports": ["Chip"],
         "required": ["label"],
-        "props": {},
+        "props": {
+          "onDelete": {
+            "description": "Callback (event: MouseEvent | KeyboardEvent) => void. Providing this callback shows the remove button; the caller owns visibility."
+          }
+        },
         "content": [
           "avatar and icon: optional leading snippets.",
           "deleteIcon: snippet replacing the remove glyph."
         ],
         "events": [
           "onclick(event: MouseEvent): activates the label and implies a clickable native button even if clickable is omitted.",
+          "Set aria-pressed to \"true\" or \"false\" on a toggle chip. It is forwarded to the interactive body button, not the wrapper.",
           "onDelete(event: MouseEvent | KeyboardEvent): providing this callback shows the remove button. Removal is requested by clicking it or pressing Backspace/Delete on either button. The caller owns visibility."
         ],
         "examples": [
@@ -285,9 +300,7 @@
       "astro": {
         "imports": ["IconButton"],
         "required": ["aria-label"],
-        "props": {
-          "disabled": { "type": ["boolean", "null"], "default": false }
-        },
+        "props": {},
         "content": [
           "Default slot: the icon.",
           "loading-indicator: optional replacement for the accessible spinner; provide its accessible name."
@@ -477,13 +490,7 @@
       "astro": {
         "imports": ["List", "ListItem", "ListItemButton", "ListItemText", "Card"],
         "required": [],
-        "props": {
-          "disabled": {
-            "type": ["boolean", "null"],
-            "default": false,
-            "description": "Disable the button or omit href and remove a link from the tab order."
-          }
-        },
+        "props": {},
         "content": [
           "Default slot: non-interactive row content; use ListItemIcon and ListItemText for alignment."
         ],
@@ -523,7 +530,7 @@
     }
   },
   "ListItemIcon": {
-    "purpose": "Give leading icons or avatars a shared width so list labels line up. Decorative by default (aria-hidden) because the row's text names it; give it an aria-label to have it announced.",
+    "purpose": "Give leading icons or avatars a shared width so list labels line up. Decorative by default (aria-hidden) because the row's text names it; give it an aria-label or aria-labelledby to have it announced.",
     "props": {},
     "bridges": {
       "astro": {

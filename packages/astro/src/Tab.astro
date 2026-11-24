@@ -18,14 +18,15 @@ const recipe = tabRecipe({
   value,
   selected: selected ? value : undefined,
   enabled: selected && !disabled ? [value] : [],
+  disabled: !!disabled,
 });
 ---
 
 <button
-  data-motion={motion}
   {...rest}
   {...recipe.attrs}
   class:list={[recipe.className, className]}
+  data-motion={motion}
   {disabled}
 >
   {Astro.slots.has("icon") && (

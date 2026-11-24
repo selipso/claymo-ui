@@ -71,6 +71,7 @@ export interface TabState {
   selected: TabValue | undefined;
   enabled: readonly TabValue[];
   ids: TabIds;
+  disabled?: boolean;
 }
 
 export function tabRecipe(s: TabState): { className: string; attrs: Attrs } {
@@ -82,7 +83,7 @@ export function tabRecipe(s: TabState): { className: string; attrs: Attrs } {
       id: s.ids.tab(s.value),
       "aria-selected": String(s.value === s.selected),
       "aria-controls": s.ids.panel(s.value),
-      tabindex: isTabbable(s.value, s.selected, s.enabled) ? 0 : -1,
+      tabindex: !s.disabled && isTabbable(s.value, s.selected, s.enabled) ? 0 : -1,
       "data-value": String(s.value),
       "data-value-numeric": flag(typeof s.value === "number"),
       "data-clay-interactive": "",

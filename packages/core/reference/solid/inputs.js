@@ -22,6 +22,11 @@ const nativeCheckedEvents = [
   "onChange(event, checked): runs on native change with the next checked state. Form reset does not fire it.",
 ];
 
+const checkedOnChange = {
+  description:
+    "Callback (event: Event, checked: boolean) => void on native change with the next checked state.",
+};
+
 export default {
   Checkbox: {
     props: {
@@ -33,6 +38,7 @@ export default {
         description:
           "Controlled mixed state. The current prop is reapplied after a toggle and is independent of the submitted checked state.",
       },
+      onChange: checkedOnChange,
     },
     content: [],
     events: nativeCheckedEvents,
@@ -90,6 +96,10 @@ export default function Example() {
         description: "Standalone initial and native form reset state; ignored inside RadioGroup.",
       },
       form: externalForm,
+      onChange: {
+        description:
+          "Callback (event: Event, value: string | number) => void on the newly checked radio.",
+      },
     },
     required: ["value"],
     content: [],
@@ -132,6 +142,10 @@ export default function Example() {
         type: "boolean",
         default: false,
         description: "Passes required to the radios for native validation.",
+      },
+      onChange: {
+        description:
+          "Callback (event: Event, value: string | number) => void when a user chooses a radio.",
       },
     },
     content: [
@@ -209,7 +223,12 @@ export default function Example() {
     ],
   },
   Switch: {
-    props: { checked: controlledChecked, defaultChecked, form: externalForm },
+    props: {
+      checked: controlledChecked,
+      defaultChecked,
+      form: externalForm,
+      onChange: checkedOnChange,
+    },
     content: [],
     events: nativeCheckedEvents,
     examples: [
@@ -241,6 +260,9 @@ export default function Example() {
         type: "number",
         description:
           "Initial and form reset value when uncontrolled. Defaults to the starting minimum.",
+      },
+      onChange: {
+        description: "Callback (event: Event, value: number) => void on every input.",
       },
     },
     required: ["aria-label"],
@@ -287,6 +309,10 @@ export default function Example() {
         type: "string",
         enum: ["hard", "soft", "off"],
         description: "Native textarea wrap mode.",
+      },
+      onChange: {
+        description:
+          "Callback (event: Event) => void following input for input/textarea, or change for select.",
       },
     },
     content: [
@@ -355,6 +381,10 @@ export default function Example() {
           "Initial and form reset selection when uncontrolled. Defaults to no selection.",
       },
       form: externalForm,
+      onChange: {
+        description:
+          "Callback (event: Event, value: string | null | string[]) => void on a user selection change.",
+      },
     },
     required: ["options", "label"],
     content: [],

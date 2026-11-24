@@ -1,9 +1,13 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
-  import type { HTMLAttributes } from "svelte/elements";
+  import type { HTMLAttributes, HTMLLabelAttributes } from "svelte/elements";
   import { typographyTag, type TypographyOptions } from "@claymo/core/surfaces";
 
-  interface Props extends Omit<HTMLAttributes<HTMLElement>, "color">, TypographyOptions {
+  interface Props
+    extends
+      Omit<HTMLAttributes<HTMLElement>, "color">,
+      Pick<HTMLLabelAttributes, "for">,
+      TypographyOptions {
     children?: Snippet;
   }
 
@@ -25,13 +29,13 @@
 
 <svelte:element
   this={tag}
+  {...rest}
   class={["clay-typography", className]}
   data-variant={variant}
   data-gutter-bottom={gutterBottom ? "" : undefined}
   data-no-wrap={noWrap ? "" : undefined}
   data-tcolor={color}
   data-align={align}
-  {...rest}
 >
   {@render children?.()}
 </svelte:element>

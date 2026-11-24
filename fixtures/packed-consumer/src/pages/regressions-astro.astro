@@ -1,6 +1,17 @@
 ---
 import Page from "../layouts/Page.astro";
-import { Button, DataTable, Dialog, Tab, TabPanel, Tabs, Tooltip } from "@claymo/astro";
+import {
+  Button,
+  ButtonGroup,
+  Chip,
+  DataTable,
+  Dialog,
+  Slider,
+  Tab,
+  TabPanel,
+  Tabs,
+  Tooltip,
+} from "@claymo/astro";
 
 const tabs = [
   { value: "a", label: "Alpha" },
@@ -77,6 +88,29 @@ const tabs = [
     <p>The first close request is rejected.</p>
   </Dialog>
   <output id="dismiss-requests"></output>
+
+  <section aria-label="Consistency checks">
+    <Chip label="Pinned filter" clickable aria-pressed="true" />
+    <Button id="loading-link" href="/nowhere/" loading>
+      Loading link
+    </Button>
+    <ButtonGroup id="legend-group" variant="outlined" aria-label="Legend group">
+      <legend class="clay-sr-only">Actions</legend>
+      <Button>First</Button>
+      <Button>Second</Button>
+    </ButtonGroup>
+    <DataTable label="Empty inferred" rows={[]} />
+    <form id="canceled-reset-form">
+      <Slider
+        name="locked-level"
+        aria-label="Canceled reset slider"
+        value={25}
+        step={25}
+        valueLabelDisplay="on"
+      />
+      <Button type="reset">Blocked reset</Button>
+    </form>
+  </section>
 </Page>
 
 <script>
@@ -92,5 +126,9 @@ const tabs = [
     reasons.push(event.detail.reason);
     dismissRequests.textContent = reasons.join(",");
     if (reasons.length === 1) event.preventDefault();
+  });
+
+  document.getElementById("canceled-reset-form")!.addEventListener("reset", (event) => {
+    event.preventDefault();
   });
 </script>

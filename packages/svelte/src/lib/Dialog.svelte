@@ -1,13 +1,16 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import { untrack, type Snippet } from "svelte";
   import type { HTMLDialogAttributes } from "svelte/elements";
   import { dialogRecipe, type DialogCloseReason, type DialogMaxWidth } from "@claymo/core";
   import type { MotionPreset } from "@claymo/core";
+  import { actionIconAttrs, closeIconPath } from "@claymo/core/actions";
   import { attachDialog, setDialogOpen } from "@claymo/core/behavior/dialog";
   import IconButton from "./IconButton.svelte";
 
   interface Props extends Omit<HTMLDialogAttributes, "open" | "title" | "oncancel" | "onclose"> {
     open?: boolean;
+    /** Initial visibility when `open` is omitted. */
+    defaultOpen?: boolean;
     /** When provided it decides; the parent must set `open = false`. Without it the Dialog closes itself. */
     onClose?: (event: Event, reason: DialogCloseReason) => void;
     fullWidth?: boolean;
@@ -25,7 +28,8 @@
   }
 
   let {
-    open = $bindable(false),
+    open,
+    defaultOpen = false,
     onClose,
     fullWidth,
     maxWidth,
@@ -44,31 +48,38 @@
     dialogRecipe({ idBase, hasTitle: !!title, fullWidth, maxWidth, dismissible }),
   );
 
+  let localOpen = $state(untrack(() => open ?? defaultOpen));
+  $effect.pre(() => {
+    if (open !== undefined) localOpen = open;
+  });
+  const isOpen = $derived(onClose && open !== undefined ? open : localOpen);
+
   let dialog = $state<HTMLDialogElement>();
 
   $effect(() => {
-    if (dialog) setDialogOpen(dialog, open);
+    if (dialog) setDialogOpen(dialog, isOpen);
   });
 
   function requestClose(event: Event, reason: DialogCloseReason) {
     if (onClose) onClose(event, reason);
-    else open = false;
+    else if (isOpen) localOpen = false;
+    else if (dialog) setDialogOpen(dialog, false);
   }
 
-  // The browser closed without asking: resync. A close caused by `open = false` arrives with open already false.
+  // The browser closed without asking: resync. A close caused by `open = false` arrives with isOpen already false.
   function closed(event: Event) {
-    if (!open) return;
+    if (!isOpen) return;
+    localOpen = false;
     onClose?.(event, "escapeKeyDown");
-    open = false;
   }
 </script>
 
 <dialog
+  {...rest}
   bind:this={dialog}
   {...recipe.attrs}
   class={[recipe.className, className]}
   data-motion={motion}
-  {...rest}
   {@attach (node) => attachDialog(node, { requestClose, closed })}
 >
   <div class="clay-dialog__panel">
@@ -79,17 +90,8 @@
         aria-label={closeText}
         data-clay-dialog-close
       >
-        <svg
-          aria-hidden="true"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2.5"
-          stroke-linecap="round"
-        >
-          <path d="M18 6 6 18M6 6l12 12" />
+        <svg {...actionIconAttrs} width="18" height="18" stroke-width="2.5">
+          <path d={closeIconPath} />
         </svg>
       </IconButton>
     {/if}

@@ -5,7 +5,10 @@ import { buttonRecipe, type ButtonOptions } from "@claymo/core";
 
 /** Slots: default (label), `start-icon`, `end-icon`. No client script: disabled links render without href. */
 type Props = Omit<HTMLAttributes<"button">, keyof ButtonOptions> &
-  Pick<HTMLAttributes<"a">, "target" | "rel"> &
+  Pick<
+    HTMLAttributes<"a">,
+    "download" | "hreflang" | "ping" | "referrerpolicy" | "rel" | "target"
+  > &
   ButtonOptions & {
     /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
     motion?: MotionPreset;
@@ -46,10 +49,11 @@ const Tag = recipe.tag;
 ---
 
 <Tag
+  {...rest}
   {...recipe.attrs}
   class:list={[recipe.className, className]}
   data-motion={motion}
-  {...rest}
+  aria-busy={loading ? "true" : rest["aria-busy"]}
   onclick={recipe.inert ? undefined : onclick}
 >
   {loading && <span class="clay-button__spinner" role="progressbar" aria-label="Loading" />}

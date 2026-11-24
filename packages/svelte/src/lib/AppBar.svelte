@@ -17,10 +17,10 @@
 </script>
 
 <header
+  {...rest}
   class={["clay", "clay-app-bar", className]}
   data-position={position}
   data-color={color}
-  {...rest}
 >
   {@render children?.()}
 </header>

@@ -113,7 +113,7 @@
       "disableSpacing": {
         "type": "boolean",
         "default": false,
-        "description": "Remove the 8px gap between actions."
+        "description": "Remove the 12px gap between actions."
       }
     },
     "bridges": {
@@ -439,7 +439,7 @@
         "props": {
           "expanded": {
             "type": "boolean",
-            "description": "Current open state. Supports bind:expanded and overrides defaultExpanded."
+            "description": "Controlled open state, taking precedence over defaultExpanded. Update it in onChange to accept a native toggle."
           },
           "onChange": {
             "description": "Optional callback (event: Event, expanded: boolean) => void for native changes; own parent-driven expanded changes do not invoke it."
@@ -455,7 +455,7 @@
         "examples": [
           {
             "title": "Track accordion expansion",
-            "source": "<script lang=\"ts\">\n  let expanded = $state(true);\n  let changes = $state(0);\n</script>\n<Accordion bind:expanded onChange={() => changes++}>\n  {#snippet summary()}Billing details{/snippet}\n  <p>Your billing information is up to date.</p>\n</Accordion>\n<p>Billing details: {expanded ? 'open' : 'closed'}. Native changes: {changes}.</p>"
+            "source": "<script lang=\"ts\">\n  let expanded = $state(true);\n  let changes = $state(0);\n</script>\n<Accordion {expanded} onChange={(_event, next) => { expanded = next; changes++; }}>\n  {#snippet summary()}Billing details{/snippet}\n  <p>Your billing information is up to date.</p>\n</Accordion>\n<p>Billing details: {expanded ? 'open' : 'closed'}. Native changes: {changes}.</p>"
           }
         ]
       }

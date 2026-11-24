@@ -2,7 +2,7 @@
 
 Claymo is a component library with soft, inflated clay surfaces and [Material UI](https://mui.com/material-ui/all-components/)-style APIs. Its Astro, Svelte 5, and Solid 2 bridges share native HTML for semantics, CSS for appearance, and TypeScript for behavior.
 
-Core recipes such as `buttonRecipe`, `paperRecipe`, and `tabRecipe` return the element, class, and attributes. Each bridge applies the recipe to native HTML and maps its own content, bindings, and events. Core implements behavior the browser doesn't provide: `moveTabFocus` handles tabs keyboard navigation, `attachDialog` handles Escape and backdrop close requests, and `bindIndeterminate` restores controlled mixed state after clicks and form reset. Renderers that work directly with the DOM can use the `upgrade*` controllers.
+Core recipes such as `buttonRecipe`, `paperRecipe`, and `tabRecipe` return the element, class, and attributes. Each bridge applies the recipe to native HTML and maps its own content, props, callbacks, and events. Core implements behavior the browser doesn't provide: `moveTabFocus` handles tabs keyboard navigation, `attachDialog` handles Escape and backdrop close requests, and `bindIndeterminate` restores controlled mixed state after clicks and form reset. Renderers that work directly with the DOM can use the `upgrade*` controllers.
 
 ## Can CSS render claymorphism?
 

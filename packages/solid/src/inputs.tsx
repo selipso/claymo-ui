@@ -595,6 +595,8 @@ export function TextField(props: TextFieldProps) {
     "onChange",
     "aria-describedby",
     "aria-invalid",
+    "startAdornment",
+    "endAdornment",
     "ref",
   ]);
   const selectRest = omit(rest, [
@@ -603,7 +605,7 @@ export function TextField(props: TextFieldProps) {
   const textareaRest = rest as unknown as JSX.TextareaHTMLAttributes<HTMLTextAreaElement>;
   const uid = `clay-tf-${createUniqueId()}`;
   const initial = props.defaultValue;
-  const id = () => props.id || uid;
+  const id = () => (typeof props.id === "string" ? props.id : uid);
   const startAdornment = createMemo(() => props.startAdornment);
   const endAdornment = createMemo(() => props.endAdornment);
   const recipe = createMemo(() =>
@@ -782,7 +784,7 @@ export interface AutocompleteProps<
 
 export function Autocomplete<Multiple extends boolean = false>(props: AutocompleteProps<Multiple>) {
   const uid = `clay-ac-${createUniqueId()}`;
-  const id = () => props.id ?? uid;
+  const id = () => (typeof props.id === "string" ? props.id : uid);
   const labelId = () => `${id()}-label`;
   const listId = () => `${id()}-listbox`;
   const multiple = () => !!props.multiple;
@@ -845,6 +847,12 @@ export function Autocomplete<Multiple extends boolean = false>(props: Autocomple
   createEffect(activeId, (current) => {
     if (current) list.children[active()]?.scrollIntoView({ block: "nearest" });
   });
+  createEffect(
+    () => (expanded() ? matches().items : undefined),
+    (items) => {
+      if (items && list) list.scrollTop = 0;
+    },
+  );
   createEffect(
     () => props.disabled,
     (disabled) => {
@@ -983,6 +991,7 @@ export function Autocomplete<Multiple extends boolean = false>(props: Autocomple
             role="listbox"
             aria-labelledby={labelId()}
             aria-multiselectable={multiple() ? "true" : undefined}
+            onMouseDown={(event) => event.preventDefault()}
           >
             <Show when={expanded()}>
               <For each={matches().items} keyed={(item) => item.value}>

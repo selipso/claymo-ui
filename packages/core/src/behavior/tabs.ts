@@ -50,7 +50,7 @@ export function attachTabs(root: HTMLElement): TabsController {
     for (const tab of all) {
       const own = readTabValue(tab);
       tab.setAttribute("aria-selected", String(own === value));
-      tab.tabIndex = isTabbable(own, value, enabled) ? 0 : -1;
+      tab.tabIndex = !tab.matches(":disabled") && isTabbable(own, value, enabled) ? 0 : -1;
       const panel = root.ownerDocument.getElementById(tab.getAttribute("aria-controls") ?? "");
       if (panel && root.contains(panel)) panel.hidden = own !== value;
     }

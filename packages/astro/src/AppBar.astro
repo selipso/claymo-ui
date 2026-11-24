@@ -8,10 +8,10 @@ const { position = "sticky", color = "primary", class: className, ...rest } = As
 ---
 
 <header
+  {...rest}
   class:list={["clay clay-app-bar", className]}
   data-position={position}
   data-color={color}
-  {...rest}
 >
   <slot />
 </header>

@@ -31,7 +31,7 @@
   }
 </script>
 
-<span class="clay clay-avatar {className}" data-variant={variant} data-size={size} {...rest}>
+<span {...rest} class={["clay clay-avatar", className]} data-variant={variant} data-size={size}>
   {#if source && failedSource !== source}
     {#key source}
       <img

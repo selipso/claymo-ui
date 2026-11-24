@@ -20,11 +20,11 @@ const initial = avatarInitial(alt);
 ---
 
 <span
+  {...rest}
   class:list={["clay clay-avatar", className]}
   data-size={size}
   data-variant={variant}
   data-clay-avatar={hasImage ? "" : undefined}
-  {...rest}
 >
   {hasImage && (
     <img class="clay-avatar__image" src={src || undefined} srcset={srcSet} {sizes} {alt} />

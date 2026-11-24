@@ -51,7 +51,7 @@
           "actions: optional controls below the content."
         ],
         "events": [
-          "Temporary drawers fire a cancelable clay-request-close on Escape or a backdrop click. Listen on the drawer; event.detail.reason is escapeKeyDown or backdropClick. preventDefault() keeps it open.",
+          "Temporary drawers fire a cancelable clay-request-close on Escape, a backdrop click, or a button marked with data-clay-dialog-close. Listen on the drawer; event.detail.reason is escapeKeyDown, backdropClick or closeButton. preventDefault() keeps it open.",
           "Native command=\"close\" and close() are explicit closes, not requests; listen to the native close event if needed."
         ],
         "examples": [
@@ -64,16 +64,24 @@
       "svelte": {
         "imports": ["Drawer", "Button", "List", "ListItem", "ListItemButton", "ListItemText"],
         "required": ["aria-label"],
-        "props": {},
+        "props": {
+          "defaultOpen": {
+            "type": "boolean",
+            "default": false,
+            "description": "Initial visibility when open is omitted. Later changes to defaultOpen do not change visibility."
+          },
+          "onClose": {
+            "description": "Callback (event: Event, reason: 'escapeKeyDown' | 'backdropClick' | 'closeButton') => void. Set open to false to accept a dismissal request; leave open unchanged to reject it. Without the callback the modal dismisses itself."
+          }
+        },
         "content": ["children: drawer content.", "actions: optional controls below the content."],
         "events": [
-          "Use bind:open to share state. Without onClose the temporary drawer closes itself on Escape or backdrop click.",
-          "onClose(event, reason): when supplied, the parent decides whether to set open=false. Reasons: escapeKeyDown, backdropClick."
+          "onClose(event, reason): a temporary drawer requests dismissal on Escape, a backdrop click, or a button marked with data-clay-dialog-close (reasons: escapeKeyDown, backdropClick, closeButton). Without onClose the temporary drawer closes itself; with onClose the parent decides whether to set open=false."
         ],
         "examples": [
           {
             "title": "Navigation drawer with links",
-            "source": "<script lang=\"ts\">\n  let open = $state(false);\n</script>\n<Button onclick={() => (open = true)}>Open navigation</Button>\n<Drawer aria-label=\"Main navigation\" bind:open>\n  <List>\n    <ListItem disablePadding>\n      <ListItemButton href=\"/\" selected><ListItemText primary=\"Home\" /></ListItemButton>\n    </ListItem>\n    <ListItem disablePadding>\n      <ListItemButton href=\"/settings/\"><ListItemText primary=\"Settings\" /></ListItemButton>\n    </ListItem>\n  </List>\n  {#snippet actions()}<Button variant=\"text\" onclick={() => (open = false)}>Close</Button>{/snippet}\n</Drawer>"
+            "source": "<script lang=\"ts\">\n  let open = $state(false);\n</script>\n<Button onclick={() => (open = true)}>Open navigation</Button>\n<Drawer aria-label=\"Main navigation\" {open} onClose={() => (open = false)}>\n  <List>\n    <ListItem disablePadding>\n      <ListItemButton href=\"/\" selected><ListItemText primary=\"Home\" /></ListItemButton>\n    </ListItem>\n    <ListItem disablePadding>\n      <ListItemButton href=\"/settings/\"><ListItemText primary=\"Settings\" /></ListItemButton>\n    </ListItem>\n  </List>\n  {#snippet actions()}<Button variant=\"text\" onclick={() => (open = false)}>Close</Button>{/snippet}\n</Drawer>"
           }
         ]
       }
@@ -146,18 +154,27 @@
       "svelte": {
         "imports": ["Snackbar", "Button"],
         "required": [],
-        "props": {},
+        "props": {
+          "defaultOpen": {
+            "type": "boolean",
+            "default": false,
+            "description": "Initial visibility when open is omitted. Later changes to defaultOpen do not change visibility."
+          },
+          "onClose": {
+            "description": "Callback (event: Event | null, reason: 'timeout' | 'escapeKeyDown' | 'clickaway') => void. Set open to false to accept a dismissal, or leave it unchanged to reject it. Timeout passes null as the event."
+          }
+        },
         "content": [
           "children: replaces the message bar if supplied.",
           "action: optional snippet beside message in the default bar."
         ],
         "events": [
-          "Use bind:open to share state. onClose(event, reason) handles timeout (event is null), escapeKeyDown and clickaway. Without onClose the notification closes itself; with onClose the parent decides whether to set open=false."
+          "onClose(event, reason): handles timeout (event is null), escapeKeyDown and clickaway. Without onClose the notification closes itself; with onClose the parent decides whether to set open=false."
         ],
         "examples": [
           {
             "title": "Snackbar with dismiss action",
-            "source": "<script lang=\"ts\">\n  let open = $state(false);\n</script>\n<Button onclick={() => (open = true)}>Save settings</Button>\n<Snackbar bind:open message=\"Settings saved\">\n  {#snippet action()}<Button variant=\"text\" size=\"small\" onclick={() => (open = false)}>Dismiss</Button>{/snippet}\n</Snackbar>"
+            "source": "<script lang=\"ts\">\n  let open = $state(false);\n</script>\n<Button onclick={() => (open = true)}>Save settings</Button>\n<Snackbar {open} onClose={() => (open = false)} message=\"Settings saved\">\n  {#snippet action()}<Button variant=\"text\" size=\"small\" onclick={() => (open = false)}>Dismiss</Button>{/snippet}\n</Snackbar>"
           }
         ]
       }
@@ -217,7 +234,14 @@
       "svelte": {
         "imports": ["Tooltip", "Button"],
         "required": [],
-        "props": {},
+        "props": {
+          "onOpen": {
+            "description": "Callback (event: Event) => void reported on hover or focus."
+          },
+          "onClose": {
+            "description": "Callback (event: Event, reason: 'leave' | 'escapeKeyDown') => void reported on pointer/focus leave or Escape."
+          }
+        },
         "content": [
           "children: one focusable trigger element, described by the tooltip.",
           "content: optional noninteractive snippet replacing title."

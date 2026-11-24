@@ -9,9 +9,13 @@
 
   interface Props
     extends
-      Omit<HTMLInputAttributes, "color" | "size" | "type" | "checked" | "value" | "children">,
+      Omit<
+        HTMLInputAttributes,
+        "color" | "size" | "type" | "checked" | "defaultChecked" | "value" | "children"
+      >,
       CheckboxOptions {
     checked?: boolean;
+    defaultChecked?: boolean;
     /** Mixed state. Drives the DOM `indeterminate` property; the parent owns it (controlled, like MUI). */
     indeterminate?: boolean;
     value?: string | number;
@@ -21,7 +25,8 @@
   }
 
   let {
-    checked = $bindable(),
+    checked,
+    defaultChecked,
     indeterminate = false,
     disabled = false,
     color,
@@ -36,8 +41,14 @@
   // FormControlLabel shares its `disabled` through context.
   const form = getContext<{ readonly disabled: boolean } | undefined>("clay-form-control");
   const recipe = $derived(checkboxRecipe({ color, size }));
+  const initialDefault = untrack(() => defaultChecked ?? false);
+  const resetChecked = $derived(checked ?? initialDefault);
 
   let input: HTMLInputElement | undefined = $state();
+
+  $effect(() => {
+    if (input && checked !== undefined && input.checked !== checked) input.checked = checked;
+  });
 
   // Prop updates only write the property; the listeners stay attached to the same input.
   $effect(() => {
@@ -49,19 +60,26 @@
   });
 
   function handleChange(event: ChangeEv) {
+    const next = event.currentTarget.checked;
     onchange?.(event);
-    onChange?.(event, event.currentTarget.checked);
+    onChange?.(event, next);
+    if (checked !== undefined) {
+      queueMicrotask(() => {
+        if (input && checked !== undefined && input.checked !== checked) input.checked = checked;
+      });
+    }
   }
 </script>
 
 <input
+  {...rest}
   bind:this={input}
   type="checkbox"
   {...recipe.attrs}
   class={[recipe.className, className]}
   data-motion={motion}
   disabled={disabled || !!form?.disabled}
-  bind:checked
+  defaultChecked={resetChecked}
+  checked={checked ?? initialDefault}
   onchange={handleChange}
-  {...rest}
 />

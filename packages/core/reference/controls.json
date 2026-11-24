@@ -202,18 +202,17 @@
       },
       "checked": {
         "type": "boolean",
-        "default": false,
-        "description": "In Astro, sets both the initial checkedness and the form reset default. In Svelte, is live state (bind:checked is supported); use defaultChecked to set a separate form reset default."
+        "description": "Checked state."
       },
       "defaultChecked": {
         "type": "boolean",
         "default": false,
-        "description": "Initial checked state when checked is omitted. Svelte also uses it as the reset default; Astro resets to the state rendered on the input."
+        "description": "Initial checked state when checked is omitted."
       },
       "indeterminate": {
         "type": "boolean",
         "default": false,
-        "description": "Astro's client script sets the initial mixed state; clicking clears it and form reset restores it. In Svelte the parent owns this prop: on change and reset the client restores the current prop, not its original value."
+        "description": "Visual mixed state; independent of checkedness."
       },
       "disabled": {
         "type": "boolean",
@@ -243,7 +242,22 @@
       "astro": {
         "imports": ["Checkbox", "Button"],
         "required": [],
-        "props": {},
+        "props": {
+          "checked": {
+            "type": "boolean",
+            "description": "Sets both the initial checkedness and the native form reset default."
+          },
+          "defaultChecked": {
+            "type": "boolean",
+            "default": false,
+            "description": "Initial checked state and form reset default when checked is omitted."
+          },
+          "indeterminate": {
+            "type": "boolean",
+            "default": false,
+            "description": "Initial mixed state; clicking clears it and form reset restores it."
+          }
+        },
         "content": [],
         "events": [
           "Native change event on the input; attach listeners in a client script. No component callback prop."
@@ -258,16 +272,34 @@
       "svelte": {
         "imports": ["Checkbox", "Button"],
         "required": [],
-        "props": {},
+        "props": {
+          "checked": {
+            "type": "boolean",
+            "description": "Controlled checked state. Update it in onChange to accept user changes; omit to let the native input handle changes and form reset."
+          },
+          "defaultChecked": {
+            "type": "boolean",
+            "default": false,
+            "description": "Initial and native form reset state when checked is omitted."
+          },
+          "indeterminate": {
+            "type": "boolean",
+            "default": false,
+            "description": "Controlled mixed state. The current prop is reapplied after a toggle and is independent of the submitted checked state."
+          },
+          "onChange": {
+            "description": "Callback (event: Event, checked: boolean) => void after onchange, with the next checked state."
+          }
+        },
         "content": [],
         "events": [
           "onchange(event): native change handler, called first.",
-          "onChange(event, checked): Svelte callback after onchange, with the input's current checkedness. Use bind:checked to track form resets as well as user changes."
+          "onChange(event, checked): Svelte callback after onchange, with the next checked state. Form reset does not fire it."
         ],
         "examples": [
           {
             "title": "Reset a checkbox",
-            "source": "<script lang=\"ts\">\n  let checked = $state(true);\n</script>\n\n<form>\n  <label><Checkbox name=\"updates\" value=\"yes\" bind:checked defaultChecked /> Email updates</label>\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
+            "source": "<form>\n  <label><Checkbox name=\"updates\" value=\"yes\" defaultChecked /> Email updates</label>\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
           }
         ]
       }

@@ -15,20 +15,22 @@ const {
 } = Astro.props;
 const dimensions = skeletonDimensions({ variant, width, height });
 const inline =
-  typeof style === "string"
-    ? `${style}${dimensions.width === undefined ? "" : `;width:${dimensions.width}`}${dimensions.height === undefined ? "" : `;height:${dimensions.height}`}`
-    : {
-        ...style,
-        ...(dimensions.width === undefined ? {} : { width: dimensions.width }),
-        ...(dimensions.height === undefined ? {} : { height: dimensions.height }),
-      };
+  dimensions.width === undefined && dimensions.height === undefined
+    ? style
+    : typeof style === "string"
+      ? `${style ? `${style};` : ""}${dimensions.width === undefined ? "" : `width:${dimensions.width};`}${dimensions.height === undefined ? "" : `height:${dimensions.height};`}`
+      : {
+          ...style,
+          ...(dimensions.width === undefined ? {} : { width: dimensions.width }),
+          ...(dimensions.height === undefined ? {} : { height: dimensions.height }),
+        };
 ---
 
 <span
+  {...rest}
   class:list={["clay clay-skeleton", className]}
   data-variant={variant}
   data-animation={animation || undefined}
-  {...rest}
   aria-hidden="true"
   style={inline}
 ></span>

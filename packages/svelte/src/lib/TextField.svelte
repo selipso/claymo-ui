@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
   import type { Snippet } from "svelte";
   import type {
     HTMLInputAttributes,
@@ -7,6 +7,7 @@
     HTMLTextareaAttributes,
   } from "svelte/elements";
   import type { Color, Size } from "@claymo/core";
+  import { afterFormReset } from "@claymo/core/behavior/input";
   import { textFieldDefaults, textFieldRecipe, type TextFieldOption } from "@claymo/core/input";
 
   interface Props extends Omit<
@@ -31,6 +32,10 @@
     fullWidth?: boolean;
     multiline?: boolean;
     rows?: number;
+    /** Native textarea column width in multiline mode. */
+    cols?: number | string;
+    /** Native textarea wrap mode in multiline mode. */
+    wrap?: "hard" | "soft" | "off";
     /** Renders a native <select>; pass options or use an option/optgroup snippet. */
     select?: boolean;
     options?: readonly TextFieldOption[];
@@ -60,6 +65,8 @@
     fullWidth = false,
     multiline = false,
     rows = textFieldDefaults.rows,
+    cols,
+    wrap,
     select = false,
     options,
     size,
@@ -68,7 +75,7 @@
     name,
     id: idProp,
     placeholder,
-    value = $bindable(),
+    value,
     defaultValue,
     onChange,
     startAdornment,
@@ -77,6 +84,7 @@
     oninput,
     onchange,
     "aria-describedby": ariaDescribedby,
+    "aria-invalid": ariaInvalid,
     class: className = "",
     ...rest
   }: Props = $props();
@@ -101,50 +109,62 @@
     }),
   );
   const chevronSize = $derived(size === "small" ? 16 : 20);
+  const invalidAttr = $derived(ariaInvalid ?? recipe.input["aria-invalid"]);
+  const controlledText = $derived(value === undefined ? undefined : String(value ?? ""));
+  const initialDefault = untrack(() => defaultValue);
+  const resetText = $derived(
+    controlledText !== undefined ? controlledText : String(initialDefault ?? ""),
+  );
+  const selectedMatch = $derived(value !== undefined ? value : initialDefault);
 
   // rest is typed for <input>; narrow it per element.
   const textareaRest = $derived(rest as unknown as HTMLTextareaAttributes);
-  const selectRest = $derived(
-    defaultValue === undefined
-      ? (rest as unknown as HTMLSelectAttributes)
-      : ({ ...rest, defaultValue } as unknown as HTMLSelectAttributes),
-  );
+  const selectRest = $derived(rest as unknown as HTMLSelectAttributes);
 
-  // The native bindings own live values (including an empty number field's undefined).
-  // Render the supplied default before mount so it is also present in server HTML.
-  let mounted = $state(false);
-  let control = $state<HTMLInputElement | HTMLTextAreaElement>();
-  const fieldValue = $derived(value === undefined && !mounted ? defaultValue : value);
+  let control = $state<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>();
 
-  onMount(() => {
-    if (control && value === undefined && defaultValue != null) {
-      if (
-        control instanceof HTMLInputElement &&
-        (control.type === "number" || control.type === "range")
-      ) {
-        const number = control.valueAsNumber;
-        value = Number.isNaN(number) ? undefined : number;
-      } else {
-        value = control.value;
-      }
+  $effect(() => {
+    if (control && controlledText !== undefined && control.value !== controlledText) {
+      control.value = controlledText;
     }
-    mounted = true;
   });
 
-  function setFieldValue(next: string | number | null | undefined) {
-    value = next;
-  }
+  onMount(() => {
+    if (!control) return;
+    if (control instanceof HTMLSelectElement && !options) {
+      const start = value !== undefined ? value : initialDefault;
+      if (start != null) {
+        const expected = String(start);
+        control.value = expected;
+        for (const option of control.options) option.defaultSelected = option.value === expected;
+      }
+    }
+    return afterFormReset(control, () => {
+      if (control && controlledText !== undefined) control.value = controlledText;
+    });
+  });
 
   function callUser(handler: unknown, event: Event) {
     if (typeof handler === "function") handler(event);
   }
+  function syncControlled() {
+    if (value !== undefined) {
+      queueMicrotask(() => {
+        if (control && controlledText !== undefined && control.value !== controlledText) {
+          control.value = controlledText;
+        }
+      });
+    }
+  }
   function handleInput(event: Event) {
     callUser(oninput, event);
     onChange?.(event);
+    syncControlled();
   }
   function handleSelectChange(event: Event) {
     callUser(onchange, event);
     onChange?.(event);
+    syncControlled();
   }
 </script>
 
@@ -164,6 +184,7 @@
 
     {#if multiline}
       <textarea
+        {...textareaRest}
         bind:this={control}
         class="clay clay-text-field__input"
         {id}
@@ -172,28 +193,36 @@
         {required}
         {disabled}
         {rows}
-        {...recipe.input}
-        defaultValue={defaultValue ?? ""}
-        bind:value={() => fieldValue, setFieldValue}
+        cols={cols !== undefined ? Number(cols) : undefined}
+        {wrap}
+        aria-describedby={recipe.input["aria-describedby"]}
+        aria-invalid={invalidAttr}
+        defaultValue={resetText}
         oninput={handleInput}
-        onchange={onchange as HTMLTextareaAttributes["onchange"]}
-        {...textareaRest}></textarea>
+        onchange={onchange as HTMLTextareaAttributes["onchange"]}>{resetText}</textarea
+      >
     {:else if select}
       <select
+        {...selectRest}
+        bind:this={control}
         class="clay clay-text-field__input"
         {id}
         {name}
         {required}
         {disabled}
-        {...recipe.input}
-        bind:value
+        aria-describedby={recipe.input["aria-describedby"]}
+        aria-invalid={invalidAttr}
         oninput={oninput as HTMLSelectAttributes["oninput"]}
         onchange={handleSelectChange}
-        {...selectRest}
       >
         {#if options}
           {#each options as option}
-            <option value={option.value} disabled={option.disabled}>{option.label}</option>
+            <option
+              value={option.value}
+              disabled={option.disabled}
+              selected={selectedMatch != null && String(option.value) === String(selectedMatch)}
+              >{option.label}</option
+            >
           {/each}
         {:else}
           {@render children?.()}
@@ -215,6 +244,7 @@
       </svg>
     {:else}
       <input
+        {...rest}
         bind:this={control}
         class="clay clay-text-field__input"
         {type}
@@ -223,12 +253,11 @@
         {placeholder}
         {required}
         {disabled}
-        {...recipe.input}
-        defaultValue={defaultValue ?? ""}
-        bind:value={() => fieldValue, setFieldValue}
+        aria-describedby={recipe.input["aria-describedby"]}
+        aria-invalid={invalidAttr}
+        defaultValue={resetText}
         oninput={handleInput}
         {onchange}
-        {...rest}
       />
     {/if}
 

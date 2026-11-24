@@ -1,5 +1,5 @@
 import { createSignal } from "solid-js";
-import { Autocomplete, Button, Checkbox, DataTable, Dialog } from "@claymo/solid";
+import { Autocomplete, Button, Checkbox, DataTable, Dialog, TextField } from "@claymo/solid";
 
 const rows = [
   { id: "reef", name: "Reef" },
@@ -28,6 +28,11 @@ export default function Controls() {
         quickFilter
         checkboxSelection
       />
+      <TextField label="Adorned" startAdornment={<span>$</span>} endAdornment={<span>USD</span>} />
+      <Button id="loading-link" href="/nowhere/" loading>
+        Loading link
+      </Button>
+      <DataTable label="Empty inferred" rows={[]} />
     </>
   );
 }

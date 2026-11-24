@@ -48,6 +48,21 @@ test("signals control form and dialog state; keyboard combobox and table control
   await expect(sites.getByRole("rowheader")).toHaveText(["Reef"]);
   await sites.getByRole("checkbox", { name: "Select all rows" }).check();
   await expect(page.getByText("1 selected", { exact: true })).toBeVisible();
+
+  const adorned = page.getByRole("textbox", { name: "Adorned" });
+  await expect(adorned).not.toHaveAttribute("startadornment");
+  await expect(adorned).not.toHaveAttribute("endadornment");
+
+  const loadingLink = page.locator("#loading-link");
+  expect(await loadingLink.evaluate((el) => Number(getComputedStyle(el).opacity))).toBeCloseTo(
+    0.85,
+    2,
+  );
+
+  await expect(page.getByRole("region", { name: "Empty inferred" }).locator("td")).toHaveAttribute(
+    "colspan",
+    "1",
+  );
 });
 
 test("keyboard tab selection skips disabled tabs and updates its linked panel", async ({

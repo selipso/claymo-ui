@@ -9,7 +9,7 @@
   } from "@claymo/core/actions";
   import type { MotionPreset, Severity } from "@claymo/core";
 
-  interface Props extends HTMLAttributes<HTMLDivElement> {
+  interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "color"> {
     severity?: Severity;
     color?: Severity;
     variant?: AlertVariant;

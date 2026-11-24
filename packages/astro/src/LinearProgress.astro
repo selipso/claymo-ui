@@ -23,6 +23,7 @@ const progress = linearProgress({ variant, min, max, value, valueBuffer });
 ---
 
 <div
+  {...rest}
   class:list={["clay clay-linear-progress", className]}
   data-variant={variant}
   role="progressbar"
@@ -31,7 +32,6 @@ const progress = linearProgress({ variant, min, max, value, valueBuffer });
   aria-valuemax={progress.range?.max}
   aria-valuenow={progress.range?.now}
   data-color={color}
-  {...rest}
 >
   {progress.buffer !== undefined && (
     <div

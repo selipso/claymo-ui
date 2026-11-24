@@ -21,6 +21,6 @@
   const recipe = $derived(paperRecipe({ elevation, variant, square, inflated, as }));
 </script>
 
-<svelte:element this={recipe.tag} {...recipe.attrs} class={[recipe.className, className]} {...rest}>
+<svelte:element this={recipe.tag} {...rest} {...recipe.attrs} class={[recipe.className, className]}>
   {@render children?.()}
 </svelte:element>

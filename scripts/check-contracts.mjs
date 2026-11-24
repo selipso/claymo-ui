@@ -244,10 +244,17 @@ function isNative(doc, prop) {
 }
 
 // Locally redeclared to forward native values to the concrete control or wrapper.
-const forwardedSolidAttributes = new Set([
+const forwardedAttributes = new Set([
+  "astro/Autocomplete.class",
+  "astro/Autocomplete.aria-describedby",
+  "svelte/Autocomplete.class",
+  "svelte/Autocomplete.aria-describedby",
+  "svelte/Chip.onclick",
   "solid/Autocomplete.class",
   "solid/Autocomplete.ref",
   "solid/Autocomplete.aria-describedby",
+  "solid/Chip.onClick",
+  "solid/TextField.onInput",
   "solid/TextField.ref",
 ]);
 const callSignatures = (type) => checker.getSignaturesOfType(type, ts.SignatureKind.Call);
@@ -433,7 +440,7 @@ function checkComponent(doc, component, signature) {
     const key = prop.name;
     if (framework === "svelte" && ["$$events", "$$slots"].includes(key)) continue; // Generated legacy metadata.
     const native =
-      (isNative(doc, prop) || forwardedSolidAttributes.has(`${prefix}.${key}`)) &&
+      (isNative(doc, prop) || forwardedAttributes.has(`${prefix}.${key}`)) &&
       prop.flags & ts.SymbolFlags.Optional;
     if (native && !Object.hasOwn(props.properties, key)) continue;
     const propType = checker.getTypeOfSymbol(prop);
@@ -447,11 +454,13 @@ function checkComponent(doc, component, signature) {
         issues.push(`${prefix}.${key}: required content prop is not described as required`);
       }
     }
-    if (Object.hasOwn(props.properties, key) || isContent(propType, framework)) continue;
     if (/^on[A-Z]/.test(key) && isCallback(propType)) {
+      if (!Object.hasOwn(props.properties, key))
+        issues.push(`${prefix}.${key}: callback is missing from schema props`);
       if (!mentions(events, key)) issues.push(`${prefix}.${key}: callback is missing from events`);
       continue;
     }
+    if (Object.hasOwn(props.properties, key) || isContent(propType, framework)) continue;
     issues.push(`${prefix}.${key}: declared prop is missing from schema`);
   }
   if (framework === "astro") {
@@ -511,6 +520,96 @@ for (const [i, framework] of frameworks.entries()) {
   for (const name of exports.keys()) {
     if (!names.has(name))
       issues.push(`${framework}/${name}: public component is missing from the catalog`);
+  }
+}
+
+// Cross-framework MCP reference parity checks (when checking all frameworks together).
+if (frameworks.length === runtimeFrameworks.length) {
+  const stripDesc = (value) => {
+    if (!value || typeof value !== "object") return value;
+    if (Array.isArray(value)) return value.map(stripDesc);
+    return Object.fromEntries(
+      Object.entries(value)
+        .filter(([k]) => k !== "description")
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([k, v]) => [k, stripDesc(v)]),
+    );
+  };
+  const reactiveOnlyProps = new Set(["defaultOpen", "defaultValue"]);
+  const astroOnlyProps = new Set([
+    "dismissible",
+    "deletable",
+    "clickableRows",
+    "id",
+    "tabs",
+    "tabsId",
+    "selected",
+  ]);
+  const byFramework = Object.fromEntries(
+    frameworks.map((fw) => [fw, new Map(listComponents(fw).map((n) => [n, getComponent(fw, n)]))]),
+  );
+  for (const name of listComponents("astro")) {
+    const astro = byFramework.astro.get(name);
+    const svelte = byFramework.svelte.get(name);
+    const solid = byFramework.solid.get(name);
+    if (!svelte || !solid) {
+      issues.push(`parity/${name}: missing in one or more frameworks`);
+      continue;
+    }
+    // Svelte and Solid must expose identical prop keys and requiredness.
+    const svelteKeys = Object.keys(svelte.props.properties).sort();
+    const solidKeys = Object.keys(solid.props.properties).sort();
+    if (JSON.stringify(svelteKeys) !== JSON.stringify(solidKeys)) {
+      issues.push(
+        `parity/${name}: svelte props (${svelteKeys.join(", ")}) != solid props (${solidKeys.join(", ")})`,
+      );
+    }
+    if (
+      JSON.stringify([...svelte.props.required].sort()) !==
+      JSON.stringify([...solid.props.required].sort())
+    ) {
+      issues.push(`parity/${name}: svelte required != solid required`);
+    }
+    // Every prop shared by two or more frameworks must agree on schema shape and default.
+    const allProps = new Set([...Object.keys(astro.props.properties), ...svelteKeys, ...solidKeys]);
+    for (const key of allProps) {
+      const present = frameworks.filter((fw) =>
+        Object.hasOwn(byFramework[fw].get(name).props.properties, key),
+      );
+      if (present.length === 1 && present[0] === "astro" && !astroOnlyProps.has(key)) {
+        issues.push(`parity/${name}.${key}: astro-only prop is not an allowed Astro idiom`);
+      }
+      if (
+        present.length === 2 &&
+        !present.includes("astro") &&
+        !/^on[A-Z]/.test(key) &&
+        !reactiveOnlyProps.has(key)
+      ) {
+        issues.push(`parity/${name}.${key}: missing in astro`);
+      }
+      if (present.length > 1 && !(name === "TextField" && key === "type")) {
+        const shapes = new Map(
+          present.map((fw) => [
+            fw,
+            JSON.stringify(stripDesc(byFramework[fw].get(name).props.properties[key])),
+          ]),
+        );
+        if (new Set(shapes.values()).size > 1) {
+          issues.push(
+            `parity/${name}.${key}: schema/default differs across frameworks (${[...shapes.entries()].map(([f, s]) => `${f}=${s}`).join(" vs ")})`,
+          );
+        }
+      }
+    }
+    // Prevent cross-framework prose leaks in single-framework MCP responses.
+    for (const [key, prop] of Object.entries(astro.props.properties)) {
+      if (/\bSvelte\b|\bbind:/.test(prop.description ?? ""))
+        issues.push(`astro/${name}.${key}: description leaks Svelte prose`);
+    }
+    for (const [key, prop] of Object.entries(svelte.props.properties)) {
+      if (/\bAstro\b/.test(prop.description ?? ""))
+        issues.push(`svelte/${name}.${key}: description leaks Astro prose`);
+    }
   }
 }
 

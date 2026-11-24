@@ -7,7 +7,10 @@
   interface Props
     extends
       Omit<HTMLButtonAttributes, keyof ButtonOptions>,
-      Pick<HTMLAnchorAttributes, "target" | "rel">,
+      Pick<
+        HTMLAnchorAttributes,
+        "download" | "hreflang" | "ping" | "referrerpolicy" | "rel" | "target"
+      >,
       ButtonOptions {
     /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
     motion?: MotionPreset;
@@ -64,11 +67,12 @@
 
 <svelte:element
   this={recipe.tag}
+  {...rest}
   {...recipe.attrs}
   class={[recipe.className, className]}
   data-motion={motion}
+  aria-busy={loading ? "true" : rest["aria-busy"]}
   onclick={handleClick}
-  {...rest}
 >
   {#if loading}
     <span class="clay-button__spinner" role="progressbar" aria-label="Loading"></span>

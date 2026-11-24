@@ -187,7 +187,7 @@ test.describe("svelte bridge only", () => {
     expect(messages).toEqual([]);
   });
 
-  test("bind:checked follows clicks and form reset", async ({ page }) => {
+  test("controlled checked follows clicks and form reset", async ({ page }) => {
     await load(page, "svelte");
     await page.getByText("Accept terms").click();
     await expect(page.locator("#terms")).toHaveText("true");

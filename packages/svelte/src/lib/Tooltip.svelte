@@ -41,6 +41,7 @@
 </script>
 
 <span
+  {...rest}
   {id}
   class={["clay-tooltip", className]}
   data-placement={placement}
@@ -48,7 +49,6 @@
   data-clay-open={open === undefined ? undefined : String(open)}
   data-clay-tooltip-content={hasContent ? "" : undefined}
   data-motion={motion}
-  {...rest}
   {@attach (node) =>
     attachTooltip(node, {
       requestOpen: (event) => onOpen?.(event),

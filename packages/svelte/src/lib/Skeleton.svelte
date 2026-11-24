@@ -2,7 +2,10 @@
   import type { HTMLAttributes } from "svelte/elements";
   import { skeletonDefaults, skeletonDimensions, type SkeletonOptions } from "@claymo/core/display";
 
-  type Props = Omit<HTMLAttributes<HTMLSpanElement>, "aria-hidden" | keyof SkeletonOptions> &
+  type Props = Omit<
+    HTMLAttributes<HTMLSpanElement>,
+    "aria-hidden" | "children" | keyof SkeletonOptions
+  > &
     SkeletonOptions;
 
   let {
@@ -18,10 +21,10 @@
 </script>
 
 <span
-  class="clay clay-skeleton {className}"
+  {...rest}
+  class={["clay clay-skeleton", className]}
   data-variant={variant}
   data-animation={animation || undefined}
-  {...rest}
   aria-hidden="true"
   style:width={dimensions.width}
   style:height={dimensions.height}

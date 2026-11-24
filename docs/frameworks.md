@@ -1,6 +1,6 @@
 # Frameworks
 
-Astro, Svelte 5, and Solid 2 expose the same component names through `@claymo/astro`, `@claymo/svelte`, and `@claymo/solid`. Astro enhances server-rendered HTML with DOM controllers. Svelte uses bindings; Solid uses reactive props, signals and JSX. React and Angular bridges are not included.
+Astro, Svelte 5, and Solid 2 expose the same component names through `@claymo/astro`, `@claymo/svelte`, and `@claymo/solid`. Astro enhances server-rendered HTML with DOM controllers. Svelte and Solid both use one-way reactive props with callbacks (and `default*` props for uncontrolled state). React and Angular bridges are not included.
 
 | Category                | Components                                                                                                                       |
 | ----------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
@@ -15,12 +15,12 @@ See [Getting started](./getting-started.md) for stylesheet setup. Each component
 
 ## Content, state, and forms
 
-| Concern      | Astro                                        | Svelte                                                    | Solid 2                                                         |
-| ------------ | -------------------------------------------- | --------------------------------------------------------- | --------------------------------------------------------------- |
-| Body         | Default slot                                 | `children` snippet                                        | JSX children                                                    |
-| Named markup | Named slot, e.g. `start-icon`                | Named snippet, e.g. `startIcon`                           | Named JSX prop, e.g. `startIcon={<Icon />}`                     |
-| State        | Props set the initial render                 | `bind:value`, `bind:checked`, `bind:open` where supported | Pass signal values and update them from callbacks               |
-| Events       | Native DOM events and `clay-*` custom events | Callback props                                            | Callback props; native DOM handlers use Solid's JSX event types |
+| Concern      | Astro                                        | Svelte                                                                                       | Solid 2                                                                                     |
+| ------------ | -------------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Body         | Default slot                                 | `children` snippet                                                                           | JSX children                                                                                |
+| Named markup | Named slot, e.g. `start-icon`                | Named snippet, e.g. `startIcon`                                                              | Named JSX prop, e.g. `startIcon={<Icon />}`                                                 |
+| State        | Props set the initial render                 | Pass reactive props and update them from callbacks, or use `default*` for uncontrolled state | Pass signal values and update them from callbacks, or use `default*` for uncontrolled state |
+| Events       | Native DOM events and `clay-*` custom events | Callback props                                                                               | Callback props; native DOM handlers use Solid's JSX event types                             |
 
 `TextField` and `RadioGroup` accept an `options` array. You can also supply native options or compose controls instead. Use `defaultValue` or `defaultChecked` for initial form values and native reset defaults where supported.
 
@@ -35,7 +35,7 @@ All three bridges export `Tabs`, `Tab`, and `TabPanel`. Astro supports two forms
 
 In Astro, open a `Dialog` or temporary `Drawer` with a button whose `commandfor` matches the overlay's `id` and whose `command` is `show-modal`. Escape and backdrop clicks send a cancelable, non-bubbling `clay-request-close` on the overlay itself. Listen there and call `event.preventDefault()` to keep it open.
 
-In Svelte, bind `open` and optionally handle `onClose`. In Solid, pass `open={open()}` and `onClose={() => setOpen(false)}` to keep the parent signal in sync.
+In Svelte and Solid, pass `open` with `onClose` (for example `open={open}` and `onClose={() => (open = false)}` in Svelte, or `open={open()}` and `onClose={() => setOpen(false)}` in Solid) to keep the parent state in sync; leave `open` true in `onClose` to reject a close request.
 
 `dismissible` adds a close (X) button to a `Dialog`; `closeText` sets its accessible name (default "Close"). It sends the same close request as Escape and the backdrop, with reason `closeButton`, so the same listener or callback can keep the dialog open.
 
@@ -49,7 +49,7 @@ Compose `List` > `ListItem` > content. Inside a row, `ListItemIcon` (an icon or 
 
 ## Data tables
 
-`DataTable` takes `rows` and `columns` and adds sorting, search, pagination and checkbox selection. Astro renders all supplied rows and emits `clay-*-change` events. Svelte can bind the four models. Solid accepts the models as reactive props and reports changes through callbacks such as `onPaginationModelChange`. `renderCell` is an inline markup function in Astro, a snippet in Svelte, and a function returning JSX in Solid. See [Data patterns](./data-patterns.md).
+`DataTable` takes `rows` and `columns` and adds sorting, search, pagination and checkbox selection. Astro renders all supplied rows and emits `clay-*-change` events. Svelte and Solid accept the four models as reactive props and report changes through callbacks such as `onPaginationModelChange`. `renderCell` is an inline markup function in Astro, a snippet in Svelte, and a function returning JSX in Solid. See [Data patterns](./data-patterns.md).
 
 ## Motion
 

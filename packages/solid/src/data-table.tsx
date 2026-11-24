@@ -13,6 +13,7 @@ import {
   type DataTableCellParams,
   type DataTableOptions,
   type DataTablePaginationModel,
+  type DataTableRow,
   type DataTableSortModel,
 } from "@claymo/core/display";
 import { dynamic, For, Show, type JSX } from "@solidjs/web";
@@ -23,18 +24,18 @@ import { LinearProgress } from "./overlays.js";
 import { omit } from "./shared.js";
 import { Table } from "./surfaces.js";
 
-export interface DataTableRowParams<Row> {
+export interface DataTableRowParams<Row = DataTableRow> {
   id: string;
   row: Row;
   /** Position in the `rows` prop. */
   rowIndex: number;
 }
 
-export type DataTableRenderCell<Row extends object> = (
+export type DataTableRenderCell<Row extends object = DataTableRow> = (
   params: DataTableCellParams<Row>,
 ) => JSX.Element;
 
-export interface DataTableProps<Row extends object>
+export interface DataTableProps<Row extends object = DataTableRow>
   extends
     DataTableOptions<Row, DataTableRenderCell<Row>>,
     Omit<JSX.HTMLAttributes<HTMLDivElement>, "role" | "tabindex" | "aria-label" | "children"> {
@@ -83,6 +84,10 @@ export function DataTable<Row extends object>(props: DataTableProps<Row>) {
     "class",
   ]);
   const toolbar = children(() => props.toolbar);
+  const hasToolbar = () => {
+    const value = toolbar();
+    return value != null && value !== "" && typeof value !== "boolean";
+  };
   const [localSort, setLocalSort] = createSignal<DataTableSortModel>([]);
   const [localPage, setLocalPage] = createSignal<DataTablePaginationModel>(
     dataTableDefaults.paginationModel,
@@ -134,7 +139,7 @@ export function DataTable<Row extends object>(props: DataTableProps<Row>) {
   function setQuickFilter(event: Event) {
     const next = (event.currentTarget as HTMLInputElement).value;
     if (props.quickFilterValue === undefined) setLocalFilter(next);
-    if (props.pagination && paginationModel().page !== 0) setPage(0);
+    if (props.pagination && view().page && view().page!.page !== 0) setPage(0);
     props.onQuickFilterValueChange?.(next);
   }
 
@@ -158,9 +163,9 @@ export function DataTable<Row extends object>(props: DataTableProps<Row>) {
       class={["clay-data-table", props.class]}
       data-clickable-rows={props.onRowClick ? "" : undefined}
     >
-      <Show when={props.quickFilter || toolbar() != null}>
+      <Show when={props.quickFilter || hasToolbar()}>
         <div class="clay-data-table__toolbar">
-          <Show when={toolbar() != null}>
+          <Show when={hasToolbar()}>
             <div class="clay-data-table__toolbar-content">{toolbar()}</div>
           </Show>
           <Show when={props.quickFilter}>
@@ -333,8 +338,8 @@ export function DataTable<Row extends object>(props: DataTableProps<Row>) {
         <div class="clay-data-table__footer">
           <Show when={props.checkboxSelection}>
             <span class="clay-data-table__selected" role="status">
-              {rowSelectionModel().length
-                ? fillTemplate(locale().footerRowSelected, { count: rowSelectionModel().length })
+              {selected().size
+                ? fillTemplate(locale().footerRowSelected, { count: selected().size })
                 : ""}
             </span>
           </Show>

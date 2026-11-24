@@ -8,9 +8,13 @@ type Props = Omit<
   HTMLAttributes<"button">,
   keyof NativeActionOptions | "color" | "size" | "aria-label"
 > &
-  Pick<HTMLAttributes<"a">, "target" | "rel"> &
-  NativeActionOptions & {
+  Pick<
+    HTMLAttributes<"a">,
+    "download" | "hreflang" | "ping" | "referrerpolicy" | "rel" | "target"
+  > &
+  Omit<NativeActionOptions, "disabled"> & {
     "aria-label": string;
+    disabled?: boolean;
     color?: Color;
     size?: Size;
     loading?: boolean | null;
@@ -40,7 +44,6 @@ const Tag = action.tag;
 ---
 
 <Tag
-  data-motion={motion}
   {...rest}
   {...action.attrs}
   class:list={["clay clay-icon-button", className]}
@@ -50,6 +53,7 @@ const Tag = action.tag;
   data-size={size}
   data-clay-interactive
   data-inflated={inflated ? "" : undefined}
+  data-motion={motion}
   aria-busy={loading ? "true" : rest["aria-busy"]}
   onclick={inactive ? undefined : onclick}
 >

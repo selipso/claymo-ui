@@ -120,6 +120,11 @@ select.clay-text-field__input option {
   inset-block-end: auto;
   height: 48px;
 }
+.clay-text-field[data-size="small"]
+  .clay-text-field__control[data-multiline]
+  .clay-text-field__adornment {
+  height: 36px;
+}
 .clay-text-field__adornment--start {
   inset-inline-start: 14px;
 }
@@ -388,7 +393,7 @@ select.clay-text-field__input option {
   --t-drop: oklch(from var(--t-fill) calc(l * 0.5) calc(c * 0.5 * 1.25) h / 0.5);
   content: "";
   position: absolute;
-  left: var(--thumb-inset);
+  inset-inline-start: var(--thumb-inset);
   top: var(--thumb-inset);
   box-sizing: border-box;
   width: var(--clay-switch-thumb);
@@ -405,6 +410,9 @@ select.clay-text-field__input option {
 }
 .clay-switch:checked::before {
   transform: translateX(var(--clay-switch-travel));
+}
+.clay-switch:dir(rtl):checked::before {
+  transform: translateX(calc(var(--clay-switch-travel) * -1));
 }
 .clay-radio {
   --clay-d: 3px;

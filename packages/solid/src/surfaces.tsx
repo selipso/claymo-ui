@@ -17,7 +17,7 @@ import {
 import { callHandler, omit } from "./shared.js";
 
 function hasContent(value: JSX.Element): boolean {
-  return value != null && typeof value !== "boolean";
+  return value != null && value !== "" && typeof value !== "boolean";
 }
 
 export type PaperProps = JSX.HTMLAttributes<HTMLElement> & PaperOptions;
@@ -56,7 +56,9 @@ export function Card(props: CardProps) {
   );
 }
 
-export function CardContent(props: JSX.IntrinsicElements["div"]) {
+export type CardContentProps = JSX.IntrinsicElements["div"];
+
+export function CardContent(props: CardContentProps) {
   const rest = omit(props, ["class", "children"]);
   return (
     <div {...rest} class={["clay-card-content", props.class]}>
@@ -303,7 +305,7 @@ export function List(props: ListProps) {
       role={props.role ?? "list"}
       aria-label={
         props["aria-label"] ??
-        (props["aria-labelledby"] === undefined ? props.subheader : undefined)
+        (props["aria-labelledby"] === undefined ? props.subheader || undefined : undefined)
       }
     >
       <Show when={props.subheader}>
@@ -408,7 +410,9 @@ export function ListItemButton(props: ListItemButtonProps) {
   );
 }
 
-export function ListItemIcon(props: JSX.IntrinsicElements["span"]) {
+export type ListItemIconProps = JSX.IntrinsicElements["span"];
+
+export function ListItemIcon(props: ListItemIconProps) {
   const rest = omit(props, ["class", "children", "aria-hidden"]);
   return (
     <span
@@ -431,7 +435,7 @@ export type ListItemTextProps = JSX.IntrinsicElements["span"] & {
 
 export function ListItemText(props: ListItemTextProps) {
   const rest = omit(props, ["primary", "secondary", "class", "children"]);
-  const primary = createMemo(() => props.primary ?? props.children);
+  const primary = createMemo(() => (hasContent(props.primary) ? props.primary : props.children));
   const secondary = createMemo(() => props.secondary);
   return (
     <span {...rest} class={["clay-list-item-text", props.class]}>

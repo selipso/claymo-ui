@@ -17,6 +17,11 @@
   const recipe = $derived(tabPanelRecipe({ value, selected: ctx.value, ids: ctx.ids }));
 </script>
 
-<div {...recipe.attrs} class={[recipe.className, className]} {...rest}>
+<div
+  {...rest}
+  {...recipe.attrs}
+  class={[recipe.className, className]}
+  hidden={recipe.attrs.hidden === true || rest.hidden}
+>
   {@render children?.()}
 </div>

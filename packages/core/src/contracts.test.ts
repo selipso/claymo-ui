@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { buttonRecipe } from "./button.ts";
 import { paperRecipe } from "./paper.ts";
-import { isTabbable, tabIds, tabKeyTarget } from "./tabs.ts";
+import { isTabbable, tabIds, tabKeyTarget, tabRecipe } from "./tabs.ts";
 
 test("tab keys wrap, mirror in RTL, and ignore other keys", () => {
   assert.equal(tabKeyTarget("ArrowRight", 2, 3, false), 0);
@@ -59,4 +59,20 @@ test("paper ignores inflated on flat surfaces", () => {
   );
   assert.equal(paperRecipe({ inflated: true, elevation: 0 }).attrs["data-inflated"], undefined);
   assert.equal(paperRecipe({ inflated: true }).attrs["data-inflated"], "");
+});
+
+test("button ignores inflated on text variant", () => {
+  assert.equal(buttonRecipe({ inflated: true, variant: "text" }).attrs["data-inflated"], undefined);
+  assert.equal(buttonRecipe({ inflated: true, variant: "contained" }).attrs["data-inflated"], "");
+});
+
+test("disabled tab always uses tabindex -1", () => {
+  const disabled = tabRecipe({
+    value: "a",
+    selected: "a",
+    enabled: ["a", "b"],
+    ids: tabIds("t"),
+    disabled: true,
+  });
+  assert.equal(disabled.attrs.tabindex, -1);
 });

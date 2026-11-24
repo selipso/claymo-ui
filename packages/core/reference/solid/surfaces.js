@@ -149,6 +149,10 @@ export default function Example() {
         description:
           "Controlled open state, taking precedence over defaultExpanded. Update it in onChange to accept a native toggle.",
       },
+      onChange: {
+        description:
+          "Optional callback (event: Event, expanded: boolean) => void for native changes; parent-driven expanded changes do not invoke it.",
+      },
     },
     content: [
       "summary: required JSX for the visible disclosure label.",

@@ -47,10 +47,10 @@ const panels = await Promise.all(
 ---
 
 <div
+  {...rest}
   id={base}
   class:list={["clay-tabs", className]}
   data-motion={motion}
-  {...rest}
   data-clay-tabs
   data-clay-selected={value}
   data-clay-selected-numeric={typeof value === "number" ? "" : undefined}
@@ -58,7 +58,13 @@ const panels = await Promise.all(
   <div class={list.className} {...list.attrs}>
     {tabs ? (
       tabs.map((tab) => {
-        const recipe = tabRecipe({ value: tab.value, selected: value, enabled, ids });
+        const recipe = tabRecipe({
+          value: tab.value,
+          selected: value,
+          enabled,
+          ids,
+          disabled: tab.disabled,
+        });
         return (
           <button {...recipe.attrs} class={recipe.className} disabled={tab.disabled}>
             <span class="clay-tab__label">{tab.label}</span>

@@ -440,7 +440,7 @@
     }
   },
   "DataTable": {
-    "purpose": "Data-driven table: pass rows and columns; it renders a Table with optional sorting, quick filter search, pagination, checkbox selection and clickable rows. MUI DataGrid naming. Clay deviations: columns may be field-name strings and default to the first row's keys; row ids are strings; renderCell is a Svelte snippet or, in Astro, a function returning markup written inline in the template. For hand-written markup use Table.",
+    "purpose": "Data-driven table: pass rows and columns; it renders a Table with optional sorting, quick filter search, pagination, checkbox selection and clickable rows. MUI DataGrid naming. Clay deviations: columns may be field-name strings and default to the first row's keys; row ids are strings. For hand-written markup use Table.",
     "props": {
       "label": {
         "type": "string",
@@ -501,7 +501,7 @@
                   "description": "(value, row) => string: displayed and searched text."
                 },
                 "renderCell": {
-                  "description": "Custom cell content from (params: { row, id, field, value, formattedValue, rowIndex }). Svelte: a snippet. Astro: a function returning markup, written inline in the template."
+                  "description": "Custom cell content from (params: { row, id, field, value, formattedValue, rowIndex })."
                 }
               }
             }
@@ -527,7 +527,7 @@
           "type": "string"
         },
         "default": [],
-        "description": "Selected row ids. Svelte: supports bind:rowSelectionModel."
+        "description": "Selected row ids."
       },
       "sortModel": {
         "type": "array",
@@ -545,7 +545,7 @@
           }
         },
         "default": [],
-        "description": "Active sort; header clicks cycle ascending, descending, unsorted. Svelte: supports bind:sortModel."
+        "description": "Active sort; header clicks cycle ascending, descending, unsorted."
       },
       "quickFilter": {
         "type": "boolean",
@@ -555,7 +555,7 @@
       "quickFilterValue": {
         "type": "string",
         "default": "",
-        "description": "Search text. Svelte: supports bind:quickFilterValue."
+        "description": "Search text."
       },
       "pagination": {
         "type": "boolean",
@@ -577,7 +577,7 @@
           "page": 0,
           "pageSize": 10
         },
-        "description": "Zero-based page and page size. Svelte: supports bind:paginationModel."
+        "description": "Zero-based page and page size."
       },
       "pageSizeOptions": {
         "type": "array",
@@ -661,7 +661,7 @@
         },
         "content": [
           "toolbar: optional named slot before the quick filter, e.g. bulk action buttons.",
-          "no-rows: optional named slot shown when rows is empty."
+          "no-rows: optional named slot shown when rows is empty and the table is not loading."
         ],
         "events": [
           "The server renders every row; the page script sorts, filters, pages and selects them. All events bubble from the root; detail is keyed by the prop name.",
@@ -708,14 +708,27 @@
         "props": {
           "onRowClick": {
             "description": "Optional callback ({ id, row, rowIndex }, event) => void. Makes rows clickable; the row header becomes the keyboard button. Clicks on links, buttons and inputs inside a row keep their own behavior."
+          },
+          "onSortModelChange": {
+            "description": "(sortModel: DataTableSortModel) => void. Called when the user changes sort."
+          },
+          "onPaginationModelChange": {
+            "description": "(paginationModel: DataTablePaginationModel) => void. Called when page or page size changes."
+          },
+          "onQuickFilterValueChange": {
+            "description": "(quickFilterValue: string) => void. Called when search text changes."
+          },
+          "onRowSelectionModelChange": {
+            "description": "(rowSelectionModel: string[]) => void. Called when row selection changes."
           }
         },
         "content": [
           "toolbar: optional snippet before the quick filter, e.g. bulk action buttons.",
-          "noRows: optional snippet shown when rows is empty."
+          "noRows: optional snippet shown when rows is empty and the table is not loading."
         ],
         "events": [
-          "onSortModelChange(sortModel), onPaginationModelChange(paginationModel), onQuickFilterValueChange(quickFilterValue), onRowSelectionModelChange(rowSelectionModel): called after user changes; the matching props also support bind:."
+          "onRowClick({ id, row, rowIndex }, event): click a noninteractive part of a row or activate its row-header button. rowIndex is its position in rows.",
+          "onSortModelChange(sortModel), onPaginationModelChange(paginationModel), onQuickFilterValueChange(quickFilterValue), onRowSelectionModelChange(rowSelectionModel): called after user changes. Omit a model prop for internal state, or update it in the callback."
         ],
         "examples": [
           {
@@ -728,23 +741,23 @@
           },
           {
             "title": "Search, sort and paginate",
-            "source": "<script lang=\"ts\">\n  import type { DataTableSortModel } from \"@claymo/core/display\";\n\n  const names = [\n    \"Atlas\",\n    \"Birch\",\n    \"Cedar\",\n    \"Delta\",\n    \"Ember\",\n    \"Fjord\",\n    \"Grove\",\n    \"Harbor\",\n    \"Inlet\",\n    \"Juniper\",\n    \"Kestrel\",\n    \"Lagoon\",\n  ];\n  const regions = [\"North\", \"Coast\", \"Valley\"];\n  const rows = names.map((name, index) => ({\n    id: index + 1,\n    name,\n    region: regions[index % 3],\n    visits: (index * 37) % 100,\n  }));\n  let paginationModel = $state({ page: 0, pageSize: 5 });\n  let sortModel = $state<DataTableSortModel>([{ field: \"visits\", sort: \"desc\" }]);\n  let quickFilterValue = $state(\"\");\n</script>\n\n<DataTable\n  label=\"Sites\"\n  {rows}\n  columns={[\n    { field: \"name\", headerName: \"Site\" },\n    { field: \"region\", headerName: \"Region\" },\n    { field: \"visits\", headerName: \"Visits\", type: \"number\" },\n  ]}\n  quickFilter\n  pagination\n  bind:paginationModel\n  bind:sortModel\n  bind:quickFilterValue\n/>\n<p aria-live=\"polite\">\n  Page {paginationModel.page + 1}{sortModel[0]\n    ? `, sorted by ${sortModel[0].field}`\n    : \"\"}{quickFilterValue ? `, matching \"${quickFilterValue}\"` : \"\"}\n</p>"
+            "source": "<script lang=\"ts\">\n  import type { DataTableSortModel } from \"@claymo/core/display\";\n\n  const names = [\n    \"Atlas\",\n    \"Birch\",\n    \"Cedar\",\n    \"Delta\",\n    \"Ember\",\n    \"Fjord\",\n    \"Grove\",\n    \"Harbor\",\n    \"Inlet\",\n    \"Juniper\",\n    \"Kestrel\",\n    \"Lagoon\",\n  ];\n  const regions = [\"North\", \"Coast\", \"Valley\"];\n  const rows = names.map((name, index) => ({\n    id: index + 1,\n    name,\n    region: regions[index % 3],\n    visits: (index * 37) % 100,\n  }));\n  let paginationModel = $state({ page: 0, pageSize: 5 });\n  let sortModel = $state<DataTableSortModel>([{ field: \"visits\", sort: \"desc\" }]);\n  let quickFilterValue = $state(\"\");\n</script>\n\n<DataTable\n  label=\"Sites\"\n  {rows}\n  columns={[\n    { field: \"name\", headerName: \"Site\" },\n    { field: \"region\", headerName: \"Region\" },\n    { field: \"visits\", headerName: \"Visits\", type: \"number\" },\n  ]}\n  quickFilter\n  pagination\n  {paginationModel}\n  onPaginationModelChange={(next) => (paginationModel = next)}\n  {sortModel}\n  onSortModelChange={(next) => (sortModel = next)}\n  {quickFilterValue}\n  onQuickFilterValueChange={(next) => (quickFilterValue = next)}\n/>\n<p aria-live=\"polite\">\n  Page {paginationModel.page + 1}{sortModel[0]\n    ? `, sorted by ${sortModel[0].field}`\n    : \"\"}{quickFilterValue ? `, matching \"${quickFilterValue}\"` : \"\"}\n</p>"
           },
           {
             "title": "Row details in a dialog",
-            "source": "<script lang=\"ts\">\n  type Article = { id: number; title: string; author: string; summary: string };\n  const rows: Article[] = [\n    {\n      id: 1,\n      title: \"Tide tables\",\n      author: \"M. Reyes\",\n      summary: \"How the moon sets the rhythm of the coast.\",\n    },\n    {\n      id: 2,\n      title: \"Reef survey\",\n      author: \"K. Osei\",\n      summary: \"A season of counts along the outer reef.\",\n    },\n    {\n      id: 3,\n      title: \"Kelp forests\",\n      author: \"L. Park\",\n      summary: \"Why kelp grows fastest in cold water.\",\n    },\n  ];\n  let active = $state<Article>();\n  let open = $state(false);\n</script>\n\n<DataTable\n  label=\"Articles\"\n  {rows}\n  columns={[\n    { field: \"title\", headerName: \"Title\" },\n    { field: \"author\", headerName: \"Author\" },\n  ]}\n  onRowClick={({ row }) => {\n    active = row;\n    open = true;\n  }}\n/>\n<Dialog bind:open title={active?.title ?? \"Article\"} dismissible>\n  <p>{active?.summary}</p>\n  {#snippet actions()}\n    <Button variant=\"text\" onclick={() => (open = false)}>Close</Button>\n    <Button onclick={() => (open = false)}>Read article</Button>\n  {/snippet}\n</Dialog>"
+            "source": "<script lang=\"ts\">\n  type Article = { id: number; title: string; author: string; summary: string };\n  const rows: Article[] = [\n    {\n      id: 1,\n      title: \"Tide tables\",\n      author: \"M. Reyes\",\n      summary: \"How the moon sets the rhythm of the coast.\",\n    },\n    {\n      id: 2,\n      title: \"Reef survey\",\n      author: \"K. Osei\",\n      summary: \"A season of counts along the outer reef.\",\n    },\n    {\n      id: 3,\n      title: \"Kelp forests\",\n      author: \"L. Park\",\n      summary: \"Why kelp grows fastest in cold water.\",\n    },\n  ];\n  let active = $state<Article>();\n  let open = $state(false);\n</script>\n\n<DataTable\n  label=\"Articles\"\n  {rows}\n  columns={[\n    { field: \"title\", headerName: \"Title\" },\n    { field: \"author\", headerName: \"Author\" },\n  ]}\n  onRowClick={({ row }) => {\n    active = row;\n    open = true;\n  }}\n/>\n<Dialog {open} onClose={() => (open = false)} title={active?.title ?? \"Article\"} dismissible>\n  <p>{active?.summary}</p>\n  {#snippet actions()}\n    <Button variant=\"text\" onclick={() => (open = false)}>Close</Button>\n    <Button onclick={() => (open = false)}>Read article</Button>\n  {/snippet}\n</Dialog>"
           },
           {
             "title": "Selection with a bulk action",
-            "source": "<script lang=\"ts\">\n  let rows = $state([\n    { id: \"f1\", name: \"budget.xlsx\", owner: \"Ada\", size: 24 },\n    { id: \"f2\", name: \"logo.svg\", owner: \"Grace\", size: 8 },\n    { id: \"f3\", name: \"notes.md\", owner: \"Alan\", size: 2 },\n  ]);\n  let selected = $state<string[]>([]);\n\n  function remove() {\n    // Send `selected` to your API; here the rows simply disappear.\n    rows = rows.filter((row) => !selected.includes(row.id));\n    selected = [];\n  }\n</script>\n\n<DataTable\n  label=\"Files\"\n  {rows}\n  columns={[\n    { field: \"name\", headerName: \"Name\" },\n    { field: \"owner\", headerName: \"Owner\" },\n    { field: \"size\", headerName: \"Size (KB)\", type: \"number\" },\n  ]}\n  checkboxSelection\n  bind:rowSelectionModel={selected}\n>\n  {#snippet toolbar()}\n    <Button variant=\"outlined\" color=\"error\" disabled={selected.length === 0} onclick={remove}>\n      Delete selected\n    </Button>\n  {/snippet}\n</DataTable>"
+            "source": "<script lang=\"ts\">\n  let rows = $state([\n    { id: \"f1\", name: \"budget.xlsx\", owner: \"Ada\", size: 24 },\n    { id: \"f2\", name: \"logo.svg\", owner: \"Grace\", size: 8 },\n    { id: \"f3\", name: \"notes.md\", owner: \"Alan\", size: 2 },\n  ]);\n  let selected = $state<string[]>([]);\n\n  function remove() {\n    // Send `selected` to your API; here the rows simply disappear.\n    rows = rows.filter((row) => !selected.includes(row.id));\n    selected = [];\n  }\n</script>\n\n<DataTable\n  label=\"Files\"\n  {rows}\n  columns={[\n    { field: \"name\", headerName: \"Name\" },\n    { field: \"owner\", headerName: \"Owner\" },\n    { field: \"size\", headerName: \"Size (KB)\", type: \"number\" },\n  ]}\n  checkboxSelection\n  rowSelectionModel={selected}\n  onRowSelectionModelChange={(next) => (selected = next)}\n>\n  {#snippet toolbar()}\n    <Button variant=\"outlined\" color=\"error\" disabled={selected.length === 0} onclick={remove}>\n      Delete selected\n    </Button>\n  {/snippet}\n</DataTable>"
           },
           {
             "title": "Edit rows in a dialog",
-            "source": "<script lang=\"ts\">\n  import type { DataTableCellParams } from \"@claymo/core/display\";\n\n  type Contact = { id: number; name: string; email: string };\n  let rows = $state<Contact[]>([\n    { id: 1, name: \"Ada Byron\", email: \"ada@example.com\" },\n    { id: 2, name: \"Grace Hopper\", email: \"grace@example.com\" },\n  ]);\n  let editing = $state<Contact>();\n  let draft = $state({ name: \"\", email: \"\" });\n  let open = $state(false);\n  const dirty = $derived(\n    !!editing && (draft.name !== editing.name || draft.email !== editing.email),\n  );\n\n  function edit(row: Contact) {\n    editing = row;\n    draft = { name: row.name, email: row.email };\n    open = true;\n  }\n  function save(event: SubmitEvent) {\n    event.preventDefault();\n    rows = rows.map((row) => (row.id === editing?.id ? { ...row, ...draft } : row));\n    open = false;\n  }\n  // Escape and backdrop clicks ask first when there are unsaved edits.\n  function requestClose() {\n    if (!dirty || confirm(\"Discard unsaved changes?\")) open = false;\n  }\n</script>\n\n{#snippet editButton({ row }: DataTableCellParams<Contact>)}\n  <IconButton size=\"small\" aria-label=\"Edit {row.name}\" onclick={() => edit(row)}>\n    <svg\n      aria-hidden=\"true\"\n      width=\"18\"\n      height=\"18\"\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      stroke-width=\"2\"\n      stroke-linecap=\"round\"><path d=\"M4 20h4L19 9l-4-4L4 16v4Z\" /></svg\n    >\n  </IconButton>\n{/snippet}\n\n<DataTable\n  label=\"Contacts\"\n  {rows}\n  columns={[\n    { field: \"name\", headerName: \"Name\" },\n    { field: \"email\", headerName: \"Email\" },\n    { field: \"edit\", type: \"actions\", renderCell: editButton },\n  ]}\n/>\n<Dialog bind:open title=\"Edit contact\" onClose={requestClose}>\n  <form id=\"contact-form\" class=\"contact-form\" onsubmit={save}>\n    <TextField label=\"Name\" bind:value={draft.name} fullWidth />\n    <TextField label=\"Email\" type=\"email\" bind:value={draft.email} fullWidth />\n  </form>\n  {#snippet actions()}\n    <Button variant=\"text\" onclick={() => (open = false)}>Cancel</Button>\n    <Button type=\"submit\" form=\"contact-form\" disabled={!dirty}>Save</Button>\n  {/snippet}\n</Dialog>\n\n<style>\n  .contact-form {\n    display: grid;\n    gap: 16px;\n    padding-block-start: 8px;\n  }\n</style>"
+            "source": "<script lang=\"ts\">\n  import type { DataTableCellParams } from \"@claymo/core/display\";\n\n  type Contact = { id: number; name: string; email: string };\n  let rows = $state<Contact[]>([\n    { id: 1, name: \"Ada Byron\", email: \"ada@example.com\" },\n    { id: 2, name: \"Grace Hopper\", email: \"grace@example.com\" },\n  ]);\n  let editing = $state<Contact>();\n  let draft = $state({ name: \"\", email: \"\" });\n  let open = $state(false);\n  const dirty = $derived(\n    !!editing && (draft.name !== editing.name || draft.email !== editing.email),\n  );\n\n  function edit(row: Contact) {\n    editing = row;\n    draft = { name: row.name, email: row.email };\n    open = true;\n  }\n  function save(event: SubmitEvent) {\n    event.preventDefault();\n    rows = rows.map((row) => (row.id === editing?.id ? { ...row, ...draft } : row));\n    open = false;\n  }\n  // Escape and backdrop clicks ask first when there are unsaved edits.\n  function requestClose() {\n    if (!dirty || confirm(\"Discard unsaved changes?\")) open = false;\n  }\n</script>\n\n{#snippet editButton({ row }: DataTableCellParams<Contact>)}\n  <IconButton size=\"small\" aria-label=\"Edit {row.name}\" onclick={() => edit(row)}>\n    <svg\n      aria-hidden=\"true\"\n      width=\"18\"\n      height=\"18\"\n      viewBox=\"0 0 24 24\"\n      fill=\"none\"\n      stroke=\"currentColor\"\n      stroke-width=\"2\"\n      stroke-linecap=\"round\"><path d=\"M4 20h4L19 9l-4-4L4 16v4Z\" /></svg\n    >\n  </IconButton>\n{/snippet}\n\n<DataTable\n  label=\"Contacts\"\n  {rows}\n  columns={[\n    { field: \"name\", headerName: \"Name\" },\n    { field: \"email\", headerName: \"Email\" },\n    { field: \"edit\", type: \"actions\", renderCell: editButton },\n  ]}\n/>\n<Dialog {open} title=\"Edit contact\" onClose={requestClose}>\n  <form id=\"contact-form\" class=\"contact-form\" onsubmit={save}>\n    <TextField label=\"Name\" value={draft.name} onChange={(event) => (draft.name = (event.currentTarget as HTMLInputElement).value)} fullWidth />\n    <TextField label=\"Email\" type=\"email\" value={draft.email} onChange={(event) => (draft.email = (event.currentTarget as HTMLInputElement).value)} fullWidth />\n  </form>\n  {#snippet actions()}\n    <Button variant=\"text\" onclick={() => (open = false)}>Cancel</Button>\n    <Button type=\"submit\" form=\"contact-form\" disabled={!dirty}>Save</Button>\n  {/snippet}\n</Dialog>\n\n<style>\n  .contact-form {\n    display: grid;\n    gap: 16px;\n    padding-block-start: 8px;\n  }\n</style>"
           },
           {
             "title": "Server-side data with loading state",
-            "source": "<script lang=\"ts\">\n  import type { DataTablePaginationModel, DataTableSortModel } from \"@claymo/core/display\";\n\n  type Book = { id: number; title: string; year: number };\n  const library: Book[] = Array.from({ length: 23 }, (_, index) => ({\n    id: index + 1,\n    title: `Volume ${index + 1}`,\n    year: 1990 + ((index * 7) % 30),\n  }));\n\n  // Stands in for your API: it filters, sorts and pages, and reports the total.\n  async function fetchBooks(\n    page: DataTablePaginationModel,\n    sort: DataTableSortModel,\n    search: string,\n  ) {\n    await new Promise((resolve) => setTimeout(resolve, 300));\n    const found = library.filter((book) => book.title.toLowerCase().includes(search.toLowerCase()));\n    const [order] = sort;\n    if (order) {\n      const direction = order.sort === \"asc\" ? 1 : -1;\n      found.sort(\n        (a, b) =>\n          direction *\n          (order.field === \"year\"\n            ? a.year - b.year\n            : a.title.localeCompare(b.title, \"en\", { numeric: true })),\n      );\n    }\n    return {\n      rows: found.slice(page.page * page.pageSize, (page.page + 1) * page.pageSize),\n      total: found.length,\n    };\n  }\n\n  let paginationModel = $state({ page: 0, pageSize: 5 });\n  let sortModel = $state<DataTableSortModel>([]);\n  let quickFilterValue = $state(\"\");\n  let rows = $state<Book[]>([]);\n  let rowCount = $state(0);\n  let loading = $state(true);\n\n  $effect(() => {\n    const request = fetchBooks(paginationModel, sortModel, quickFilterValue);\n    let current = true;\n    loading = true;\n    request.then((result) => {\n      if (!current) return; // a newer request replaced this one\n      rows = result.rows;\n      rowCount = result.total;\n      loading = false;\n    });\n    return () => (current = false);\n  });\n</script>\n\n<DataTable\n  label=\"Books\"\n  {rows}\n  {rowCount}\n  {loading}\n  columns={[\n    { field: \"title\", headerName: \"Title\" },\n    { field: \"year\", headerName: \"Year\", type: \"number\" },\n  ]}\n  quickFilter\n  pagination\n  pageSizeOptions={[5, 10]}\n  paginationMode=\"server\"\n  sortingMode=\"server\"\n  filterMode=\"server\"\n  bind:paginationModel\n  bind:sortModel\n  bind:quickFilterValue\n>\n  {#snippet noRows()}No books match.{/snippet}\n</DataTable>"
+            "source": "<script lang=\"ts\">\n  import type { DataTablePaginationModel, DataTableSortModel } from \"@claymo/core/display\";\n\n  type Book = { id: number; title: string; year: number };\n  const library: Book[] = Array.from({ length: 23 }, (_, index) => ({\n    id: index + 1,\n    title: `Volume ${index + 1}`,\n    year: 1990 + ((index * 7) % 30),\n  }));\n\n  // Stands in for your API: it filters, sorts and pages, and reports the total.\n  async function fetchBooks(\n    page: DataTablePaginationModel,\n    sort: DataTableSortModel,\n    search: string,\n  ) {\n    await new Promise((resolve) => setTimeout(resolve, 300));\n    const found = library.filter((book) => book.title.toLowerCase().includes(search.toLowerCase()));\n    const [order] = sort;\n    if (order) {\n      const direction = order.sort === \"asc\" ? 1 : -1;\n      found.sort(\n        (a, b) =>\n          direction *\n          (order.field === \"year\"\n            ? a.year - b.year\n            : a.title.localeCompare(b.title, \"en\", { numeric: true })),\n      );\n    }\n    return {\n      rows: found.slice(page.page * page.pageSize, (page.page + 1) * page.pageSize),\n      total: found.length,\n    };\n  }\n\n  let paginationModel = $state({ page: 0, pageSize: 5 });\n  let sortModel = $state<DataTableSortModel>([]);\n  let quickFilterValue = $state(\"\");\n  let rows = $state<Book[]>([]);\n  let rowCount = $state(0);\n  let loading = $state(true);\n\n  $effect(() => {\n    const request = fetchBooks(paginationModel, sortModel, quickFilterValue);\n    let current = true;\n    loading = true;\n    request.then((result) => {\n      if (!current) return; // a newer request replaced this one\n      rows = result.rows;\n      rowCount = result.total;\n      loading = false;\n    });\n    return () => (current = false);\n  });\n</script>\n\n<DataTable\n  label=\"Books\"\n  {rows}\n  {rowCount}\n  {loading}\n  columns={[\n    { field: \"title\", headerName: \"Title\" },\n    { field: \"year\", headerName: \"Year\", type: \"number\" },\n  ]}\n  quickFilter\n  pagination\n  pageSizeOptions={[5, 10]}\n  paginationMode=\"server\"\n  sortingMode=\"server\"\n  filterMode=\"server\"\n  {paginationModel}\n  onPaginationModelChange={(next) => (paginationModel = next)}\n  {sortModel}\n  onSortModelChange={(next) => (sortModel = next)}\n  {quickFilterValue}\n  onQuickFilterValueChange={(next) => (quickFilterValue = next)}\n>\n  {#snippet noRows()}No books match.{/snippet}\n</DataTable>"
           }
         ]
       }

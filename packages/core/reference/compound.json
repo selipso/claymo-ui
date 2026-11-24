@@ -67,7 +67,11 @@
         "props": {
           "value": {
             "type": ["string", "number"],
-            "description": "Selected tab value. Supports bind:value; when omitted, no tab starts selected."
+            "description": "Controlled selection. Update value from onChange to accept user selection. Each value matches a Tab and TabPanel by type as well as by value."
+          },
+          "defaultValue": {
+            "type": ["string", "number"],
+            "description": "Initial selection in uncontrolled mode. If omitted, no panel starts selected and the first enabled tab is the keyboard entry point."
           },
           "onChange": {
             "description": "Optional callback (event: Event, value: string | number) => void. Called when the user selects a different tab, not for parent-driven value changes."
@@ -81,7 +85,7 @@
         "examples": [
           {
             "title": "Track the selected tab",
-            "source": "<script lang=\"ts\">\n  let selected = $state<string | number>('profile');\n  let changes = $state(0);\n</script>\n<Tabs aria-label=\"Account\" bind:value={selected} onChange={() => changes++}>\n  <Tab value=\"profile\" label=\"Profile\" />\n  <Tab value=\"security\" label=\"Security\" />\n  {#snippet panels()}\n    <TabPanel value=\"profile\"><p>Profile settings</p></TabPanel>\n    <TabPanel value=\"security\"><p>Security settings</p></TabPanel>\n  {/snippet}\n</Tabs>\n<p>Selected tab: {selected}. User changes: {changes}.</p>"
+            "source": "<script lang=\"ts\">\n  let selected = $state<string | number>('profile');\n  let changes = $state(0);\n</script>\n<Tabs aria-label=\"Account\" value={selected} onChange={(_event, next) => { selected = next; changes++; }}>\n  <Tab value=\"profile\" label=\"Profile\" />\n  <Tab value=\"security\" label=\"Security\" />\n  {#snippet panels()}\n    <TabPanel value=\"profile\"><p>Profile settings</p></TabPanel>\n    <TabPanel value=\"security\"><p>Security settings</p></TabPanel>\n  {/snippet}\n</Tabs>\n<p>Selected tab: {selected}. User changes: {changes}.</p>"
           }
         ]
       }
@@ -203,7 +207,7 @@
       "open": {
         "type": "boolean",
         "default": false,
-        "description": "Svelte: live modal state, supports bind:open. Astro: request initial modal opening once the client script runs."
+        "description": "Modal visibility."
       },
       "fullWidth": {
         "type": "boolean",
@@ -235,6 +239,11 @@
           "id": {
             "type": "string",
             "description": "Unique dialog ID. Native buttons target it with commandfor and command=\"show-modal\" or command=\"close\"."
+          },
+          "open": {
+            "type": "boolean",
+            "default": false,
+            "description": "Request initial modal opening once the client script runs."
           }
         },
         "content": [
@@ -259,6 +268,16 @@
         "imports": ["Dialog", "Button", "TextField"],
         "required": [],
         "props": {
+          "open": {
+            "type": "boolean",
+            "default": false,
+            "description": "Reactive modal visibility. With onClose, the owner decides whether to accept a dismissal by setting open to false."
+          },
+          "defaultOpen": {
+            "type": "boolean",
+            "default": false,
+            "description": "Initial visibility when open is omitted. Later changes to defaultOpen do not change visibility."
+          },
           "onClose": {
             "description": "Optional callback (event: Event, reason: 'escapeKeyDown' | 'backdropClick' | 'closeButton') => void. For these requests, set open to false to accept, or leave it unchanged to reject. Without the callback the dialog closes itself."
           }
@@ -268,16 +287,16 @@
           "actions: optional Svelte snippet for buttons and other actions."
         ],
         "events": [
-          "onClose(event, reason): handles Escape, backdrop and close-button requests. If the browser already closed the dialog (for example via a form with method=\"dialog\"), the binding is resynced and an installed callback receives escapeKeyDown even if Escape did not cause the close."
+          "onClose(event, reason): handles Escape, backdrop and close-button requests. If the browser already closed the dialog (for example via a form with method=\"dialog\"), local state is reset and an installed callback receives escapeKeyDown even if Escape did not cause the close."
         ],
         "examples": [
           {
             "title": "Dialog with close button",
-            "source": "<script>\n  let open = $state(false);\n</script>\n<Button onclick={() => (open = true)}>Open help</Button>\n<Dialog bind:open title=\"Account help\" dismissible onClose={(_event, reason) => {\n  if (reason !== 'backdropClick') open = false;\n}}>\n  <p>Choose Close, the X, or press Escape to dismiss this dialog.</p>\n  {#snippet actions()}\n    <Button variant=\"text\" onclick={() => (open = false)}>Close</Button>\n  {/snippet}\n</Dialog>"
+            "source": "<script>\n  let open = $state(false);\n</script>\n<Button onclick={() => (open = true)}>Open help</Button>\n<Dialog {open} title=\"Account help\" dismissible onClose={(_event, reason) => {\n  if (reason !== 'backdropClick') open = false;\n}}>\n  <p>Choose Close, the X, or press Escape to dismiss this dialog.</p>\n  {#snippet actions()}\n    <Button variant=\"text\" onclick={() => (open = false)}>Close</Button>\n  {/snippet}\n</Dialog>"
           },
           {
             "title": "View and edit modes",
-            "source": "<script lang=\"ts\">\n  let open = $state(false);\n  let editing = $state(false);\n  let saved = $state(\"Weekly sync with the design team.\");\n  let draft = $state(\"\");\n  const dirty = $derived(editing && draft !== saved);\n\n  function startEdit() {\n    draft = saved;\n    editing = true;\n  }\n  function save() {\n    saved = draft;\n    editing = false;\n  }\n  // Escape, backdrop clicks and the X ask first when there are unsaved edits.\n  function requestClose() {\n    if (dirty && !confirm(\"Discard unsaved changes?\")) return;\n    editing = false;\n    open = false;\n  }\n</script>\n\n<Button onclick={() => (open = true)}>Open event</Button>\n<Dialog bind:open title=\"Team meeting\" dismissible onClose={requestClose}>\n  {#if editing}\n    <TextField label=\"Description\" multiline rows={3} fullWidth bind:value={draft} />\n  {:else}\n    <p>{saved}</p>\n  {/if}\n  {#snippet actions()}\n    {#if editing}\n      <Button variant=\"text\" onclick={() => (editing = false)}>Cancel</Button>\n      <Button onclick={save} disabled={!dirty}>Save</Button>\n    {:else}\n      <Button variant=\"outlined\" onclick={startEdit}>Edit</Button>\n    {/if}\n  {/snippet}\n</Dialog>"
+            "source": "<script lang=\"ts\">\n  let open = $state(false);\n  let editing = $state(false);\n  let saved = $state(\"Weekly sync with the design team.\");\n  let draft = $state(\"\");\n  const dirty = $derived(editing && draft !== saved);\n\n  function startEdit() {\n    draft = saved;\n    editing = true;\n  }\n  function save() {\n    saved = draft;\n    editing = false;\n  }\n  // Escape, backdrop clicks and the X ask first when there are unsaved edits.\n  function requestClose() {\n    if (dirty && !confirm(\"Discard unsaved changes?\")) return;\n    editing = false;\n    open = false;\n  }\n</script>\n\n<Button onclick={() => (open = true)}>Open event</Button>\n<Dialog {open} title=\"Team meeting\" dismissible onClose={requestClose}>\n  {#if editing}\n    <TextField label=\"Description\" multiline rows={3} fullWidth value={draft} onChange={(event) => (draft = (event.currentTarget as HTMLTextAreaElement).value)} />\n  {:else}\n    <p>{saved}</p>\n  {/if}\n  {#snippet actions()}\n    {#if editing}\n      <Button variant=\"text\" onclick={() => (editing = false)}>Cancel</Button>\n      <Button onclick={save} disabled={!dirty}>Save</Button>\n    {:else}\n      <Button variant=\"outlined\" onclick={startEdit}>Edit</Button>\n    {/if}\n  {/snippet}\n</Dialog>"
           }
         ]
       }

@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { Snippet } from "svelte";
-  import type { HTMLAttributes } from "svelte/elements";
+  import type { HTMLAttributes, HTMLButtonAttributes } from "svelte/elements";
   import {
     actionIconAttrs,
     closeIconPath,
@@ -14,9 +14,9 @@
    * A <button> cannot contain another <button>, so the chip root is a <span>
    * holding sibling controls: the main body (a <button> when clickable or when
    * `onclick` is given, else a <span>) and, when `onDelete` is set, a separate
-   * remove <button aria-label="Remove {label}">. `onclick` goes to the body.
+   * remove <button aria-label="Remove {label}">. `onclick` and `aria-pressed` go to the body.
    */
-  interface Props extends Omit<HTMLAttributes<HTMLElement>, "color"> {
+  interface Props extends Omit<HTMLAttributes<HTMLSpanElement>, "color" | "children" | "onclick"> {
     label: string;
     variant?: ChipVariant;
     color?: Color;
@@ -24,6 +24,7 @@
     icon?: Snippet;
     avatar?: Snippet;
     deleteIcon?: Snippet;
+    onclick?: HTMLButtonAttributes["onclick"];
     onDelete?: (event: MouseEvent | KeyboardEvent) => void;
     clickable?: boolean;
     disabled?: boolean;
@@ -45,6 +46,7 @@
     motion,
     class: className = "",
     onclick,
+    "aria-pressed": ariaPressed,
     ...rest
   }: Props = $props();
 
@@ -70,6 +72,7 @@
 {/snippet}
 
 <span
+  {...rest}
   class={["clay clay-chip", className]}
   data-variant={variant}
   data-deletable={onDelete ? "" : undefined}
@@ -78,14 +81,14 @@
   data-clay-interactive={interactive ? "" : undefined}
   data-disabled={disabled ? "" : undefined}
   data-motion={motion}
-  {...rest}
 >
   {#if interactive}
     <button
       type="button"
       class="clay-chip__body"
       {disabled}
-      onclick={onclick as ((e: MouseEvent) => void) | undefined}
+      aria-pressed={ariaPressed}
+      {onclick}
       onkeydown={onBodyKeydown}
     >
       {@render bodyContent()}

@@ -35,6 +35,12 @@ test("marks use their actual step positions and do not invent a tick at max", ()
   assert.deepEqual(sliderMarks(0, 0, 1), []);
 });
 
+test("text field handles empty-string HTML boolean disabled flag", () => {
+  assert.equal(textFieldRecipe({ id: "a", disabled: "" }).root["data-disabled"], "");
+  assert.equal(textFieldRecipe({ id: "a", disabled: "false" }).root["data-disabled"], undefined);
+  assert.equal(textFieldRecipe({ id: "a", disabled: true }).root["data-disabled"], "");
+});
+
 test("percentages handle out-of-range and collapsed inputs", () => {
   assert.equal(sliderPercent(-4, 0, 12), 0);
   assert.equal(sliderPercent(13, 0, 12), 100);

@@ -4,8 +4,12 @@ import type { MotionPreset } from "@claymo/core";
 import { nativeAction, type NativeActionOptions } from "@claymo/core/actions";
 
 type Props = Omit<HTMLAttributes<"button">, keyof NativeActionOptions> &
-  Pick<HTMLAttributes<"a">, "target" | "rel"> &
-  NativeActionOptions & {
+  Pick<
+    HTMLAttributes<"a">,
+    "download" | "hreflang" | "ping" | "referrerpolicy" | "rel" | "target"
+  > &
+  Omit<NativeActionOptions, "disabled"> & {
+    disabled?: boolean;
     selected?: boolean;
     dense?: boolean;
     disableGutters?: boolean;
@@ -29,7 +33,6 @@ const Tag = action.tag;
 ---
 
 <Tag
-  data-motion={motion}
   {...rest}
   {...action.attrs}
   class:list={["clay clay-list-item-button", className]}
@@ -37,6 +40,7 @@ const Tag = action.tag;
   data-dense={dense ? "" : undefined}
   data-gutters={!disableGutters ? "" : undefined}
   data-clay-interactive
+  data-motion={motion}
   aria-current={rest["aria-current"] ?? (selected ? (href ? "page" : "true") : undefined)}
   onclick={disabled ? undefined : onclick}
 >

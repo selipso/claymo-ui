@@ -7,9 +7,11 @@
   import Search from "@lucide/svelte/icons/search";
 
   import type { Color, Severity, Size } from "@claymo/core";
+  import type { DataTablePaginationModel } from "@claymo/core/display";
   import {
     Accordion,
     Alert,
+    Autocomplete,
     Avatar,
     Badge,
     Button,
@@ -21,6 +23,7 @@
     Checkbox,
     Chip,
     CircularProgress,
+    DataTable,
     Dialog,
     Divider,
     FormControlLabel,
@@ -45,6 +48,7 @@
     Tooltip,
     Typography,
   } from "@claymo/svelte";
+  import { formats, rows } from "./collection-data";
 
   const colors: Color[] = [
     "primary",
@@ -58,6 +62,11 @@
   const sizes: Size[] = ["small", "medium", "large"];
   const severities: Severity[] = ["success", "info", "warning", "error"];
   const variants = ["contained", "outlined", "text"] as const;
+  const columns = [
+    { field: "name", headerName: "Item" },
+    { field: "shelf", headerName: "Shelf" },
+    { field: "qty", headerName: "Qty", type: "number" as const },
+  ];
 
   interface MotionChoice {
     value: string;
@@ -79,6 +88,10 @@
   let dialog = $state(false);
   let loadingDemo = $state(false);
   let acc = $state(false);
+  let deletable = $state(true);
+  let clicked = $state(false);
+  let dismissed = $state<Severity[]>([]);
+  let pagination = $state<DataTablePaginationModel>({ page: 0, pageSize: 3 });
 
   function fakeLoad() {
     loadingDemo = true;
@@ -122,7 +135,7 @@
               <Button>Save</Button>
               <Button variant="outlined">Cancel</Button>
               <IconButton aria-label={`Favorite, ${preset.label}`}><Heart /></IconButton>
-              <Checkbox aria-label={`Checkbox, ${preset.label}`} checked />
+              <Checkbox aria-label={`Checkbox, ${preset.label}`} defaultChecked />
               <Switch aria-label={`Switch, ${preset.label}`} />
             </div>
           </div>
@@ -202,24 +215,30 @@
 
     <Card as="section" aria-labelledby="g-text">
       <CardHeader
-        title="TextField"
-        subheader="outlined/filled, helperText, error, required, select, multiline, adornments, sizes"
+        title="TextField and Autocomplete"
+        subheader="outlined/filled, helperText, error, required, select, multiline, adornments, and searchable choices"
       />
       <CardContent>
-        <h3 id="g-text" class="clay-sr-only">TextField</h3>
+        <h3 id="g-text" class="clay-sr-only">TextField and Autocomplete</h3>
         <div class="grid">
           <TextField
             label="Outlined"
             placeholder="Type here"
-            bind:value={field}
+            value={field}
+            onChange={(e) => (field = (e.currentTarget as HTMLInputElement).value)}
             helperText="Helper text"
           />
           <TextField label="Filled" variant="filled" helperText="variant=&quot;filled&quot;" />
           <TextField label="Required" required helperText="required marks the label" />
-          <TextField label="Error" error value="not-an-email" helperText="Enter a valid email" />
+          <TextField
+            label="Error"
+            error
+            defaultValue="not-an-email"
+            helperText="Enter a valid email"
+          />
           <TextField label="Disabled" disabled value="Disabled value" />
           <TextField label="Small" size="small" />
-          <TextField label="Select" select value="b">
+          <TextField label="Select" select defaultValue="b">
             <option value="a">Alpha</option>
             <option value="b">Beta</option>
             <option value="c">Gamma</option>
@@ -228,8 +247,15 @@
           <TextField label="Adornments" placeholder="Search">
             {#snippet startAdornment()}<Search size={18} />{/snippet}
           </TextField>
+          <Autocomplete
+            label="Shelves"
+            options={formats}
+            multiple
+            filterSelectedOptions
+            placeholder="Choose shelves"
+          />
         </div>
-        <p class="label">Typed value (two-way bound): {field || "(empty)"}</p>
+        <p class="label">Typed value: {field || "(empty)"}</p>
       </CardContent>
     </Card>
 
@@ -244,11 +270,15 @@
           <div class="col">
             <p class="label">Checkbox</p>
             <FormControlLabel label="Checked"
-              >{#snippet control()}<Checkbox bind:checked={checkA} />{/snippet}</FormControlLabel
+              >{#snippet control()}<Checkbox
+                  checked={checkA}
+                  onChange={(_e, next) => (checkA = next)}
+                />{/snippet}</FormControlLabel
             >
             <FormControlLabel label="Unchecked"
               >{#snippet control()}<Checkbox
-                  bind:checked={checkB}
+                  checked={checkB}
+                  onChange={(_e, next) => (checkB = next)}
                   color="secondary"
                 />{/snippet}</FormControlLabel
             >
@@ -256,7 +286,10 @@
               >{#snippet control()}<Checkbox indeterminate />{/snippet}</FormControlLabel
             >
             <FormControlLabel label="Small"
-              >{#snippet control()}<Checkbox size="small" checked />{/snippet}</FormControlLabel
+              >{#snippet control()}<Checkbox
+                  size="small"
+                  defaultChecked
+                />{/snippet}</FormControlLabel
             >
             <FormControlLabel label="Disabled" disabled
               >{#snippet control()}<Checkbox disabled />{/snippet}</FormControlLabel
@@ -264,7 +297,11 @@
           </div>
           <div>
             <p class="label">Radio ({radio})</p>
-            <RadioGroup bind:value={radio} aria-label="Radio demo">
+            <RadioGroup
+              value={radio}
+              onChange={(_e, next) => (radio = String(next))}
+              aria-label="Radio demo"
+            >
               <FormControlLabel label="Alpha"
                 >{#snippet control()}<Radio value="a" />{/snippet}</FormControlLabel
               >
@@ -279,18 +316,22 @@
           <div class="col">
             <p class="label">Switch</p>
             <FormControlLabel label="On"
-              >{#snippet control()}<Switch bind:checked={sw1} />{/snippet}</FormControlLabel
+              >{#snippet control()}<Switch
+                  checked={sw1}
+                  onChange={(_e, next) => (sw1 = next)}
+                />{/snippet}</FormControlLabel
             >
             <FormControlLabel label="Off"
               >{#snippet control()}<Switch
-                  bind:checked={sw2}
+                  checked={sw2}
+                  onChange={(_e, next) => (sw2 = next)}
                   color="secondary"
                 />{/snippet}</FormControlLabel
             >
             <FormControlLabel label="Small"
               >{#snippet control()}<Switch
                   size="small"
-                  checked
+                  defaultChecked
                   color="success"
                 />{/snippet}</FormControlLabel
             >
@@ -301,13 +342,15 @@
           <div>
             <p class="label">Slider ({slider})</p>
             <Slider
-              bind:value={slider}
+              value={slider}
+              onChange={(_e, next) => (slider = next)}
               valueLabelDisplay="auto"
               aria-label="Slider with auto label"
             />
             <p class="label">marks + on ({slider2})</p>
             <Slider
-              bind:value={slider2}
+              value={slider2}
+              onChange={(_e, next) => (slider2 = next)}
               min={0}
               max={100}
               step={10}
@@ -334,8 +377,20 @@
           <Chip label="Default" />
           <Chip label="Outlined" variant="outlined" />
           {#each colors.slice(0, 6) as c}<Chip label={c} color={c} />{/each}
-          <Chip label="Deletable" onDelete={() => {}} />
-          <Chip label="Clickable" clickable onclick={() => {}} />
+          {#if deletable}
+            <Chip label="Deletable" onDelete={() => (deletable = false)} />
+          {:else}
+            <Button variant="text" size="small" onclick={() => (deletable = true)}>
+              Restore chip
+            </Button>
+          {/if}
+          <Chip
+            label="Clickable"
+            clickable
+            color={clicked ? "secondary" : "default"}
+            aria-pressed={clicked}
+            onclick={() => (clicked = !clicked)}
+          />
           <Chip label="Small" size="small" color="primary" />
           <Chip label="Disabled" disabled />
         </div>
@@ -365,8 +420,9 @@
           {#each severities as s}
             <Alert severity={s}>{s} / standard</Alert>
           {/each}
-          {#each severities as s}
-            <Alert severity={s} variant="filled" onClose={() => {}}>{s} / filled with onClose</Alert
+          {#each severities.filter((s) => !dismissed.includes(s)) as s (s)}
+            <Alert severity={s} variant="filled" onClose={() => (dismissed = [...dismissed, s])}
+              >{s} / filled with onClose</Alert
             >
           {/each}
           {#each severities as s}
@@ -375,6 +431,9 @@
         </div>
         <div class="wrap">
           <Button variant="outlined" onclick={() => (snack = true)}>Open Snackbar</Button>
+          {#if dismissed.length > 0}
+            <Button variant="text" onclick={() => (dismissed = [])}>Restore alerts</Button>
+          {/if}
         </div>
         <p class="label">LinearProgress</p>
         <div class="stack">
@@ -409,7 +468,7 @@
       />
       <CardContent>
         <h3 id="g-nav" class="clay-sr-only">Navigation and surfaces</h3>
-        <Tabs bind:value={tab} aria-label="Gallery tabs">
+        <Tabs value={tab} onChange={(_e, next) => (tab = next)} aria-label="Gallery tabs">
           <Tab value="one" label="One" />
           <Tab value="two" label="Two" />
           <Tab value="three" label="Disabled" disabled />
@@ -421,7 +480,7 @@
           {/snippet}
         </Tabs>
         <Divider />
-        <Accordion bind:expanded={acc}>
+        <Accordion expanded={acc} onChange={(_e, next) => (acc = next)}>
           {#snippet summary()}Accordion summary ({acc ? "open" : "closed"}){/snippet}
           <p>Native details and summary underneath.</p>
         </Accordion>
@@ -460,6 +519,29 @@
       </CardContent>
     </Card>
 
+    <Card as="section" aria-labelledby="g-table">
+      <CardHeader
+        title="DataTable"
+        subheader="Quick filter, sortable columns, row selection, and pagination"
+      />
+      <CardContent>
+        <h3 id="g-table" class="clay-sr-only">DataTable</h3>
+        <DataTable
+          {rows}
+          {columns}
+          getRowId={(row) => row.set}
+          rowHeader="name"
+          label="Sample shelf inventory"
+          quickFilter
+          checkboxSelection
+          pagination
+          paginationModel={pagination}
+          onPaginationModelChange={(next) => (pagination = next)}
+          pageSizeOptions={[3, 5]}
+        />
+      </CardContent>
+    </Card>
+
     <Card as="section" aria-labelledby="g-type">
       <CardHeader title="Typography and overlays" subheader="variants, Dialog" />
       <CardContent>
@@ -476,8 +558,8 @@
       </CardActions>
     </Card>
   </div>
-  <Snackbar bind:open={snack} message="Snackbar from the gallery" />
-  <Dialog bind:open={dialog} title="Dialog title" maxWidth="xs">
+  <Snackbar open={snack} onClose={() => (snack = false)} message="Snackbar from the gallery" />
+  <Dialog open={dialog} onClose={() => (dialog = false)} title="Dialog title" maxWidth="xs">
     <p>Native dialog: focus is trapped, Escape closes, focus returns to the opener.</p>
     {#snippet actions()}
       <Button variant="text" onclick={() => (dialog = false)}>Close</Button>

@@ -33,6 +33,7 @@
 </script>
 
 <fieldset
+  {...rest}
   class={["clay clay-button-group", className]}
   data-variant={variant}
   data-orientation={orientation}
@@ -42,7 +43,6 @@
   data-size={size}
   data-motion={motion}
   {disabled}
-  {...rest}
 >
   {@render children?.()}
 </fieldset>

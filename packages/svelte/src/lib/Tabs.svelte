@@ -20,7 +20,10 @@
   import type { MotionPreset } from "@claymo/core";
 
   interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "role" | "onchange"> {
+    /** Controlled selection. Update it in `onChange` to accept user selection. */
     value?: TabValue;
+    /** Initial selection when uncontrolled. */
+    defaultValue?: TabValue;
     onChange?: (event: Event, value: TabValue) => void;
     variant?: TabsVariant;
     "aria-label": string;
@@ -33,7 +36,8 @@
   }
 
   let {
-    value = $bindable(),
+    value,
+    defaultValue,
     onChange,
     variant,
     motion,
@@ -48,11 +52,13 @@
   const uid = $props.id();
   const ids = tabIds(uid);
   const list = $derived(tabListRecipe({ variant, label }));
+  let localValue = $state<TabValue | undefined>(untrack(() => defaultValue));
+  const selected = $derived(value !== undefined ? value : localValue);
   let enabled = $state<TabValue[]>([]);
 
   setContext<TabsContext>("clay-tabs", {
     get value() {
-      return value;
+      return selected;
     },
     get enabled() {
       return enabled;
@@ -60,8 +66,8 @@
     ids,
     // User request only: parent-driven `value` updates never call onChange.
     select(event, next) {
-      if (next === value) return;
-      value = next;
+      if (next === selected) return;
+      if (value === undefined) localValue = next;
       onChange?.(event, next);
     },
     register(own) {
@@ -75,7 +81,7 @@
   });
 </script>
 
-<div class={["clay-tabs", className]} data-motion={motion} {...rest}>
+<div {...rest} class={["clay-tabs", className]} data-motion={motion}>
   <div class={list.className} {...list.attrs}>
     {@render children?.()}
   </div>

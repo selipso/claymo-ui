@@ -28,13 +28,13 @@ const recipe = checkboxRecipe({ color, size });
 ---
 
 <input
+  {...rest}
   type="checkbox"
   {...recipe.attrs}
   class:list={[recipe.className, className]}
   data-clay-indeterminate={indeterminate ? "" : undefined}
   checked={checked ?? defaultChecked}
   data-motion={motion}
-  {...rest}
 />
 
 <script>

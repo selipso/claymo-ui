@@ -72,7 +72,7 @@ function createOpenState(props: OpenProps): Signal<boolean> {
 }
 
 function hasContent(value: JSX.Element): boolean {
-  return value != null && typeof value !== "boolean";
+  return value != null && value !== "" && typeof value !== "boolean";
 }
 
 interface ModalRootProps extends Omit<
@@ -164,8 +164,8 @@ export function Dialog(props: DialogProps) {
 
   return (
     <ModalRoot
-      {...recipe().attrs}
       {...rest}
+      {...recipe().attrs}
       state={state}
       onRequestClose={props.onClose}
       class={[recipe().className, props.class]}
@@ -240,13 +240,12 @@ export function Drawer(props: DrawerProps) {
     "style",
     "ref",
   ]);
-  const modalRest = omit(rest, ["tabindex"]);
   const variant = () => props.variant ?? "temporary";
   const style = createMemo(() => {
     const native = props.style;
     const width = `${props.width ?? 280}px`;
     return typeof native === "string"
-      ? `${native};--clay-drawer-width:${width}`
+      ? `${native ? `${native};` : ""}--clay-drawer-width:${width}`
       : { ...(native || undefined), "--clay-drawer-width": width };
   });
 
@@ -269,7 +268,7 @@ export function Drawer(props: DrawerProps) {
       }
     >
       <ModalRoot
-        {...modalRest}
+        {...(rest as JSX.IntrinsicElements["dialog"])}
         ref={[props.ref as JSX.Ref<HTMLDialogElement>]}
         class={["clay clay-drawer", props.class]}
         hidden={props.hidden}
@@ -322,20 +321,20 @@ export function Tabs(props: TabsProps) {
     "children",
   ]);
   const [local, setLocal] = createSignal(untrack(() => props.defaultValue));
-  const controlled = "value" in props;
+  const controlled = () => props.value !== undefined;
   const [enabled, setEnabled] = createSignal<readonly TabValue[]>([]);
   const ids = tabIds(`clay-tabs-${createUniqueId()}`);
   const list = createMemo(() =>
     tabListRecipe({ variant: props.variant, label: props["aria-label"] }),
   );
-  const selected = () => (controlled ? props.value : local());
+  const selected = () => (controlled() ? props.value : local());
   const context: TabsState = {
     selected,
     enabled,
     ids,
     select(event, next) {
       if (next === selected()) return;
-      if (!controlled) setLocal(next);
+      if (!controlled()) setLocal(next);
       props.onChange?.(event, next);
     },
     register(value) {
@@ -388,16 +387,15 @@ export function Tab(props: TabProps) {
     "onKeyDown",
   ]);
   const context = useContext(TabsContext);
-  const recipe = createMemo(() => {
-    const result = tabRecipe({
+  const recipe = createMemo(() =>
+    tabRecipe({
       value: props.value,
       selected: context.selected(),
       enabled: context.enabled(),
       ids: context.ids,
-    });
-    if (props.disabled) result.attrs.tabindex = -1;
-    return result;
-  });
+      disabled: props.disabled,
+    }),
+  );
   const icon = createMemo(() => props.icon);
   createEffect(
     () => (props.disabled ? undefined : props.value),
@@ -406,8 +404,8 @@ export function Tab(props: TabProps) {
 
   return (
     <button
-      {...recipe().attrs}
       {...rest}
+      {...recipe().attrs}
       class={[recipe().className, props.class]}
       data-motion={props.motion}
       disabled={props.disabled}
@@ -447,8 +445,8 @@ export function TabPanel(props: TabPanelProps) {
   );
   return (
     <div
-      {...recipe().attrs}
       {...rest}
+      {...recipe().attrs}
       class={[recipe().className, props.class]}
       hidden={recipe().attrs.hidden === true || props.hidden}
     >
@@ -742,7 +740,7 @@ export function Skeleton(props: SkeletonProps) {
     const { width, height } = dimensions();
     if (width === undefined && height === undefined) return native;
     if (typeof native === "string") {
-      return `${native};${width === undefined ? "" : `width:${width};`}${height === undefined ? "" : `height:${height};`}`;
+      return `${native ? `${native};` : ""}${width === undefined ? "" : `width:${width};`}${height === undefined ? "" : `height:${height};`}`;
     }
     const merged = { ...(native || undefined) };
     if (width !== undefined) merged.width = width;

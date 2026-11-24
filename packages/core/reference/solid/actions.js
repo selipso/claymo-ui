@@ -216,6 +216,12 @@ export default function Example() {
   },
   Chip: {
     required: ["label"],
+    props: {
+      onDelete: {
+        description:
+          "Callback (event: MouseEvent | KeyboardEvent) => void. Providing this callback shows a separate remove button; the caller owns visibility.",
+      },
+    },
     content: [
       "avatar and icon: optional leading JSX. The label prop provides the visible text.",
       "deleteIcon: optional JSX replacing the remove glyph. The remove button keeps the accessible name Remove {label}.",
@@ -266,6 +272,13 @@ export default function Example() {
       title: {
         type: "string",
         description: "Description text. An empty title with no JSX content suppresses the tooltip.",
+      },
+      onOpen: {
+        description: "Callback (event: Event) => void reported on hover or focus.",
+      },
+      onClose: {
+        description:
+          "Callback (event: Event, reason: 'leave' | 'escapeKeyDown') => void reported on pointer/focus leave or Escape.",
       },
     },
     content: [

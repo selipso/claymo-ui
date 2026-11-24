@@ -87,7 +87,7 @@ const documentOrder = [...view.ordered, ...view.models.filter((model) => !shown.
 const selected = new Set(rowSelectionModel);
 const hasToolbar = quickFilter || Astro.slots.has("toolbar");
 const rowsPerPageId = instanceId("clay-data-table-rows");
-const span = view.columns.length + (checkboxSelection ? 1 : 0);
+const span = Math.max(1, view.columns.length + (checkboxSelection ? 1 : 0));
 ---
 
 <div
