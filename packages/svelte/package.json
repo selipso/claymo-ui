@@ -1,6 +1,6 @@
 {
   "name": "@claymo/svelte",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Svelte 5 bridge for the Claymo claymorphic design system.",
   "license": "MIT",
   "publishConfig": {
@@ -26,7 +26,7 @@
     "check": "svelte-check --tsconfig ./tsconfig.json --fail-on-warnings"
   },
   "dependencies": {
-    "@claymo/core": "0.2.0"
+    "@claymo/core": "0.3.0"
   },
   "peerDependencies": {
     "svelte": "^5.57.0"

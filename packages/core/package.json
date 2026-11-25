@@ -1,6 +1,6 @@
 {
   "name": "@claymo/core",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Claymorphic design system core: CSS, server-safe component recipes, and DOM behavior.",
   "license": "MIT",
   "publishConfig": {

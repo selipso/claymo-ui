@@ -1,6 +1,6 @@
 {
   "name": "@claymo/astro",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Astro bridge for the Claymo claymorphic design system: server-rendered HTML, scripts only for interactive components.",
   "license": "MIT",
   "publishConfig": {
@@ -27,7 +27,7 @@
     "check": "astro check"
   },
   "dependencies": {
-    "@claymo/core": "0.2.0"
+    "@claymo/core": "0.3.0"
   },
   "peerDependencies": {
     "@astrojs/svelte": "^7.0.0 || ^8.0.0 || ^9.0.0",

@@ -1,6 +1,6 @@
 {
   "name": "@claymo/solid",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Solid 2 components for the Claymo design system.",
   "license": "MIT",
   "type": "module",
@@ -25,7 +25,7 @@
     "check": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
-    "@claymo/core": "0.2.0"
+    "@claymo/core": "0.3.0"
   },
   "peerDependencies": {
     "@solidjs/web": "^2.0.3",
