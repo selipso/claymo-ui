@@ -38,6 +38,7 @@ const geometry = circularProgress({ variant, min, max, value, size, thickness })
 ---
 
 <svg
+  {...rest}
   class:list={["clay-circular-progress", className]}
   data-variant={variant}
   data-disable-shrink={disableShrink ? "" : undefined}
@@ -50,7 +51,6 @@ const geometry = circularProgress({ variant, min, max, value, size, thickness })
   width={geometry.width}
   height={geometry.width}
   viewBox={`0 0 ${geometry.diameter} ${geometry.diameter}`}
-  {...rest}
 >
   {enableTrackSlot && (
     <circle

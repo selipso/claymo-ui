@@ -13,8 +13,8 @@ type Props = Omit<HTMLAttributes<"input">, "color" | "size" | "value"> & {
   error?: boolean;
   fullWidth?: boolean;
   rows?: number;
-  cols?: number;
-  wrap?: HTMLAttributes<"textarea">["wrap"];
+  cols?: number | string;
+  wrap?: "hard" | "soft" | "off";
   size?: Exclude<Size, "large">;
   color?: Color;
 } & (

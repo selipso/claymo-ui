@@ -1,4 +1,5 @@
 ---
+import type { HTMLAttributes } from "astro/types";
 import {
   autocompleteDefaults,
   autocompleteInputValue,
@@ -10,7 +11,12 @@ import {
 import Chip from "./Chip.astro";
 import { instanceId } from "./ids.ts";
 
-type Props = AutocompleteProps;
+type Props = AutocompleteProps & {
+  class?: HTMLAttributes<"div">["class"];
+  /** Id of the associated form when the control is not nested in it. */
+  form?: string;
+  "aria-describedby"?: string;
+};
 
 const {
   options,
@@ -28,6 +34,9 @@ const {
   size,
   id: idProp,
   name,
+  form,
+  "aria-describedby": describedBy,
+  class: className,
   filterSelectedOptions = false,
   noOptionsText = autocompleteDefaults.noOptionsText,
   addOptionText = autocompleteDefaults.addOptionText,
@@ -37,11 +46,19 @@ const labelId = `${id}-label`;
 const listId = `${id}-listbox`;
 const normalized = normalizeAutocompleteOptions(options);
 const selected = autocompleteSelectedValues(value === undefined ? defaultValue : value, multiple);
-const recipe = textFieldRecipe({ id, size, error, disabled, fullWidth, helperText });
+const recipe = textFieldRecipe({
+  id,
+  size,
+  error,
+  disabled,
+  fullWidth,
+  helperText,
+  describedBy,
+});
 ---
 
 <div
-  class="clay-text-field clay-autocomplete"
+  class:list={["clay-text-field clay-autocomplete", className]}
   {...recipe.root}
   data-clay-autocomplete
   data-options={JSON.stringify(options)}
@@ -84,6 +101,7 @@ const recipe = textFieldRecipe({ id, size, error, disabled, fullWidth, helperTex
         required={required && selected.length === 0}
         {placeholder}
         {disabled}
+        {form}
         {...recipe.input}
         value={autocompleteInputValue(normalized, selected, multiple)}
       />
@@ -108,7 +126,7 @@ const recipe = textFieldRecipe({ id, size, error, disabled, fullWidth, helperTex
     </p>
   )}
   <div hidden data-autocomplete-fields>
-    {name && selected.map((item) => <input type="hidden" {name} value={item} {disabled} />)}
+    {name && selected.map((item) => <input type="hidden" {name} value={item} {disabled} {form} />)}
   </div>
   {multiple && (
     <template>

@@ -57,11 +57,15 @@ export function textFieldRecipe(o: TextFieldRecipeOptions): TextFieldRecipe {
   const describedBy = [o.helperText ? helperId : undefined, o.describedBy]
     .filter(Boolean)
     .join(" ");
+  const disabled =
+    o.disabled === true ||
+    o.disabled === "" ||
+    (typeof o.disabled === "string" && o.disabled !== "false");
   return {
     helperId,
     root: {
       "data-full-width": flag(o.fullWidth),
-      "data-disabled": flag(Boolean(o.disabled)),
+      "data-disabled": flag(disabled),
       "data-color": o.color ?? textFieldDefaults.color,
       "data-size": o.size ?? textFieldDefaults.size,
       "data-variant": o.variant ?? textFieldDefaults.variant,

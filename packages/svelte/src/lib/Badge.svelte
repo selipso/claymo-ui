@@ -42,7 +42,7 @@
   );
 </script>
 
-<span class="clay-badge {className}" data-motion={motion} {...rest}>
+<span {...rest} class={["clay-badge", className]} data-motion={motion}>
   {@render children?.()}
   {#if text !== undefined}
     <span

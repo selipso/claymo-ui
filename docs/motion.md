@@ -27,7 +27,7 @@ The nearest preset wins. Each preset starts from the defaults, so a nested prese
 | ------------- | -------------------------------------------------------------------- |
 | Whole app     | `<html data-motion="lift">`, next to `data-theme` and `data-palette` |
 | One region    | `data-motion="fade"` or `class="clay-motion-fade"` on any container  |
-| One component | The `motion` prop, with the same name in both bridges                |
+| One component | The same `motion` prop in every bridge                               |
 | One value     | A token, e.g. `.toolbar { --clay-motion-duration: 120ms; }`          |
 
 Astro:
@@ -48,6 +48,16 @@ Svelte:
 </script>
 
 <Button motion="lift-push">Record</Button>
+```
+
+Solid:
+
+```tsx
+import { Button } from "@claymo/solid";
+
+export default function RecordButton() {
+  return <Button motion="lift-push">Record</Button>;
+}
 ```
 
 The prop renders `data-motion` on the component's outer element, so it also applies to everything the component draws, such as a slider's thumb or a dialog's backdrop. These components take it: Accordion, Alert, Badge, Button, ButtonGroup, Checkbox, Chip, Dialog, Drawer, IconButton, ListItemButton, Radio, RadioGroup, Slider, Snackbar, Switch, Tab, Tabs and Tooltip. Any other element can use the attribute or class.

@@ -19,6 +19,7 @@
         | "aria-valuemin"
         | "aria-valuemax"
         | "aria-valuenow"
+        | "children"
       >,
       CircularProgressOptions {
     "aria-label": string;
@@ -43,7 +44,8 @@
 </script>
 
 <svg
-  class="clay-circular-progress {className}"
+  {...rest}
+  class={["clay-circular-progress", className]}
   data-variant={variant}
   data-disable-shrink={disableShrink ? "" : undefined}
   role="progressbar"
@@ -55,7 +57,6 @@
   width={geometry.width}
   height={geometry.width}
   viewBox="0 0 {geometry.diameter} {geometry.diameter}"
-  {...rest}
 >
   {#if enableTrackSlot}
     <circle

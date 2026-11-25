@@ -29,7 +29,7 @@
 
   let {
     defaultValue,
-    value = $bindable(),
+    value,
     name,
     row = false,
     disabled = false,
@@ -45,25 +45,37 @@
 
   const uid = $props.id();
   const groupName = $derived(name ?? `clay-radio-${uid}`);
-  let mounted = $state(false);
-  const selection = $derived(mounted ? value : (value ?? defaultValue));
-  const initialValue = untrack(() => selection);
-  const resetValue = $derived(defaultValue ?? initialValue);
+  const initialDefault = untrack(() => defaultValue);
+  let localValue = $state<string | number | undefined>(initialDefault);
+  const selection = $derived(value !== undefined ? value : localValue);
+  const resetValue = $derived(value !== undefined ? value : initialDefault);
   let root: HTMLDivElement;
 
-  // Radio inputs reset natively. Keep the group's Svelte binding in sync, including controls
-  // associated with a non-ancestor form via the native `form` attribute.
+  function syncRadios() {
+    if (!root) return;
+    const expected = selection === undefined ? undefined : String(selection);
+    for (const input of root.querySelectorAll<HTMLInputElement>("[data-clay-radio-member]")) {
+      if (input.closest(".clay-radio-group") !== root) continue;
+      const shouldCheck = expected !== undefined && input.value === expected;
+      if (input.checked !== shouldCheck) input.checked = shouldCheck;
+    }
+  }
+
+  // Radio inputs reset natively. Keep the group's state in sync, including controls
+  // associated with a non-ancestor form via the native `form` attribute and Shadow DOM.
   onMount(() => {
-    value ??= initialValue;
-    mounted = true;
+    const target = root.getRootNode();
     return on(
-      root.ownerDocument,
+      target,
       "reset",
       (event) => {
+        if (event.defaultPrevented) return;
         for (const input of root.querySelectorAll<HTMLInputElement>("[data-clay-radio-member]")) {
           if (input.form !== event.target || input.closest(".clay-radio-group") !== root) continue;
-          queueMicrotask(() => {
-            if (!event.defaultPrevented) value = resetValue;
+          setTimeout(() => {
+            if (event.defaultPrevented) return;
+            if (value === undefined) localValue = initialDefault;
+            syncRadios();
           });
           break;
         }
@@ -79,6 +91,9 @@
     get value() {
       return selection;
     },
+    get controlled() {
+      return value !== undefined;
+    },
     get disabled() {
       return disabled;
     },
@@ -89,25 +104,28 @@
       return required;
     },
     select(next: string | number, event: ChangeEv) {
-      value = next;
+      if (value === undefined) localValue = next;
       onChange?.(event, next);
+      if (value !== undefined) {
+        queueMicrotask(syncRadios);
+      }
     },
   });
 </script>
 
 <!-- Name the group with aria-label or aria-labelledby (passed through rest). -->
 <div
+  {...rest}
   bind:this={root}
   role="radiogroup"
   class={["clay-radio-group", className]}
-  data-row={row || undefined}
+  data-row={row ? "" : undefined}
   data-motion={motion}
   aria-required={required || undefined}
-  {...rest}
 >
   {#if options}
     {#each options as option}
-      <FormControlLabel label={option.label}>
+      <FormControlLabel label={option.label} disabled={disabled || option.disabled}>
         {#snippet control()}
           <Radio
             value={option.value}

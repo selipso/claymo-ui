@@ -4,7 +4,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { readProject } from "./project.js";
 import { createServer } from "./server.js";
 
-// `--framework astro|svelte` wins; otherwise the project in the working directory decides.
+// An explicit --framework wins; otherwise the project in the working directory decides.
 const { values } = parseArgs({ options: { framework: { type: "string" } } });
 const project = readProject(process.cwd());
 const framework = values.framework ?? project.framework;

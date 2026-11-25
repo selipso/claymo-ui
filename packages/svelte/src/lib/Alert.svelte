@@ -9,7 +9,7 @@
   } from "@claymo/core/actions";
   import type { MotionPreset, Severity } from "@claymo/core";
 
-  interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "role"> {
+  interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "color"> {
     severity?: Severity;
     color?: Severity;
     variant?: AlertVariant;
@@ -20,7 +20,6 @@
     /** When set, renders a close button (aria-label "Close"). */
     onClose?: (event: MouseEvent) => void;
     closeText?: string;
-    role?: string;
     /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
     motion?: MotionPreset;
     children?: Snippet;

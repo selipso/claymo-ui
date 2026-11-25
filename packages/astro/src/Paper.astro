@@ -9,6 +9,6 @@ const recipe = paperRecipe({ elevation, variant, square, inflated, as });
 const Tag = recipe.tag;
 ---
 
-<Tag {...recipe.attrs} class:list={[recipe.className, className]} {...rest}>
+<Tag {...rest} {...recipe.attrs} class:list={[recipe.className, className]}>
   <slot />
 </Tag>

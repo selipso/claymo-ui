@@ -4,7 +4,13 @@
   import type { MotionPreset } from "@claymo/core";
   import { nativeAction } from "@claymo/core/actions";
 
-  interface Props extends HTMLButtonAttributes, Pick<HTMLAnchorAttributes, "target" | "rel"> {
+  interface Props
+    extends
+      HTMLButtonAttributes,
+      Pick<
+        HTMLAnchorAttributes,
+        "download" | "hreflang" | "ping" | "referrerpolicy" | "rel" | "target"
+      > {
     selected?: boolean;
     disabled?: boolean;
     dense?: boolean;

@@ -12,7 +12,14 @@
 
 <section>
   <h2>Tabs</h2>
-  <Tabs bind:value={tab} aria-label="Account" onChange={() => changes++}>
+  <Tabs
+    value={tab}
+    aria-label="Account"
+    onChange={(_event, next) => {
+      tab = next;
+      changes++;
+    }}
+  >
     <Tab value="profile" label="Profile" />
     <Tab value="security" label="Security" />
     <Tab value="danger" label="Danger" disabled />
@@ -30,8 +37,15 @@
   </Button>
 </section>
 
-<form id="form" method="get" action="/svelte/">
-  <label><Checkbox name="terms" value="yes" bind:checked={terms} /> Accept terms</label>
+<form id="form" method="get" action="/svelte/" onreset={() => (terms = false)}>
+  <label>
+    <Checkbox
+      name="terms"
+      value="yes"
+      checked={terms}
+      onChange={(_event, next) => (terms = next)}
+    /> Accept terms
+  </label>
   <label>
     <Checkbox name="mixed" value="yes" indeterminate={mixed} onChange={() => (mixed = false)} />
     Mixed
@@ -44,7 +58,7 @@
 
 <section>
   <Button id="open" onclick={() => (open = true)}>Open dialog</Button>
-  <Dialog bind:open title="Locked dialog" onClose={(_event, reason) => rejections.push(reason)}>
+  <Dialog {open} title="Locked dialog" onClose={(_event, reason) => rejections.push(reason)}>
     <p>Escape and backdrop requests are rejected.</p>
     {#snippet actions()}
       <Button onclick={() => (open = false)}>Close</Button>

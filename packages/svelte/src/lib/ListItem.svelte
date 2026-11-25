@@ -23,11 +23,11 @@
 </script>
 
 <li
+  {...rest}
   class={["clay-list-item", className]}
   data-padded={!disablePadding ? "" : undefined}
   data-gutters={!disableGutters ? "" : undefined}
   data-divider={divider ? "" : undefined}
-  {...rest}
 >
   {@render children?.()}
   {#if secondaryAction}

@@ -28,7 +28,7 @@ const label = badgeLabel(
 );
 ---
 
-<span class:list={["clay-badge", className]} data-motion={motion} {...rest}>
+<span {...rest} class:list={["clay-badge", className]} data-motion={motion}>
   <slot />
   {label !== undefined && (
     <span

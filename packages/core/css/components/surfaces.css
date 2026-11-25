@@ -236,8 +236,12 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-/* The default caption and overline elements need a box for vertical margins. */
-.clay-typography:is([data-variant="caption"], [data-variant="overline"]) {
+/* Default inline elements for button, caption and overline need a box for vertical margins. */
+.clay-typography:is(span, label):is(
+    [data-variant="button"],
+    [data-variant="caption"],
+    [data-variant="overline"]
+  ) {
   display: inline-block;
 }
 .clay-typography:is([data-tcolor="text.primary"], [data-tcolor="textPrimary"]) {

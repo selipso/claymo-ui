@@ -1,5 +1,5 @@
 import { afterFormReset } from "./form.ts";
-import { upgrader } from "./upgrade.ts";
+import { disposableUpgrader } from "./upgrade.ts";
 
 /**
  * Controlled mixed state (the parent owns it, like MUI). The browser clears `indeterminate` on click;
@@ -29,7 +29,7 @@ export function attachIndeterminate(input: HTMLInputElement): () => void {
   return afterFormReset(input, apply);
 }
 
-export const upgradeCheckboxes = upgrader<HTMLInputElement>(
+export const upgradeCheckboxes = disposableUpgrader<HTMLInputElement>(
   "input[data-clay-indeterminate]",
   attachIndeterminate,
 );

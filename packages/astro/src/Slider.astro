@@ -2,6 +2,7 @@
 import type { HTMLAttributes } from "astro/types";
 import type { Color, MotionPreset, Size } from "@claymo/core";
 import { sliderMarks, sliderPercent, sliderValue } from "@claymo/core/input";
+import { instanceId } from "./ids.ts";
 
 type Props = Omit<
   HTMLAttributes<"input">,
@@ -33,9 +34,12 @@ const {
   valueLabelDisplay = "off",
   marks = false,
   motion,
+  id: idProp,
   class: className,
   ...rest
 } = Astro.props;
+const id = idProp ?? instanceId("clay-slider");
+const isDisabled = disabled === true || (disabled as unknown) === "";
 const current = sliderValue(value ?? defaultValue ?? min, min, max, step);
 const pct = sliderPercent(current, min, max);
 const ticks = marks ? sliderMarks(min, max, step) : [];
@@ -44,9 +48,9 @@ const ticks = marks ? sliderMarks(min, max, step) : [];
 <div
   class:list={["clay-slider", className]}
   data-clay-slider
-  data-disabled={disabled || undefined}
-  data-has-label={valueLabelDisplay !== "off" || undefined}
-  data-has-marks={ticks.length > 0 || undefined}
+  data-disabled={isDisabled ? "" : undefined}
+  data-has-label={valueLabelDisplay !== "off" ? "" : undefined}
+  data-has-marks={ticks.length > 0 ? "" : undefined}
   data-color={color}
   data-size={size}
   data-label={valueLabelDisplay}
@@ -59,6 +63,8 @@ const ticks = marks ? sliderMarks(min, max, step) : [];
     </span>
   )}
   <input
+    {...rest}
+    {id}
     class="clay clay-slider__input"
     type="range"
     {min}
@@ -66,7 +72,6 @@ const ticks = marks ? sliderMarks(min, max, step) : [];
     {step}
     {disabled}
     value={current}
-    {...rest}
   />
   {ticks.length > 0 && (
     <span class="clay-slider__marks" aria-hidden="true">
@@ -74,7 +79,7 @@ const ticks = marks ? sliderMarks(min, max, step) : [];
         <span
           class="clay-slider__tick"
           data-value={tick}
-          data-active={tick <= current || undefined}
+          data-active={tick <= current ? "" : undefined}
           style={`--clay-slider-tick:${sliderPercent(tick, min, max)}%`}
         ></span>
       ))}

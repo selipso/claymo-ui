@@ -34,6 +34,7 @@ test("exposes four read-only tools in workflow order, with workflow instructions
   );
   assert.ok(tools.every((tool) => tool.annotations?.readOnlyHint));
   assert.match(client.getInstructions() ?? "", /list_themes[\s\S]*get_setup[\s\S]*get_components/);
+  assert.match(client.getInstructions() ?? "", /framework \(astro, svelte, solid\)/);
 });
 
 test("Astro setup injects CSS through its config and sets palette and mode on <html>", async () => {
@@ -84,13 +85,29 @@ test("SvelteKit setup ignores svelteIslands", async () => {
   assert.ok(setup.files.some((file) => file.content.includes('<html lang="en">')));
 });
 
-test("lists the same importable catalog for both bridges, each with a purpose", async () => {
+test("Solid setup ignores Astro-only island settings", async () => {
+  const client = await connect({ framework: "solid" });
+  const args = { palette: "reef", mode: "light" };
+  const setup = json(await client.callTool({ name: "get_setup", arguments: args }));
+  const withIslands = json(
+    await client.callTool({ name: "get_setup", arguments: { ...args, svelteIslands: true } }),
+  );
+  assert.deepEqual(withIslands, setup);
+  assert.equal(setup.framework, "solid");
+});
+
+test("lists the same importable catalog for all bridges, each with a purpose", async () => {
   const client = await connect();
   const list = async (framework) =>
     json(await client.callTool({ name: "list_components", arguments: { framework } }));
   const astro = await list("astro");
   assert.deepEqual(astro, await list("svelte"));
-  assert.ok(astro.every((c) => c.purpose.length > 0));
+  const solid = await list("solid");
+  assert.deepEqual(
+    solid.map((component) => component.name),
+    astro.map((component) => component.name),
+  );
+  assert.ok([...astro, ...solid].every((component) => component.purpose.length > 0));
 });
 
 test("list_themes describes motion presets, and animated components take a motion prop", async () => {
@@ -128,17 +145,35 @@ test("one get_components call returns every requested component, in order", asyn
   }
 });
 
+test("Solid Alert does not inherit Astro's dismissal API", async () => {
+  const client = await connect();
+  const getAlert = async (framework) => {
+    const [alert] = json(
+      await client.callTool({
+        name: "get_components",
+        arguments: { framework, names: ["Alert"] },
+      }),
+    );
+    return alert;
+  };
+  const astro = await getAlert("astro");
+  const solid = await getAlert("solid");
+  assert.ok("dismissible" in astro.props.properties);
+  assert.ok(!("dismissible" in solid.props.properties));
+  assert.ok(solid.events.some((event) => event.includes("onClose")));
+});
+
 test("a detected project framework becomes the default for every tool", async () => {
-  const client = await connect({ framework: "svelte" });
-  assert.match(client.getInstructions() ?? "", /uses svelte/);
+  const client = await connect({ framework: "solid" });
+  assert.match(client.getInstructions() ?? "", /uses solid/);
   assert.equal(
     json(await client.callTool({ name: "get_setup", arguments: {} })).framework,
-    "svelte",
+    "solid",
   );
   const [button] = json(
     await client.callTool({ name: "get_components", arguments: { names: ["Button"] } }),
   );
-  assert.equal(button.framework, "svelte");
+  assert.equal(button.framework, "solid");
   // Explicit framework and Svelte islands still win when the project has different defaults.
   const astro = json(
     await client.callTool({
@@ -156,10 +191,10 @@ test("invalid input returns the valid choices", async () => {
     await errorText(client, "get_setup", { framework: "astro", palette: "neon" }),
     /reef/,
   );
-  assert.match(await errorText(client, "list_components", {}), /astro|svelte/);
+  assert.match(await errorText(client, "list_components", {}), /astro[\s\S]*svelte[\s\S]*solid/);
   assert.match(
     await errorText(client, "get_components", { framework: "astro", names: ["Carousel"] }),
     /Button/,
   );
-  assert.throws(() => createServer({ framework: "react" }), /Choose: astro, svelte/);
+  assert.throws(() => createServer({ framework: "react" }), /Choose: astro, svelte, solid/);
 });

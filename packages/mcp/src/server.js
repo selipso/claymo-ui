@@ -13,6 +13,7 @@ import {
 import manifest from "../package.json" with { type: "json" };
 
 const componentNames = [...new Set(frameworks.flatMap(listComponents))].sort();
+const frameworkChoices = frameworks.join(", ");
 
 /**
  * @param {string | undefined} framework
@@ -21,16 +22,16 @@ const componentNames = [...new Set(frameworks.flatMap(listComponents))].sort();
 function instructions(framework, svelteIslands) {
   const project = framework
     ? `This project uses ${framework} (detected); every framework argument defaults to it.\n`
-    : "Pass the project's framework (astro or svelte) to every tool.\n";
+    : `Pass the project's framework (${frameworkChoices}) to each tool that accepts it.\n`;
   const islands = svelteIslands
     ? "Astro setup enables Svelte islands by default (detected); pass svelteIslands: false to disable them.\n"
     : "";
   return `Claymo builds claymorphic (soft, inflated) UIs from npm packages. ${project}${islands}Follow these steps in order:
 1. Call list_themes. Pick ONE palette whose description fits the product, and a mode (system, light or dark). Keep the default motion preset unless the brief asks for a different feel; set another one with data-motion on <html>.
-2. Call get_setup with your palette and mode. Run its install command and write the returned files, merging the Astro integration into an existing config as noted.
+2. Call get_setup with your palette and mode. Follow its setup order: write the files for a new project or merge them into an existing one, then run its install command. Never replace an existing package.json.
 3. Call list_components. Choose components by purpose. Use ONLY names it returns.
 4. Call get_components ONCE with every chosen name. Copy the example whose title is closest to your need, then change only values its props allow.
-Rules: never invent props or components. A component's color prop is a semantic role (primary, error, ...), never a palette name or a CSS color. Theme is set once in the layout, never on components.`;
+Rules: never invent props or components. A component's color prop is a semantic role (primary, error, ...), never a palette name or a CSS color. Set theme attributes once on <html>, never on components.`;
 }
 
 /** @param {import("@claymo/core/reference").Framework | undefined} framework */
@@ -40,7 +41,7 @@ function frameworkInput(framework) {
     ? schema
         .default(framework)
         .describe(`UI framework; defaults to ${framework}, detected from this project.`)
-    : schema.describe("The UI framework of the project: astro or svelte.");
+    : schema.describe(`The UI framework of the project: ${frameworkChoices}.`);
 }
 
 const readOnly = { readOnlyHint: true, idempotentHint: true, openWorldHint: false };
@@ -61,9 +62,7 @@ export function createServer({
   svelteIslands: projectSvelteIslands = false,
 } = {}) {
   if (projectFramework !== undefined && !frameworks.some((name) => name === projectFramework))
-    throw new RangeError(
-      `Unknown framework "${projectFramework}". Choose: ${frameworks.join(", ")}.`,
-    );
+    throw new RangeError(`Unknown framework "${projectFramework}". Choose: ${frameworkChoices}.`);
   const detected = /** @type {import("@claymo/core/reference").Framework | undefined} */ (
     projectFramework
   );
@@ -92,7 +91,7 @@ export function createServer({
     {
       title: "Get Claymo setup files",
       description:
-        "Step 2. Returns the install command and setup files that load Claymo's CSS and apply the chosen palette and mode. Follow the notes for existing Astro configs.",
+        "Step 2. Returns the install command and setup files that load Claymo's CSS and apply the chosen palette and mode. Follow the notes when merging into an existing project.",
       inputSchema: {
         framework,
         palette: z.enum(palettes).default("default").describe("A palette from list_themes."),
@@ -134,7 +133,7 @@ export function createServer({
     {
       title: "Get Claymo components",
       description:
-        "Step 4. For each requested name, in order: props (JSON Schema with enums and defaults), content slots or snippets, events, and titled, complete copyable examples with imports (the first is the most common use). Request every component you need in one call.",
+        "Step 4. For each requested name, in order: props (JSON Schema with enums and defaults), content (slots, snippets, or JSX props), events, and titled, complete copyable examples with imports (the first is the most common use). Request every component you need in one call.",
       inputSchema: {
         framework,
         names: z

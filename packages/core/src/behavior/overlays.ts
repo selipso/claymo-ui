@@ -96,7 +96,11 @@ export function attachSnackbar(
     view.addEventListener(
       "keydown",
       (event) => {
-        if (event.key === "Escape" && !event.defaultPrevented) close(event, "escapeKeyDown");
+        if (event.key !== "Escape" || event.defaultPrevented) return;
+        const blockedByModal = [...doc.querySelectorAll("dialog")].some(
+          (dialog) => dialog.matches(":modal") && !dialog.contains(root),
+        );
+        if (!blockedByModal) close(event, "escapeKeyDown");
       },
       { signal },
     );

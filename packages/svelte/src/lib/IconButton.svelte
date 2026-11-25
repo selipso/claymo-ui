@@ -7,7 +7,10 @@
   interface Props
     extends
       Omit<HTMLButtonAttributes, "color" | "size" | "aria-label">,
-      Pick<HTMLAnchorAttributes, "target" | "rel"> {
+      Pick<
+        HTMLAnchorAttributes,
+        "download" | "hreflang" | "ping" | "referrerpolicy" | "rel" | "target"
+      > {
     /** Required: an icon-only control has no visible text label. */
     "aria-label": string;
     /** MUI default is "default". */

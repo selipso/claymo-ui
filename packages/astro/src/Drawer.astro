@@ -30,12 +30,13 @@ const {
 } = Astro.props;
 const drawerStyle =
   typeof style === "string"
-    ? `--clay-drawer-width:${width}px;${style}`
-    : { "--clay-drawer-width": `${width}px`, ...style };
+    ? `${style ? `${style};` : ""}--clay-drawer-width:${width}px`
+    : { ...style, "--clay-drawer-width": `${width}px` };
 ---
 
 {variant === "temporary" ? (
   <dialog
+    {...rest}
     class:list={["clay clay-drawer", className]}
     data-variant={variant}
     data-anchor={anchor}
@@ -44,7 +45,6 @@ const drawerStyle =
     data-clay-dialog
     data-clay-open={open ? "" : undefined}
     data-motion={motion}
-    {...rest}
   >
     <div class="clay-drawer__panel">
       <slot />
@@ -57,12 +57,12 @@ const drawerStyle =
   </dialog>
 ) : (
   <aside
+    {...rest}
     class:list={["clay clay-drawer", className]}
     data-variant={variant}
     data-anchor={anchor}
     style={drawerStyle}
     data-motion={motion}
-    {...rest}
     hidden={variant === "persistent" && !open ? true : rest.hidden}
   >
     <div class="clay-drawer__panel">

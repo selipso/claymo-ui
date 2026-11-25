@@ -5,6 +5,7 @@
   import LayoutDashboard from "@lucide/svelte/icons/layout-dashboard";
   import Settings from "@lucide/svelte/icons/settings";
   import { THEME_CHANGE_EVENT, readTheme, setTheme } from "../lib/theme";
+  import { formats, rows, type Shelf } from "./collection-data";
   import Save from "@lucide/svelte/icons/save";
   import Trash from "@lucide/svelte/icons/trash";
   import Plus from "@lucide/svelte/icons/plus";
@@ -75,21 +76,21 @@
   }
 
   // ---- dashboard (sample data)
-  const formats = ["Favorites", "Trade", "Wishlist", "Archive"];
-  let activeFormats = $state<string[]>(["Favorites"]);
-  let removedFormats = $state<string[]>([]);
-  const rows = [
-    { name: "Ember Sprite", set: "A1", qty: 4, price: "$1.50" },
-    { name: "Glass Compass", set: "B7", qty: 2, price: "$2.10" },
-    { name: "Quiet Tide", set: "C3", qty: 3, price: "$1.80" },
-    { name: "Lantern Moth", set: "A4", qty: 1, price: "$9.40" },
-    { name: "Iron Orchard", set: "D2", qty: 2, price: "$3.25" },
-  ];
+  let activeFormats = $state<Shelf[]>(["Favorites"]);
+  let removedFormats = $state<Shelf[]>([]);
+  const visibleRows = $derived(
+    activeFormats.length ? rows.filter((row) => activeFormats.includes(row.shelf)) : rows,
+  );
 
-  function toggleFormat(f: string) {
+  function toggleFormat(f: Shelf) {
     activeFormats = activeFormats.includes(f)
       ? activeFormats.filter((x) => x !== f)
       : [...activeFormats, f];
+  }
+
+  function removeFormat(format: Shelf) {
+    activeFormats = activeFormats.filter((item) => item !== format);
+    removedFormats = [...removedFormats, format];
   }
 
   // ---- settings form
@@ -146,7 +147,7 @@
   </List>
 {/snippet}
 
-<div class="shell">
+<div class="collection-demo">
   <AppBar>
     <span class="menu-btn">
       <IconButton aria-label="Open navigation" onclick={() => (drawerOpen = true)}>
@@ -177,7 +178,12 @@
         {@render nav()}
       </Drawer>
     </div>
-    <Drawer variant="temporary" aria-label="Main navigation" bind:open={drawerOpen}>
+    <Drawer
+      variant="temporary"
+      aria-label="Main navigation"
+      open={drawerOpen}
+      onClose={() => (drawerOpen = false)}
+    >
       {@render nav()}
     </Drawer>
 
@@ -185,7 +191,7 @@
       <Typography variant="overline" as="p" color="text.secondary"
         >Prototype · sample data · no backend</Typography
       >
-      <Tabs bind:value={tab} aria-label="App sections">
+      <Tabs value={tab} onChange={(_e, next) => (tab = next)} aria-label="App sections">
         <Tab value="dashboard" label="Dashboard">
           {#snippet icon()}<LayoutDashboard size={18} />{/snippet}
         </Tab>
@@ -252,7 +258,7 @@
                         clickable
                         onclick={() => toggleFormat(f)}
                         aria-pressed={activeFormats.includes(f)}
-                        onDelete={() => (removedFormats = [...removedFormats, f])}
+                        onDelete={() => removeFormat(f)}
                       />
                     {/each}
                     {#if removedFormats.length}
@@ -267,7 +273,7 @@
                       <tr><th>Item</th><th>Code</th><th>Qty</th><th>Price</th></tr>
                     </thead>
                     <tbody>
-                      {#each rows as r (r.name)}
+                      {#each visibleRows as r (r.name)}
                         <tr><td>{r.name}</td><td>{r.set}</td><td>{r.qty}</td><td>{r.price}</td></tr>
                       {/each}
                     </tbody>
@@ -296,11 +302,18 @@
                       save();
                     }}
                   >
-                    <TextField label="Display name" bind:value={displayName} required fullWidth />
+                    <TextField
+                      label="Display name"
+                      value={displayName}
+                      onChange={(e) => (displayName = (e.currentTarget as HTMLInputElement).value)}
+                      required
+                      fullWidth
+                    />
                     <TextField
                       label="Email"
                       type="email"
-                      bind:value={email}
+                      value={email}
+                      onChange={(e) => (email = (e.currentTarget as HTMLInputElement).value)}
                       required
                       fullWidth
                       error={emailInvalid}
@@ -309,7 +322,14 @@
                         : "Sample helper text"}
                       onblur={() => (emailTouched = true)}
                     />
-                    <TextField label="Default shelf" select bind:value={defaultFormat} fullWidth>
+                    <TextField
+                      label="Default shelf"
+                      select
+                      value={defaultFormat}
+                      onChange={(e) =>
+                        (defaultFormat = (e.currentTarget as HTMLSelectElement).value)}
+                      fullWidth
+                    >
                       <option value="main">Main shelf</option>
                       <option value="trade">Trade shelf</option>
                       <option value="wishlist">Wishlist</option>
@@ -319,14 +339,20 @@
                       label="Bio"
                       multiline
                       rows={3}
-                      bind:value={bio}
+                      value={bio}
+                      onChange={(e) => (bio = (e.currentTarget as HTMLTextAreaElement).value)}
                       fullWidth
                       variant="filled"
                     />
 
                     <fieldset class="fieldset">
                       <legend>Shelf density</legend>
-                      <RadioGroup bind:value={density} row aria-label="Shelf density">
+                      <RadioGroup
+                        value={density}
+                        onChange={(_e, next) => (density = String(next))}
+                        row
+                        aria-label="Shelf density"
+                      >
                         <FormControlLabel label="Comfortable">
                           {#snippet control()}<Radio value="comfortable" />{/snippet}
                         </FormControlLabel>
@@ -349,13 +375,22 @@
                       </FormControlLabel>
                       <div class="indent">
                         <FormControlLabel label="Updates">
-                          {#snippet control()}<Checkbox bind:checked={notify.price} />{/snippet}
+                          {#snippet control()}<Checkbox
+                              checked={notify.price}
+                              onChange={(_e, next) => (notify.price = next)}
+                            />{/snippet}
                         </FormControlLabel>
                         <FormControlLabel label="Reminders">
-                          {#snippet control()}<Checkbox bind:checked={notify.trade} />{/snippet}
+                          {#snippet control()}<Checkbox
+                              checked={notify.trade}
+                              onChange={(_e, next) => (notify.trade = next)}
+                            />{/snippet}
                         </FormControlLabel>
                         <FormControlLabel label="Announcements">
-                          {#snippet control()}<Checkbox bind:checked={notify.news} />{/snippet}
+                          {#snippet control()}<Checkbox
+                              checked={notify.news}
+                              onChange={(_e, next) => (notify.news = next)}
+                            />{/snippet}
                         </FormControlLabel>
                       </div>
                     </fieldset>
@@ -364,17 +399,22 @@
 
                     <div class="switches">
                       <FormControlLabel label="Weekly email digest">
-                        {#snippet control()}<Switch bind:checked={digest} />{/snippet}
+                        {#snippet control()}<Switch
+                            checked={digest}
+                            onChange={(_e, next) => (digest = next)}
+                          />{/snippet}
                       </FormControlLabel>
                       <FormControlLabel label="Profile visible to others">
                         {#snippet control()}<Switch
-                            bind:checked={publicProfile}
+                            checked={publicProfile}
+                            onChange={(_e, next) => (publicProfile = next)}
                             color="secondary"
                           />{/snippet}
                       </FormControlLabel>
                       <FormControlLabel label="Preview features">
                         {#snippet control()}<Switch
-                            bind:checked={betaFeatures}
+                            checked={betaFeatures}
+                            onChange={(_e, next) => (betaFeatures = next)}
                             color="success"
                           />{/snippet}
                       </FormControlLabel>
@@ -388,7 +428,8 @@
                         Alert threshold: ${threshold}
                       </Typography>
                       <Slider
-                        bind:value={threshold}
+                        value={threshold}
+                        onChange={(_e, next) => (threshold = next)}
                         min={5}
                         max={100}
                         step={5}
@@ -452,116 +493,17 @@
   </div>
 </div>
 
-<Snackbar bind:open={snackOpen} autoHideDuration={4000} message="Settings saved" />
+<Snackbar
+  open={snackOpen}
+  onClose={() => (snackOpen = false)}
+  autoHideDuration={4000}
+  message="Settings saved"
+/>
 
-<Dialog bind:open={confirmOpen} title="Reset sample data?">
+<Dialog open={confirmOpen} onClose={() => (confirmOpen = false)} title="Reset sample data?">
   <p>Demo only. Nothing is stored or deleted; the buttons just close this dialog.</p>
   {#snippet actions()}
     <Button variant="text" color="default" onclick={() => (confirmOpen = false)}>Cancel</Button>
     <Button color="error" onclick={() => (confirmOpen = false)}>Reset</Button>
   {/snippet}
 </Dialog>
-
-<style>
-  .shell {
-    min-height: 100vh;
-  }
-  .body {
-    display: flex;
-    gap: 24px;
-    align-items: flex-start;
-    padding: 24px;
-  }
-  .perm {
-    display: none;
-    position: sticky;
-    top: 88px;
-  }
-  .main {
-    flex: 1;
-    min-width: 0;
-  }
-  .menu-btn {
-    display: inline-flex;
-  }
-  .spacer {
-    flex: 1;
-  }
-  .stack {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
-    padding-top: 16px;
-  }
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
-    gap: 24px;
-  }
-  .row {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 4px 4px 20px;
-  }
-  .form {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 24px;
-    max-width: 640px;
-  }
-  .fieldset {
-    border: 0;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 8px;
-  }
-  .fieldset legend {
-    font-weight: 600;
-    margin-bottom: 8px;
-    padding: 0;
-  }
-  .indent {
-    display: grid;
-    margin-left: 24px;
-  }
-  .bar-switch {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 600;
-    cursor: pointer;
-  }
-  .switches {
-    display: grid;
-    gap: 8px;
-  }
-  .actions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-  .actions :global(.clay-button[data-variant="text"]) {
-    margin-left: 0;
-  }
-  :global(.view-group .clay-button.clay-button[aria-pressed="true"]) {
-    --clay-color: var(--clay-primary);
-    background: var(--clay-primary);
-    color: var(--clay-primary-on);
-  }
-  /* Beside the site sidebar, the demo's own permanent drawer needs a wider viewport. */
-  @media (min-width: 1200px) {
-    .perm {
-      display: block;
-    }
-    .menu-btn {
-      display: none;
-    }
-  }
-</style>

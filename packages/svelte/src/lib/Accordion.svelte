@@ -16,7 +16,7 @@
   }
 
   let {
-    expanded = $bindable(),
+    expanded,
     defaultExpanded,
     disabled,
     summary,
@@ -28,27 +28,37 @@
     ...rest
   }: Props = $props();
 
-  // The default is read once; a parent-provided or bound value takes priority.
-  const initialDefault = untrack(() => defaultExpanded);
-  const recipe = $derived(accordionRecipe({ expanded, defaultExpanded: initialDefault, disabled }));
+  const initialDefault = untrack(() => !!defaultExpanded);
+  let localOpen = $state(initialDefault);
+  let details = $state<HTMLDetailsElement>();
+  const isOpen = $derived(expanded !== undefined ? expanded : localOpen);
+  const recipe = $derived(accordionRecipe({ expanded: isOpen, disabled }));
 
   const handleToggle: NonNullable<Props["ontoggle"]> = (event) => {
     const open = event.currentTarget.open;
     // Parent-driven changes also queue native toggles; they already match the state.
-    if (open !== recipe.open) {
-      expanded = open;
+    if (open !== isOpen) {
+      if (expanded === undefined) localOpen = open;
       onChange?.(event, open);
+      if (expanded !== undefined) {
+        queueMicrotask(() => {
+          if (details && expanded !== undefined && details.open !== expanded) {
+            details.open = expanded;
+          }
+        });
+      }
     }
     ontoggle?.(event);
   };
 </script>
 
 <details
+  {...rest}
+  bind:this={details}
   class={["clay-accordion", className]}
   data-motion={motion}
   open={recipe.open}
   ontoggle={handleToggle}
-  {...rest}
   {@attach attachAccordion}
 >
   <summary class="clay clay-accordion__summary" data-clay-interactive {...recipe.summaryAttrs}>

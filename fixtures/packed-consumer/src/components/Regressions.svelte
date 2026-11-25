@@ -1,6 +1,14 @@
 <script lang="ts">
   import { tick } from "svelte";
-  import { Button, Checkbox, Dialog } from "@claymo/svelte";
+  import {
+    Button,
+    ButtonGroup,
+    Checkbox,
+    Chip,
+    DataTable,
+    Dialog,
+    TextField,
+  } from "@claymo/svelte";
 
   let open = $state(false);
   let reasons = $state<string[]>([]);
@@ -9,6 +17,7 @@
   let changes = $state(0);
   let dismissOpen = $state(false);
   let dismissReasons = $state<string[]>([]);
+  let showCsrDefault = $state(false);
 
   // Close then reopen in one interaction: the queued native `close` must not close it again.
   async function reopen() {
@@ -20,7 +29,7 @@
 
 <Button id="open-reopen" onclick={() => (open = true)}>Open reopen dialog</Button>
 <Dialog
-  bind:open
+  {open}
   title="Reopen dialog"
   onClose={(_event, reason) => {
     reasons.push(reason);
@@ -33,7 +42,7 @@
 
 <Button id="open-dismissible" onclick={() => (dismissOpen = true)}>Open dismissible dialog</Button>
 <Dialog
-  bind:open={dismissOpen}
+  open={dismissOpen}
   title="Dismissible dialog"
   dismissible
   closeText="Dismiss"
@@ -56,3 +65,22 @@
   <Button onclick={() => (mixed = !mixed)}>Toggle mixed</Button>
   <Button type="reset">Reset mixed form</Button>
 </form>
+
+<section aria-label="Consistency checks">
+  <label><Checkbox checked={false} /> Locked unchecked</label>
+  <TextField label="Locked text" value="locked" />
+  <Button id="mount-csr-default" onclick={() => (showCsrDefault = true)}
+    >Mount default checkbox</Button
+  >
+  {#if showCsrDefault}
+    <label><Checkbox defaultChecked /> CSR default checked</label>
+  {/if}
+  <Chip label="Pinned filter" clickable aria-pressed={true} />
+  <Button id="loading-link" href="/nowhere/" loading>Loading link</Button>
+  <ButtonGroup id="legend-group" variant="outlined" aria-label="Legend group">
+    <legend class="clay-sr-only">Actions</legend>
+    <Button>First</Button>
+    <Button>Second</Button>
+  </ButtonGroup>
+  <DataTable label="Empty inferred" rows={[]} />
+</section>

@@ -38,6 +38,7 @@ const {
 ---
 
 <div
+  {...rest}
   class:list={["clay-snackbar", className]}
   role="status"
   aria-live="polite"
@@ -50,7 +51,6 @@ const {
   data-clay-resume-hide={resumeHideDuration}
   data-clay-ignore-window-blur={disableWindowBlurListener ? "" : undefined}
   data-motion={motion}
-  {...rest}
 >
   <div class="clay-snackbar__wrapper" hidden={!open} inert={!open}>
     <slot>

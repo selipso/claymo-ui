@@ -26,14 +26,14 @@
 -->
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <div
-  class="clay clay-table {className}"
+  {...rest}
+  class={["clay clay-table", className]}
   data-sticky-header={stickyHeader ? "" : undefined}
   data-size={size}
   data-padding={padding}
   role="region"
   tabindex="0"
   aria-label={label}
-  {...rest}
 >
   <table class="clay-table__table">
     {@render children?.()}

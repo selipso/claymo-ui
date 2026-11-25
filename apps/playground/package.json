@@ -18,9 +18,13 @@
     "@astrojs/svelte": "^9.1.6",
     "@claymo/astro": "0.2.0",
     "@claymo/core": "0.2.0",
+    "@claymo/solid": "0.2.0",
     "@claymo/svelte": "0.2.0",
     "@lucide/svelte": "^1.73.0",
+    "@solidjs/vite-plugin": "^3.0.1",
+    "@solidjs/web": "^2.0.3",
     "astro": "^7.4.13",
+    "solid-js": "^2.0.3",
     "svelte": "^5.57.3"
   },
   "devDependencies": {

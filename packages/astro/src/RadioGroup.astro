@@ -53,17 +53,17 @@ const initial = value ?? defaultValue;
 ---
 
 <fieldset
-  aria-required={required || undefined}
-  data-motion={motion}
   {...rest}
   role="radiogroup"
   class:list={["clay-radio-group", className]}
-  data-row={row || undefined}
+  data-row={row ? "" : undefined}
+  data-motion={motion}
+  aria-required={required || undefined}
   {disabled}
 >
   {options ? (
     options.map((option) => (
-      <FormControlLabel label={option.label}>
+      <FormControlLabel label={option.label} disabled={disabled || option.disabled}>
         <Radio
           name={groupName}
           value={option.value}

@@ -7,9 +7,11 @@
   import Search from "@lucide/svelte/icons/search";
 
   import type { Color, Severity, Size } from "@claymo/core";
+  import type { DataTablePaginationModel } from "@claymo/core/display";
   import {
     Accordion,
     Alert,
+    Autocomplete,
     Avatar,
     Badge,
     Button,
@@ -21,6 +23,7 @@
     Checkbox,
     Chip,
     CircularProgress,
+    DataTable,
     Dialog,
     Divider,
     FormControlLabel,
@@ -45,6 +48,7 @@
     Tooltip,
     Typography,
   } from "@claymo/svelte";
+  import { formats, rows } from "./collection-data";
 
   const colors: Color[] = [
     "primary",
@@ -58,6 +62,11 @@
   const sizes: Size[] = ["small", "medium", "large"];
   const severities: Severity[] = ["success", "info", "warning", "error"];
   const variants = ["contained", "outlined", "text"] as const;
+  const columns = [
+    { field: "name", headerName: "Item" },
+    { field: "shelf", headerName: "Shelf" },
+    { field: "qty", headerName: "Qty", type: "number" as const },
+  ];
 
   interface MotionChoice {
     value: string;
@@ -79,6 +88,10 @@
   let dialog = $state(false);
   let loadingDemo = $state(false);
   let acc = $state(false);
+  let deletable = $state(true);
+  let clicked = $state(false);
+  let dismissed = $state<Severity[]>([]);
+  let pagination = $state<DataTablePaginationModel>({ page: 0, pageSize: 3 });
 
   function fakeLoad() {
     loadingDemo = true;
@@ -86,7 +99,7 @@
   }
 </script>
 
-<main class="page">
+<main class="component-gallery">
   <header class="clay masthead">
     <div class="intro">
       <Typography variant="overline" color="primary">Claymo UI / Pattern library</Typography>
@@ -122,7 +135,7 @@
               <Button>Save</Button>
               <Button variant="outlined">Cancel</Button>
               <IconButton aria-label={`Favorite, ${preset.label}`}><Heart /></IconButton>
-              <Checkbox aria-label={`Checkbox, ${preset.label}`} checked />
+              <Checkbox aria-label={`Checkbox, ${preset.label}`} defaultChecked />
               <Switch aria-label={`Switch, ${preset.label}`} />
             </div>
           </div>
@@ -202,24 +215,30 @@
 
     <Card as="section" aria-labelledby="g-text">
       <CardHeader
-        title="TextField"
-        subheader="outlined/filled, helperText, error, required, select, multiline, adornments, sizes"
+        title="TextField and Autocomplete"
+        subheader="outlined/filled, helperText, error, required, select, multiline, adornments, and searchable choices"
       />
       <CardContent>
-        <h3 id="g-text" class="clay-sr-only">TextField</h3>
+        <h3 id="g-text" class="clay-sr-only">TextField and Autocomplete</h3>
         <div class="grid">
           <TextField
             label="Outlined"
             placeholder="Type here"
-            bind:value={field}
+            value={field}
+            onChange={(e) => (field = (e.currentTarget as HTMLInputElement).value)}
             helperText="Helper text"
           />
           <TextField label="Filled" variant="filled" helperText="variant=&quot;filled&quot;" />
           <TextField label="Required" required helperText="required marks the label" />
-          <TextField label="Error" error value="not-an-email" helperText="Enter a valid email" />
+          <TextField
+            label="Error"
+            error
+            defaultValue="not-an-email"
+            helperText="Enter a valid email"
+          />
           <TextField label="Disabled" disabled value="Disabled value" />
           <TextField label="Small" size="small" />
-          <TextField label="Select" select value="b">
+          <TextField label="Select" select defaultValue="b">
             <option value="a">Alpha</option>
             <option value="b">Beta</option>
             <option value="c">Gamma</option>
@@ -228,8 +247,15 @@
           <TextField label="Adornments" placeholder="Search">
             {#snippet startAdornment()}<Search size={18} />{/snippet}
           </TextField>
+          <Autocomplete
+            label="Shelves"
+            options={formats}
+            multiple
+            filterSelectedOptions
+            placeholder="Choose shelves"
+          />
         </div>
-        <p class="label">Typed value (two-way bound): {field || "(empty)"}</p>
+        <p class="label">Typed value: {field || "(empty)"}</p>
       </CardContent>
     </Card>
 
@@ -244,11 +270,15 @@
           <div class="col">
             <p class="label">Checkbox</p>
             <FormControlLabel label="Checked"
-              >{#snippet control()}<Checkbox bind:checked={checkA} />{/snippet}</FormControlLabel
+              >{#snippet control()}<Checkbox
+                  checked={checkA}
+                  onChange={(_e, next) => (checkA = next)}
+                />{/snippet}</FormControlLabel
             >
             <FormControlLabel label="Unchecked"
               >{#snippet control()}<Checkbox
-                  bind:checked={checkB}
+                  checked={checkB}
+                  onChange={(_e, next) => (checkB = next)}
                   color="secondary"
                 />{/snippet}</FormControlLabel
             >
@@ -256,7 +286,10 @@
               >{#snippet control()}<Checkbox indeterminate />{/snippet}</FormControlLabel
             >
             <FormControlLabel label="Small"
-              >{#snippet control()}<Checkbox size="small" checked />{/snippet}</FormControlLabel
+              >{#snippet control()}<Checkbox
+                  size="small"
+                  defaultChecked
+                />{/snippet}</FormControlLabel
             >
             <FormControlLabel label="Disabled" disabled
               >{#snippet control()}<Checkbox disabled />{/snippet}</FormControlLabel
@@ -264,7 +297,11 @@
           </div>
           <div>
             <p class="label">Radio ({radio})</p>
-            <RadioGroup bind:value={radio} aria-label="Radio demo">
+            <RadioGroup
+              value={radio}
+              onChange={(_e, next) => (radio = String(next))}
+              aria-label="Radio demo"
+            >
               <FormControlLabel label="Alpha"
                 >{#snippet control()}<Radio value="a" />{/snippet}</FormControlLabel
               >
@@ -279,18 +316,22 @@
           <div class="col">
             <p class="label">Switch</p>
             <FormControlLabel label="On"
-              >{#snippet control()}<Switch bind:checked={sw1} />{/snippet}</FormControlLabel
+              >{#snippet control()}<Switch
+                  checked={sw1}
+                  onChange={(_e, next) => (sw1 = next)}
+                />{/snippet}</FormControlLabel
             >
             <FormControlLabel label="Off"
               >{#snippet control()}<Switch
-                  bind:checked={sw2}
+                  checked={sw2}
+                  onChange={(_e, next) => (sw2 = next)}
                   color="secondary"
                 />{/snippet}</FormControlLabel
             >
             <FormControlLabel label="Small"
               >{#snippet control()}<Switch
                   size="small"
-                  checked
+                  defaultChecked
                   color="success"
                 />{/snippet}</FormControlLabel
             >
@@ -301,13 +342,15 @@
           <div>
             <p class="label">Slider ({slider})</p>
             <Slider
-              bind:value={slider}
+              value={slider}
+              onChange={(_e, next) => (slider = next)}
               valueLabelDisplay="auto"
               aria-label="Slider with auto label"
             />
             <p class="label">marks + on ({slider2})</p>
             <Slider
-              bind:value={slider2}
+              value={slider2}
+              onChange={(_e, next) => (slider2 = next)}
               min={0}
               max={100}
               step={10}
@@ -334,8 +377,20 @@
           <Chip label="Default" />
           <Chip label="Outlined" variant="outlined" />
           {#each colors.slice(0, 6) as c}<Chip label={c} color={c} />{/each}
-          <Chip label="Deletable" onDelete={() => {}} />
-          <Chip label="Clickable" clickable onclick={() => {}} />
+          {#if deletable}
+            <Chip label="Deletable" onDelete={() => (deletable = false)} />
+          {:else}
+            <Button variant="text" size="small" onclick={() => (deletable = true)}>
+              Restore chip
+            </Button>
+          {/if}
+          <Chip
+            label="Clickable"
+            clickable
+            color={clicked ? "secondary" : "default"}
+            aria-pressed={clicked}
+            onclick={() => (clicked = !clicked)}
+          />
           <Chip label="Small" size="small" color="primary" />
           <Chip label="Disabled" disabled />
         </div>
@@ -365,8 +420,9 @@
           {#each severities as s}
             <Alert severity={s}>{s} / standard</Alert>
           {/each}
-          {#each severities as s}
-            <Alert severity={s} variant="filled" onClose={() => {}}>{s} / filled with onClose</Alert
+          {#each severities.filter((s) => !dismissed.includes(s)) as s (s)}
+            <Alert severity={s} variant="filled" onClose={() => (dismissed = [...dismissed, s])}
+              >{s} / filled with onClose</Alert
             >
           {/each}
           {#each severities as s}
@@ -375,6 +431,9 @@
         </div>
         <div class="wrap">
           <Button variant="outlined" onclick={() => (snack = true)}>Open Snackbar</Button>
+          {#if dismissed.length > 0}
+            <Button variant="text" onclick={() => (dismissed = [])}>Restore alerts</Button>
+          {/if}
         </div>
         <p class="label">LinearProgress</p>
         <div class="stack">
@@ -409,7 +468,7 @@
       />
       <CardContent>
         <h3 id="g-nav" class="clay-sr-only">Navigation and surfaces</h3>
-        <Tabs bind:value={tab} aria-label="Gallery tabs">
+        <Tabs value={tab} onChange={(_e, next) => (tab = next)} aria-label="Gallery tabs">
           <Tab value="one" label="One" />
           <Tab value="two" label="Two" />
           <Tab value="three" label="Disabled" disabled />
@@ -421,7 +480,7 @@
           {/snippet}
         </Tabs>
         <Divider />
-        <Accordion bind:expanded={acc}>
+        <Accordion expanded={acc} onChange={(_e, next) => (acc = next)}>
           {#snippet summary()}Accordion summary ({acc ? "open" : "closed"}){/snippet}
           <p>Native details and summary underneath.</p>
         </Accordion>
@@ -460,6 +519,29 @@
       </CardContent>
     </Card>
 
+    <Card as="section" aria-labelledby="g-table">
+      <CardHeader
+        title="DataTable"
+        subheader="Quick filter, sortable columns, row selection, and pagination"
+      />
+      <CardContent>
+        <h3 id="g-table" class="clay-sr-only">DataTable</h3>
+        <DataTable
+          {rows}
+          {columns}
+          getRowId={(row) => row.set}
+          rowHeader="name"
+          label="Sample shelf inventory"
+          quickFilter
+          checkboxSelection
+          pagination
+          paginationModel={pagination}
+          onPaginationModelChange={(next) => (pagination = next)}
+          pageSizeOptions={[3, 5]}
+        />
+      </CardContent>
+    </Card>
+
     <Card as="section" aria-labelledby="g-type">
       <CardHeader title="Typography and overlays" subheader="variants, Dialog" />
       <CardContent>
@@ -476,140 +558,11 @@
       </CardActions>
     </Card>
   </div>
-  <Snackbar bind:open={snack} message="Snackbar from the gallery" />
-  <Dialog bind:open={dialog} title="Dialog title" maxWidth="xs">
+  <Snackbar open={snack} onClose={() => (snack = false)} message="Snackbar from the gallery" />
+  <Dialog open={dialog} onClose={() => (dialog = false)} title="Dialog title" maxWidth="xs">
     <p>Native dialog: focus is trapped, Escape closes, focus returns to the opener.</p>
     {#snippet actions()}
       <Button variant="text" onclick={() => (dialog = false)}>Close</Button>
     {/snippet}
   </Dialog>
 </main>
-
-<style>
-  .page {
-    box-sizing: border-box;
-    min-height: 100dvh;
-    padding: 24px max(20px, calc((100% - 1100px) / 2)) 64px;
-    background: var(--clay-page);
-    color: var(--clay-ink);
-  }
-  .masthead {
-    --clay-d: 8px;
-    --clay-radius: 32px;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    margin-top: 20px;
-    padding: clamp(20px, 4vw, 44px);
-    border: var(--clay-border-width) solid var(--clay-edge);
-    background: linear-gradient(
-      118deg,
-      var(--clay-surface) 38%,
-      color-mix(in oklab, var(--clay-primary) 16%, var(--clay-surface)) 70%,
-      color-mix(in oklab, var(--clay-secondary) 22%, var(--clay-surface))
-    );
-  }
-  .intro {
-    flex: 1 1 22rem;
-    max-width: 60ch;
-  }
-  h1 {
-    font-size: clamp(2.25rem, 5vw, 4rem);
-    line-height: 1;
-    letter-spacing: -0.04em;
-    margin: 0.12em 0 0.28em;
-  }
-  .samples {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .samples span {
-    --clay-color: var(--c);
-    --clay-d: 3px;
-    width: 26px;
-    height: 26px;
-    border-radius: 50%;
-    border: var(--clay-border-width) solid color-mix(in oklab, var(--c-ink), transparent 45%);
-  }
-  .sections {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 32px;
-    margin-top: 24px;
-  }
-  .wrap {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    align-items: center;
-    padding: 8px 4px 16px;
-  }
-  .stack {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 14px;
-    padding: 8px 4px 16px;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-    gap: 24px;
-  }
-  .label {
-    margin: 12px 0 0;
-    font-weight: 600;
-    color: var(--clay-ink-muted);
-    font-size: 0.875rem;
-  }
-  .motion-row {
-    display: grid;
-    grid-template-columns: minmax(0, 18rem) minmax(0, 1fr);
-    gap: 8px 24px;
-    align-items: center;
-    padding: 12px 0;
-    border-top: var(--clay-border-width) solid
-      color-mix(in oklab, var(--clay-edge), transparent 60%);
-  }
-  .motion-row:first-of-type {
-    border-top: 0;
-  }
-  .motion-label {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 4px 8px;
-    color: var(--clay-ink-muted);
-    font-size: 0.875rem;
-  }
-  .motion-label strong {
-    color: var(--clay-ink);
-    font-size: 1rem;
-  }
-  .motion-tag {
-    padding: 0 8px;
-    border-radius: 999px;
-    background: color-mix(in oklab, var(--clay-secondary), transparent 80%);
-    color: var(--clay-secondary-ink);
-    font-weight: 600;
-    font-size: 0.75rem;
-  }
-  @media (max-width: 719px) {
-    .motion-row {
-      grid-template-columns: minmax(0, 1fr);
-    }
-  }
-  .col {
-    display: grid;
-    justify-items: start;
-    gap: 4px;
-    align-content: start;
-  }
-  :global(.swatch) {
-    padding: 20px 24px;
-    min-width: 120px;
-    text-align: center;
-  }
-</style>

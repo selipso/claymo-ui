@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext, onMount } from "svelte";
+  import { getContext, untrack } from "svelte";
   import type { HTMLInputAttributes } from "svelte/elements";
   import type { Color, MotionPreset, Size } from "@claymo/core";
 
@@ -7,7 +7,7 @@
 
   interface Props extends Omit<
     HTMLInputAttributes,
-    "color" | "size" | "type" | "role" | "checked" | "value" | "children"
+    "color" | "size" | "type" | "role" | "checked" | "defaultChecked" | "value" | "children"
   > {
     checked?: boolean;
     defaultChecked?: boolean;
@@ -24,7 +24,7 @@
   }
 
   let {
-    checked = $bindable(),
+    checked,
     defaultChecked,
     disabled = false,
     required = false,
@@ -42,19 +42,29 @@
 
   const form = getContext<{ readonly disabled: boolean } | undefined>("clay-form-control");
   const isDisabled = $derived(disabled || !!form?.disabled);
-  const isChecked = $derived(checked ?? defaultChecked ?? false);
+  const initialDefault = untrack(() => defaultChecked ?? false);
+  const resetChecked = $derived(checked ?? initialDefault);
+  let input = $state<HTMLInputElement>();
 
-  onMount(() => {
-    checked ??= isChecked;
+  $effect(() => {
+    if (input && checked !== undefined && input.checked !== checked) input.checked = checked;
   });
 
   function handleChange(event: ChangeEv) {
+    const next = event.currentTarget.checked;
     onchange?.(event);
-    onChange?.(event, event.currentTarget.checked);
+    onChange?.(event, next);
+    if (checked !== undefined) {
+      queueMicrotask(() => {
+        if (input && checked !== undefined && input.checked !== checked) input.checked = checked;
+      });
+    }
   }
 </script>
 
 <input
+  {...rest}
+  bind:this={input}
   type="checkbox"
   role="switch"
   class={["clay clay-switch", className]}
@@ -66,8 +76,7 @@
   {name}
   {value}
   {id}
-  defaultChecked={defaultChecked ?? false}
-  bind:checked={() => isChecked, (next) => (checked = next)}
+  defaultChecked={resetChecked}
+  checked={checked ?? initialDefault}
   onchange={handleChange}
-  {...rest}
 />

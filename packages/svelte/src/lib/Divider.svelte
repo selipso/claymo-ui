@@ -2,7 +2,7 @@
   import type { HTMLAttributes } from "svelte/elements";
   import type { DividerOptions } from "@claymo/core/surfaces";
 
-  interface Props extends HTMLAttributes<HTMLHRElement>, DividerOptions {}
+  interface Props extends Omit<HTMLAttributes<HTMLHRElement>, "children">, DividerOptions {}
 
   let {
     orientation = "horizontal",
@@ -14,10 +14,10 @@
 </script>
 
 <hr
+  {...rest}
   class={["clay-divider", className]}
   data-orientation={orientation}
   data-variant={variant}
   data-flex-item={flexItem ? "" : undefined}
   aria-orientation={orientation}
-  {...rest}
 />

@@ -1,5 +1,7 @@
 <script module lang="ts">
-  export interface DataTableRowParams<Row> {
+  import type { DataTableRow } from "@claymo/core/display";
+
+  export interface DataTableRowParams<Row = DataTableRow> {
     id: string;
     row: Row;
     /** Position in the `rows` prop. */
@@ -7,7 +9,7 @@
   }
 </script>
 
-<script lang="ts" generics="Row extends object">
+<script lang="ts" generics="Row extends object = DataTableRow">
   import type { Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import { actionIconAttrs } from "@claymo/core/actions";
@@ -37,7 +39,7 @@
     extends
       Omit<
         HTMLAttributes<HTMLDivElement>,
-        keyof DataTableOptions | "role" | "tabindex" | "aria-label"
+        keyof DataTableOptions | "role" | "tabindex" | "aria-label" | "children"
       >,
       DataTableOptions<Row, Snippet<[DataTableCellParams<Row>]>> {
     /** Makes rows clickable; the row header becomes their keyboard button. */
@@ -48,7 +50,7 @@
     onRowSelectionModelChange?: (rowSelectionModel: string[]) => void;
     /** Content before the quick filter, e.g. bulk actions. */
     toolbar?: Snippet;
-    /** Shown when `rows` is empty. */
+    /** Shown when `rows` is empty and the table is not loading. */
     noRows?: Snippet;
   }
 
@@ -58,12 +60,12 @@
     getRowId,
     rowHeader,
     checkboxSelection = false,
-    rowSelectionModel = $bindable([]),
-    sortModel = $bindable([]),
+    rowSelectionModel,
+    sortModel,
     quickFilter = false,
-    quickFilterValue = $bindable(""),
+    quickFilterValue,
     pagination = false,
-    paginationModel = $bindable({ ...dataTableDefaults.paginationModel }),
+    paginationModel,
     pageSizeOptions = dataTableDefaults.pageSizeOptions,
     sortingMode = dataTableDefaults.mode,
     filterMode = dataTableDefaults.mode,
@@ -85,6 +87,15 @@
     ...rest
   }: Props = $props();
 
+  let localSort = $state<DataTableSortModel>([]);
+  let localPage = $state<DataTablePaginationModel>({ ...dataTableDefaults.paginationModel });
+  let localFilter = $state("");
+  let localSelection = $state<readonly string[]>([]);
+  const currentSort = $derived(sortModel ?? localSort);
+  const currentPage = $derived(paginationModel ?? localPage);
+  const currentFilter = $derived(quickFilterValue ?? localFilter);
+  const currentSelection = $derived(rowSelectionModel ?? localSelection);
+
   const rowsPerPageId = $props.id();
   const locale = $derived({ ...dataTableLocaleText, ...localeText });
   const view = $derived(
@@ -94,39 +105,43 @@
       getRowId,
       rowHeader,
       rowCount,
-      sortModel,
-      quickFilterValue,
-      paginationModel: pagination ? paginationModel : undefined,
-      rowSelectionModel,
+      sortModel: currentSort,
+      quickFilterValue: currentFilter,
+      paginationModel: pagination ? currentPage : undefined,
+      rowSelectionModel: currentSelection,
       sortingMode,
       filterMode,
       paginationMode,
     }),
   );
+  const selected = $derived(new Set(currentSelection));
   const pageSizes = $derived(
     pageSizeOptions.map((option) => ({ value: option, label: String(option) })),
   );
 
   function sortBy(field: string) {
-    sortModel = nextSortModel(sortModel, field);
-    onSortModelChange?.(sortModel);
+    const next = nextSortModel(currentSort, field);
+    if (sortModel === undefined) localSort = next;
+    onSortModelChange?.(next);
   }
 
-  function setPage(page: number, pageSize = paginationModel.pageSize) {
-    paginationModel = { page, pageSize };
-    onPaginationModelChange?.(paginationModel);
+  function setPage(page: number, pageSize = currentPage.pageSize) {
+    const next = { page, pageSize };
+    if (paginationModel === undefined) localPage = next;
+    onPaginationModelChange?.(next);
   }
 
   // Filtering starts again from the first page.
   function setQuickFilter(event: Event) {
-    quickFilterValue = (event.currentTarget as HTMLInputElement).value;
-    if (pagination && paginationModel.page !== 0) setPage(0);
-    onQuickFilterValueChange?.(quickFilterValue);
+    const next = (event.currentTarget as HTMLInputElement).value;
+    if (quickFilterValue === undefined) localFilter = next;
+    if (pagination && view.page && view.page.page !== 0) setPage(0);
+    onQuickFilterValueChange?.(next);
   }
 
   function select(ids: readonly string[], checked: boolean) {
-    const next = toggleSelection(rowSelectionModel, ids, checked);
-    rowSelectionModel = next;
+    const next = toggleSelection(currentSelection, ids, checked);
+    if (rowSelectionModel === undefined) localSelection = next;
     onRowSelectionModelChange?.(next);
   }
 
@@ -152,7 +167,7 @@
           class="clay-data-table__quick-filter"
           aria-label={locale.toolbarQuickFilterLabel}
           placeholder={locale.toolbarQuickFilterPlaceholder}
-          value={quickFilterValue}
+          value={currentFilter}
           onChange={setQuickFilter}
         >
           {#snippet startAdornment()}
@@ -192,7 +207,7 @@
               data-field={column.field}
               data-type={column.type}
               data-align={column.align}
-              aria-sort={ariaSort(sortModel, column.field)}
+              aria-sort={ariaSort(currentSort, column.field)}
               style:width={column.width ? `${column.width}px` : undefined}
             >
               {#if column.sortable}
@@ -222,7 +237,7 @@
       <!-- svelte-ignore a11y_click_events_have_key_events, a11y_no_noninteractive_element_interactions -->
       <tbody onclick={onRowClick ? clickRow : undefined}>
         {#each view.visible as model (model.id)}
-          {@const isSelected = rowSelectionModel.includes(model.id)}
+          {@const isSelected = selected.has(model.id)}
           <tr
             data-id={model.id}
             data-index={model.index}
@@ -277,7 +292,7 @@
         {/each}
         {#if view.ordered.length === 0}
           <tr class="clay-data-table__empty">
-            <td colspan={view.columns.length + (checkboxSelection ? 1 : 0)}>
+            <td colspan={Math.max(1, view.columns.length + (checkboxSelection ? 1 : 0))}>
               {#if loading}
                 {locale.loadingLabel}
               {:else if rows.length === 0}
@@ -295,9 +310,7 @@
     <div class="clay-data-table__footer">
       {#if checkboxSelection}
         <span class="clay-data-table__selected" role="status">
-          {rowSelectionModel.length
-            ? fillTemplate(locale.footerRowSelected, { count: rowSelectionModel.length })
-            : ""}
+          {selected.size ? fillTemplate(locale.footerRowSelected, { count: selected.size }) : ""}
         </span>
       {/if}
       {#if view.page}

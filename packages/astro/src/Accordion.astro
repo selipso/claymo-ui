@@ -14,11 +14,11 @@ const recipe = accordionRecipe({ expanded, defaultExpanded, disabled });
 ---
 
 <details
+  {...rest}
   class:list={["clay-accordion", className]}
   open={recipe.open}
   data-clay-accordion
   data-motion={motion}
-  {...rest}
 >
   <summary class="clay clay-accordion__summary" data-clay-interactive {...recipe.summaryAttrs}>
     <span class="clay-accordion__title">

@@ -70,6 +70,7 @@ export const upgradeAutocompletes = disposableUpgrader<HTMLElement>(
         upgradeChips(chips);
       }
       if (name) {
+        const formAttr = input.getAttribute("form");
         fields.replaceChildren(
           ...selected.map((value) => {
             const field = root.ownerDocument.createElement("input");
@@ -77,6 +78,7 @@ export const upgradeAutocompletes = disposableUpgrader<HTMLElement>(
             field.name = name;
             field.value = value;
             field.disabled = input.disabled;
+            if (formAttr) field.setAttribute("form", formAttr);
             return field;
           }),
         );
@@ -224,7 +226,7 @@ export const upgradeAutocompletes = disposableUpgrader<HTMLElement>(
     list.addEventListener(
       "mousedown",
       (event) => {
-        if (event.target instanceof HTMLButtonElement) event.preventDefault();
+        event.preventDefault();
       },
       listener,
     );

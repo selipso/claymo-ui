@@ -103,7 +103,7 @@
   cursor: progress;
   opacity: 1;
 }
-.clay-button[data-loading]:disabled {
+.clay-button[data-loading]:is(:disabled, [aria-disabled="true"]) {
   opacity: 0.85;
 }
 

@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
   import type { HTMLInputAttributes } from "svelte/elements";
   import type { Color, MotionPreset, Size } from "@claymo/core";
+  import { afterFormReset } from "@claymo/core/behavior/input";
   import { sliderMarks, sliderPercent, sliderValue } from "@claymo/core/input";
 
   type InputEv = Event & { currentTarget: EventTarget & HTMLInputElement };
@@ -30,7 +31,7 @@
   }
 
   let {
-    value = $bindable(),
+    value,
     defaultValue,
     min = 0,
     max = 100,
@@ -51,28 +52,44 @@
   const uid = $props.id();
   const id = $derived(idProp ?? `clay-slider-${uid}`);
 
-  const resetValue = $derived(sliderValue(defaultValue ?? min, min, max, step));
-  const currentValue = $derived(
-    value === undefined ? resetValue : sliderValue(value, min, max, step),
-  );
+  const initialDefault = untrack(() => defaultValue ?? min);
+  let localValue = $state(untrack(() => sliderValue(initialDefault, min, max, step)));
+  const currentValue = $derived(sliderValue(value ?? localValue, min, max, step));
+  const resetValue = $derived(sliderValue(value ?? initialDefault, min, max, step));
   const pct = $derived(sliderPercent(currentValue, min, max));
   const ticks = $derived(marks ? sliderMarks(min, max, step) : []);
+  let input = $state<HTMLInputElement>();
+
+  $effect(() => {
+    if (input && input.value !== String(currentValue)) input.value = String(currentValue);
+  });
 
   onMount(() => {
-    value ??= currentValue;
+    if (!input) return;
+    return afterFormReset(input, () => {
+      if (value === undefined) localValue = sliderValue(initialDefault, min, max, step);
+      if (input) input.value = String(currentValue);
+    });
   });
 
   function handleInput(event: InputEv) {
+    const next = Number(event.currentTarget.value);
+    if (value === undefined) localValue = next;
     oninput?.(event);
-    onChange?.(event, Number(event.currentTarget.value));
+    onChange?.(event, next);
+    if (value !== undefined) {
+      queueMicrotask(() => {
+        if (input && input.value !== String(currentValue)) input.value = String(currentValue);
+      });
+    }
   }
 </script>
 
 <div
   class={["clay-slider", className]}
-  data-disabled={disabled || undefined}
-  data-has-label={valueLabelDisplay !== "off" || undefined}
-  data-has-marks={ticks.length > 0 || undefined}
+  data-disabled={disabled ? "" : undefined}
+  data-has-label={valueLabelDisplay !== "off" ? "" : undefined}
+  data-has-marks={ticks.length > 0 ? "" : undefined}
   data-color={color}
   data-size={size}
   data-label={valueLabelDisplay}
@@ -84,6 +101,8 @@
     <span class="clay clay-slider__bubble" aria-hidden="true">{currentValue}</span>
   {/if}
   <input
+    {...rest}
+    bind:this={input}
     type="range"
     class="clay clay-slider__input"
     {id}
@@ -92,9 +111,8 @@
     {step}
     {disabled}
     defaultValue={resetValue}
-    bind:value={() => currentValue, (next) => (value = next)}
+    value={currentValue}
     oninput={handleInput}
-    {...rest}
   />
   {#if ticks.length > 0}
     <span class="clay-slider__marks" aria-hidden="true">
@@ -102,7 +120,7 @@
         <span
           class="clay-slider__tick"
           data-value={tick}
-          data-active={tick <= currentValue || undefined}
+          data-active={tick <= currentValue ? "" : undefined}
           style:--clay-slider-tick={`${sliderPercent(tick, min, max)}%`}
         ></span>
       {/each}

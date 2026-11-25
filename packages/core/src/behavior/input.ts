@@ -1,11 +1,11 @@
 import { sliderPercent } from "../input.ts";
 import { afterFormReset } from "./form.ts";
-import { upgrader } from "./upgrade.ts";
+import { disposableUpgrader } from "./upgrade.ts";
 
 export * from "./autocomplete.ts";
 export { afterFormReset };
 
-export const upgradeSliders = upgrader<HTMLElement>("[data-clay-slider]", (root) => {
+export const upgradeSliders = disposableUpgrader<HTMLElement>("[data-clay-slider]", (root) => {
   const input = root.querySelector<HTMLInputElement>(".clay-slider__input");
   if (!input) return;
   const label = root.querySelector(".clay-slider__bubble");
@@ -22,6 +22,11 @@ export const upgradeSliders = upgrader<HTMLElement>("[data-clay-slider]", (root)
 
   input.addEventListener("input", sync);
   input.addEventListener("change", sync);
-  afterFormReset(input, sync);
+  const detachReset = afterFormReset(input, sync);
   sync();
+  return () => {
+    input.removeEventListener("input", sync);
+    input.removeEventListener("change", sync);
+    detachReset();
+  };
 });

@@ -10,7 +10,12 @@
     extends
       Omit<
         HTMLAttributes<HTMLDivElement>,
-        keyof LinearProgressOptions | "role" | "aria-valuemin" | "aria-valuemax" | "aria-valuenow"
+        | keyof LinearProgressOptions
+        | "role"
+        | "aria-valuemin"
+        | "aria-valuemax"
+        | "aria-valuenow"
+        | "children"
       >,
       LinearProgressOptions {
     "aria-label": string;
@@ -32,7 +37,8 @@
 </script>
 
 <div
-  class="clay clay-linear-progress {className}"
+  {...rest}
+  class={["clay clay-linear-progress", className]}
   data-variant={variant}
   role="progressbar"
   aria-label={ariaLabel}
@@ -40,7 +46,6 @@
   aria-valuemax={progress.range?.max}
   aria-valuenow={progress.range?.now}
   data-color={color}
-  {...rest}
 >
   {#if progress.buffer !== undefined}
     <div

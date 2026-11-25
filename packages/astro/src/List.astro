@@ -17,7 +17,7 @@ const named = rest["aria-label"] !== undefined || rest["aria-labelledby"] !== un
   data-dense={dense ? "" : undefined}
   data-padded={!disablePadding ? "" : undefined}
   role={rest.role ?? "list"}
-  aria-label={named ? rest["aria-label"] : subheader}
+  aria-label={named ? rest["aria-label"] : subheader || undefined}
 >
   {subheader && (
     <li class="clay-list__subheader" aria-hidden="true">

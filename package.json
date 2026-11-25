@@ -10,15 +10,18 @@
     "packages/core",
     "packages/svelte",
     "packages/astro",
+    "packages/solid",
     "packages/mcp",
     "apps/playground"
   ],
   "scripts": {
-    "prepare": "npm run build -w @claymo/core -w @claymo/svelte",
+    "prepare": "npm run build -w @claymo/core -w @claymo/svelte -w @claymo/solid",
     "start": "npm run dev",
     "dev": "npm run dev -w @claymo/playground",
+    "prebuild": "npm run check:contracts",
     "build": "npm run build --workspaces --if-present",
-    "check": "npm run check --workspaces --if-present",
+    "check": "npm run check:contracts && npm run check --workspaces --if-present",
+    "check:contracts": "node scripts/check-contracts.mjs",
     "test": "npm run test --workspaces --if-present",
     "test:e2e": "npm run test:e2e -w @claymo/playground",
     "test:packed": "node scripts/test-packed.mjs",
@@ -26,11 +29,13 @@
     "format:check": "prettier --check ."
   },
   "devDependencies": {
+    "@astrojs/astro2tsx": "^0.1.4",
     "@playwright/test": "^1.65.1",
     "prettier": "^3.10.1",
     "prettier-plugin-astro": "^1.1.2",
     "prettier-plugin-svelte": "^4.1.1",
     "publint": "^0.3.0",
+    "svelte2tsx": "^0.7.63",
     "typescript": "^6.0.3"
   }
 }

@@ -31,6 +31,7 @@ export interface ButtonRecipe {
 }
 
 export function buttonRecipe(o: ButtonOptions): ButtonRecipe {
+  const variant = o.variant ?? "contained";
   const inert = !!(o.disabled || o.loading);
   // The shared native-action contract: a disabled link keeps no href and leaves the tab order.
   const action = nativeAction({ href: o.href, type: o.type, disabled: inert });
@@ -39,12 +40,12 @@ export function buttonRecipe(o: ButtonOptions): ButtonRecipe {
     className: "clay clay-button",
     inert,
     attrs: {
-      "data-variant": o.variant ?? "contained",
+      "data-variant": variant,
       "data-color": o.color ?? "primary",
       "data-size": o.size ?? "medium",
       "data-full-width": flag(o.fullWidth),
       "data-no-elevation": flag(o.disableElevation),
-      "data-inflated": flag(o.inflated),
+      "data-inflated": flag(o.inflated && variant !== "text"),
       "data-loading": o.loading ? (o.loadingPosition ?? "center") : undefined,
       "data-clay-interactive": "",
       "aria-busy": o.loading ? "true" : undefined,

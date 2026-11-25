@@ -14,9 +14,9 @@ const components = listComponents("astro").map((name) => ({
   <main class="prose">
     <h1>Components</h1>
     <p>
-      Every component exists in <code>@claymo/astro</code> and <code>@claymo/svelte</code> with the
-      same name and props. Each page shows a live example, its source, props, content and events for
-      both frameworks. The same data is what the MCP server gives coding agents.
+      Every component is available in <code>@claymo/astro</code>, <code>@claymo/svelte</code> and
+      <code>@claymo/solid</code>. Each page shows live examples, source code, props, content and
+      events for each framework. The same data is what the MCP server gives coding agents.
     </p>
     <ul class="component-list">
       {components.map(({ name, href, purpose }) => (

@@ -9,6 +9,7 @@
     readonly name: string;
     readonly value: string | number | undefined;
     readonly resetValue: string | number | undefined;
+    readonly controlled: boolean;
     readonly disabled: boolean;
     readonly required: boolean;
     select(value: string | number, event: ChangeEv): void;
@@ -16,7 +17,7 @@
 
   interface Props extends Omit<
     HTMLInputAttributes,
-    "color" | "size" | "type" | "checked" | "value" | "children" | "group"
+    "color" | "size" | "type" | "checked" | "defaultChecked" | "value" | "children" | "group"
   > {
     /** Standalone use only; inside a RadioGroup the group's `value` decides. */
     checked?: boolean;
@@ -59,19 +60,33 @@
   const isDefaultChecked = $derived(
     group
       ? group.resetValue !== undefined && String(group.resetValue) === String(value)
-      : (defaultChecked ?? false),
+      : (checked ?? initialChecked),
   );
   const inputName = $derived(name ?? group?.name);
   const isDisabled = $derived(disabled || !!group?.disabled || !!form?.disabled);
+  let input = $state<HTMLInputElement>();
+
+  $effect(() => {
+    if (input && (group || checked !== undefined) && input.checked !== isChecked) {
+      input.checked = isChecked;
+    }
+  });
 
   function handleChange(event: ChangeEv) {
     onchange?.(event);
     group?.select(value, event);
     onChange?.(event, value);
+    if (!group && checked !== undefined) {
+      queueMicrotask(() => {
+        if (input && checked !== undefined && input.checked !== checked) input.checked = checked;
+      });
+    }
   }
 </script>
 
 <input
+  {...rest}
+  bind:this={input}
   type="radio"
   class={["clay clay-radio", className]}
   data-color={color}
@@ -85,5 +100,4 @@
   required={required || !!group?.required}
   disabled={isDisabled}
   onchange={handleChange}
-  {...rest}
 />

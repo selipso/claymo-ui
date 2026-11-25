@@ -1,8 +1,8 @@
 # Claymo UI
 
-Claymo is a proof-of-concept component library with soft, inflated clay surfaces and [Material UI](https://mui.com/material-ui/all-components/)-style APIs. Its Astro and Svelte bridges share one foundation: native HTML for semantics, CSS for appearance, and TypeScript for behavior.
+Claymo is a component library with soft, inflated clay surfaces and [Material UI](https://mui.com/material-ui/all-components/)-style APIs. Its Astro, Svelte 5, and Solid 2 bridges share native HTML for semantics, CSS for appearance, and TypeScript for behavior.
 
-Core recipes such as `buttonRecipe`, `paperRecipe`, and `tabRecipe` return the element, class, and attributes. Each bridge applies the recipe to native HTML and maps its own content, bindings, and events. Core implements behavior the browser doesn't provide: `moveTabFocus` handles tabs keyboard navigation, `attachDialog` handles Escape and backdrop close requests, and `bindIndeterminate` restores controlled mixed state after clicks and form reset. Renderers that work directly with the DOM can use the `upgrade*` controllers.
+Core recipes such as `buttonRecipe`, `paperRecipe`, and `tabRecipe` return the element, class, and attributes. Each bridge applies the recipe to native HTML and maps its own content, props, callbacks, and events. Core implements behavior the browser doesn't provide: `moveTabFocus` handles tabs keyboard navigation, `attachDialog` handles Escape and backdrop close requests, and `bindIndeterminate` restores controlled mixed state after clicks and form reset. Renderers that work directly with the DOM can use the `upgrade*` controllers.
 
 ## Can CSS render claymorphism?
 
@@ -25,10 +25,12 @@ Run `npm start` and open the Lab at `/lab/` to compare the four stages and see t
 | `packages/core`             | `@claymo/core`                               | `claymo.css` (tokens, material, and component styles), optional `page.css`, server-safe recipes, DOM controllers (`@claymo/core/behavior/*`), and the component reference |
 | `packages/svelte`           | `@claymo/svelte`                             | Svelte 5.57+ bridge, built with `svelte-package` and styled by core                                                                                                       |
 | `packages/astro`            | `@claymo/astro`, `@claymo/astro/integration` | Server-rendered `.astro` components with client controllers and an integration for styles and optional Svelte islands                                                     |
+| `packages/solid`            | `@claymo/solid`                              | Solid 2 JSX components with separate browser and server builds; consumes the same core recipes and styles                                                                 |
 | `packages/mcp`              | `@claymo/mcp`                                | Read-only stdio server (`claymo-mcp`) backed by `@claymo/core/reference`                                                                                                  |
 | `apps/playground`           | `@claymo/playground` (private)               | Documentation and demos using workspace packages                                                                                                                          |
 | `fixtures/packed-consumer`  | Not a workspace                              | Astro and Svelte app installed from tarballs in a temporary directory so hoisted dependencies can't mask packaging gaps                                                   |
 | `fixtures/packed-sveltekit` | Not a workspace                              | SvelteKit app built using setup files and component examples returned by `claymo-mcp`                                                                                     |
+| `fixtures/packed-solid`     | Not a workspace                              | Solid 2 Vite app built from the MCP setup and examples; checks SSR, hydration and browser interactions                                                                    |
 
 ## Where to go next
 

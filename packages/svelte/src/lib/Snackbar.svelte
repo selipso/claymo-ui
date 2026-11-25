@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import { untrack, type Snippet } from "svelte";
   import type { HTMLAttributes } from "svelte/elements";
   import type { MotionPreset } from "@claymo/core";
   import {
@@ -12,6 +12,8 @@
 
   interface Props extends Omit<HTMLAttributes<HTMLDivElement>, "role"> {
     open?: boolean;
+    /** Initial visibility when `open` is omitted. */
+    defaultOpen?: boolean;
     message?: string;
     action?: Snippet;
     /** ms before closing with reason "timeout"; `null` keeps it open. */
@@ -28,7 +30,8 @@
   }
 
   let {
-    open = $bindable(false),
+    open,
+    defaultOpen = false,
     message,
     action,
     autoHideDuration = snackbarAutoHideDuration,
@@ -42,29 +45,35 @@
     ...rest
   }: Props = $props();
 
+  let localOpen = $state(untrack(() => open ?? defaultOpen));
+  $effect.pre(() => {
+    if (open !== undefined) localOpen = open;
+  });
+  const isOpen = $derived(onClose && open !== undefined ? open : localOpen);
+
   function requestClose(event: Event | null, reason: SnackbarCloseReason) {
     if (onClose) onClose(event, reason);
-    else open = false;
+    else localOpen = false;
   }
 </script>
 
 <!-- Keep the live region mounted before content arrives. -->
 <div
+  {...rest}
   class={["clay-snackbar", className]}
   role="status"
   aria-live="polite"
   aria-atomic="true"
   data-vertical={anchorOrigin.vertical}
   data-horizontal={anchorOrigin.horizontal}
-  data-clay-open={open ? "" : undefined}
+  data-clay-open={isOpen ? "" : undefined}
   data-clay-auto-hide={autoHideDuration ?? undefined}
   data-clay-resume-hide={resumeHideDuration}
   data-clay-ignore-window-blur={disableWindowBlurListener ? "" : undefined}
   data-motion={motion}
-  {...rest}
   {@attach (node) => attachSnackbar(node, requestClose)}
 >
-  <div class="clay-snackbar__wrapper" hidden={!open} inert={!open}>
+  <div class="clay-snackbar__wrapper" hidden={!isOpen} inert={!isOpen}>
     {#if children}
       {@render children()}
     {:else}

@@ -3,9 +3,11 @@ import type { HTMLAttributes } from "astro/types";
 import type { MotionPreset } from "@claymo/core";
 import { checkboxRecipe, type CheckboxOptions } from "@claymo/core";
 
-type Props = Omit<HTMLAttributes<"input">, "type" | "size" | "color"> &
+type Props = Omit<HTMLAttributes<"input">, "type" | "size" | "color" | "value"> &
   CheckboxOptions & {
     defaultChecked?: boolean;
+    /** A checkbox submits one scalar value, serialized as text. */
+    value?: string | number;
     /** Initial mixed state; a user click clears it, form reset restores it. */
     indeterminate?: boolean;
     /** Motion preset for this component and its contents; omitted, it inherits the surrounding preset (default subtle). */
@@ -26,13 +28,13 @@ const recipe = checkboxRecipe({ color, size });
 ---
 
 <input
+  {...rest}
   type="checkbox"
   {...recipe.attrs}
   class:list={[recipe.className, className]}
   data-clay-indeterminate={indeterminate ? "" : undefined}
   checked={checked ?? defaultChecked}
   data-motion={motion}
-  {...rest}
 />
 
 <script>

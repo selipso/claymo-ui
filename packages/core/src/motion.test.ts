@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "node:test";
-import { getComponent, listComponents, theme } from "../reference/index.js";
+import { frameworks, getComponent, listComponents, theme } from "../reference/index.js";
 import { motionPresets } from "./motion.ts";
 
 const css = readFileSync(new URL("../css/motion.css", import.meta.url), "utf8");
@@ -53,8 +53,8 @@ test("every preset finishes within 300ms and never overshoots", () => {
   }
 });
 
-test("components that animate expose the motion prop in both bridges", () => {
-  for (const framework of ["astro", "svelte"] as const) {
+test("components that animate expose the motion prop in every bridge", () => {
+  for (const framework of frameworks) {
     for (const name of listComponents(framework)) {
       const motion = getComponent(framework, name).props.properties.motion;
       assert.equal(Boolean(motion), theme.motion.components.includes(name), `${framework} ${name}`);

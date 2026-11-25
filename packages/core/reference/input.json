@@ -57,6 +57,15 @@
         "default": 3,
         "description": "Visible textarea rows; the textarea is vertically resizable."
       },
+      "cols": {
+        "type": ["number", "string"],
+        "description": "Native textarea column width in multiline mode."
+      },
+      "wrap": {
+        "type": "string",
+        "enum": ["hard", "soft", "off"],
+        "description": "Native textarea wrap mode in multiline mode."
+      },
       "select": {
         "type": "boolean",
         "default": false,
@@ -81,6 +90,35 @@
         "imports": ["TextField", "Button"],
         "required": [],
         "props": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "button",
+              "checkbox",
+              "color",
+              "date",
+              "datetime-local",
+              "email",
+              "file",
+              "hidden",
+              "image",
+              "month",
+              "number",
+              "password",
+              "radio",
+              "range",
+              "reset",
+              "search",
+              "submit",
+              "tel",
+              "text",
+              "time",
+              "url",
+              "week"
+            ],
+            "default": "text",
+            "description": "Native input type; only used for the input mode."
+          },
           "value": {
             "type": ["string", "number", "null"],
             "description": "SSR starting value and form reset default. Overrides defaultValue. In select mode, use with options."
@@ -110,11 +148,14 @@
         "props": {
           "value": {
             "type": ["string", "number", "null"],
-            "description": "Live value; supports bind:value. Native number inputs bind a number, or undefined when empty."
+            "description": "Controlled native control value. Update it in onChange to accept user input. Null represents an empty value."
           },
           "defaultValue": {
             "type": ["string", "number", "null"],
-            "description": "Initial value when value is omitted, and native form reset default. In select mode, match an option's value and type."
+            "description": "Initial and form reset value when uncontrolled. With no value or defaultValue, a select uses its native option defaults."
+          },
+          "onChange": {
+            "description": "Callback (event: Event) => void following input for input/textarea, or change for select."
           }
         },
         "content": [
@@ -128,7 +169,7 @@
         "examples": [
           {
             "title": "Text and select fields",
-            "source": "<script lang=\"ts\">\n  let shelf = $state('paper');\n</script>\n\n<form>\n  <TextField label=\"Display name\" name=\"displayName\" required helperText=\"Shown on your profile\" />\n  <TextField label=\"Shelf\" name=\"shelf\" select bind:value={shelf} defaultValue=\"paper\">\n    <option value=\"paper\">Paper</option>\n    <option value=\"digital\">Digital</option>\n  </TextField>\n</form>"
+            "source": "<script lang=\"ts\">\n  let shelf = $state('paper');\n</script>\n\n<form>\n  <TextField label=\"Display name\" name=\"displayName\" required helperText=\"Shown on your profile\" />\n  <TextField label=\"Shelf\" name=\"shelf\" select value={shelf} onChange={(event) => (shelf = (event.currentTarget as HTMLSelectElement).value)}>\n    <option value=\"paper\">Paper</option>\n    <option value=\"digital\">Digital</option>\n  </TextField>\n</form>"
           }
         ]
       }
@@ -190,6 +231,10 @@
         "type": "string",
         "description": "Native form field name. Each selected value is submitted as a separate entry with this name."
       },
+      "form": {
+        "type": "string",
+        "description": "Id of the associated form when the control is not nested in it."
+      },
       "filterSelectedOptions": {
         "type": "boolean",
         "default": false,
@@ -239,17 +284,20 @@
           "value": {
             "type": ["string", "null", "array"],
             "items": { "type": "string" },
-            "description": "Live selection; supports bind:value. A string or null for single selection, an array of strings for multiple."
+            "description": "Controlled selection: a string or null in single mode, or an array of strings in multiple mode."
           },
           "defaultValue": {
             "type": ["string", "null", "array"],
             "items": { "type": "string" },
-            "description": "Initial selection when value is omitted; null for single selection or an empty array for multiple by default."
+            "description": "Initial and form reset selection when uncontrolled. Defaults to no selection."
+          },
+          "onChange": {
+            "description": "Callback (event: Event, value: string | null | string[]) => void on a user selection change."
           }
         },
         "content": [],
         "events": [
-          "onChange(event, value): called on a user selection change with the native event and the new value (string or null for single selection, string[] for multiple)."
+          "onChange(event, value): called on a user selection change with the native event and the new value (string or null for single selection, string[] for multiple). Form reset does not fire it."
         ],
         "examples": [
           {
@@ -258,7 +306,7 @@
           },
           {
             "title": "Creatable tags (freeSolo)",
-            "source": "<script lang=\"ts\">\n  let topics = $state<string[]>(['TypeScript']);\n</script>\n\n<Autocomplete label=\"Topics\" options={['CSS', 'Accessibility', 'TypeScript']} multiple freeSolo bind:value={topics} />\n<p>Selected values: <output aria-label=\"Selected topics\">{topics.join(', ') || 'None'}</output></p>"
+            "source": "<script lang=\"ts\">\n  let topics = $state<string[]>(['TypeScript']);\n</script>\n\n<Autocomplete label=\"Topics\" options={['CSS', 'Accessibility', 'TypeScript']} multiple freeSolo value={topics} onChange={(_event, next) => (topics = next)} />\n<p>Selected values: <output aria-label=\"Selected topics\">{topics.join(', ') || 'None'}</output></p>"
           },
           {
             "title": "Single value in a form",
@@ -272,6 +320,7 @@
     "purpose": "A single-thumb, horizontal native range input with a clay track. Name it with aria-label; native form attributes are forwarded to the range input and class styles the wrapper.",
     "props": {
       "aria-label": { "type": "string", "description": "Accessible name for the range input." },
+      "id": { "type": "string", "description": "Id of the native range input." },
       "name": { "type": "string", "description": "Native form field name." },
       "form": {
         "type": "string",
@@ -345,22 +394,28 @@
         "imports": ["Slider", "Button"],
         "required": ["aria-label"],
         "props": {
-          "value": { "type": "number", "description": "Live numeric value; supports bind:value." },
+          "value": {
+            "type": "number",
+            "description": "Controlled numeric value, bounded and rounded to the current step grid."
+          },
           "defaultValue": {
             "type": "number",
-            "description": "Starting value when value is omitted, and native reset default. Defaults to min."
+            "description": "Initial and form reset value when uncontrolled. Defaults to the starting minimum."
+          },
+          "onChange": {
+            "description": "Callback (event: Event, value: number) => void on every input."
           }
         },
         "content": [],
         "events": [
           "oninput(event): native input handler, called first.",
-          "onChange(event, value): Svelte callback on every input with the numeric value.",
+          "onChange(event, value): Svelte callback on every input with the numeric value. Form reset does not fire it.",
           "onchange(event): native committed change event on the input."
         ],
         "examples": [
           {
             "title": "Reset a volume slider",
-            "source": "<script lang=\"ts\">\n  let volume = $state(25);\n</script>\n\n<form>\n  <Slider name=\"volume\" aria-label=\"Volume\" bind:value={volume} defaultValue={25} step={25} marks valueLabelDisplay=\"on\" />\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
+            "source": "<form>\n  <Slider name=\"volume\" aria-label=\"Volume\" defaultValue={25} step={25} marks valueLabelDisplay=\"on\" />\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
           }
         ]
       }
@@ -371,15 +426,19 @@
     "props": {
       "checked": {
         "type": "boolean",
-        "default": false,
-        "description": "Starting checkedness in Astro; live checkedness in Svelte, which supports bind:checked."
+        "description": "Checked state."
       },
       "defaultChecked": {
         "type": "boolean",
         "default": false,
-        "description": "Starting checkedness when checked is omitted; native reset default in Svelte. In Astro, checked takes precedence for both initial and reset state."
+        "description": "Initial checked state when checked is omitted."
       },
+      "id": { "type": "string", "description": "Id of the native switch input." },
       "name": { "type": "string", "description": "Native form field name." },
+      "form": {
+        "type": "string",
+        "description": "Id of the associated form when the control is not nested in it."
+      },
       "value": {
         "type": ["string", "number"],
         "default": "on",
@@ -411,7 +470,17 @@
       "astro": {
         "imports": ["Switch", "FormControlLabel"],
         "required": [],
-        "props": {},
+        "props": {
+          "checked": {
+            "type": "boolean",
+            "description": "Starting checkedness and native form reset default."
+          },
+          "defaultChecked": {
+            "type": "boolean",
+            "default": false,
+            "description": "Starting checkedness and reset default when checked is omitted."
+          }
+        },
         "content": [],
         "events": ["Native input and change events on the checkbox; no component callback prop."],
         "examples": [
@@ -424,16 +493,29 @@
       "svelte": {
         "imports": ["Switch", "FormControlLabel"],
         "required": [],
-        "props": {},
+        "props": {
+          "checked": {
+            "type": "boolean",
+            "description": "Controlled checked state. Omit to let the native input handle user changes and form reset."
+          },
+          "defaultChecked": {
+            "type": "boolean",
+            "default": false,
+            "description": "Initial and native form reset state when checked is omitted."
+          },
+          "onChange": {
+            "description": "Callback (event: Event, checked: boolean) => void on native change with the next checked state."
+          }
+        },
         "content": [],
         "events": [
           "onchange(event): native change handler, called first.",
-          "onChange(event, checked): Svelte callback with the current checkedness. Use bind:checked for live state and form resets."
+          "onChange(event, checked): Svelte callback with the next checkedness. Form reset does not fire it."
         ],
         "examples": [
           {
             "title": "Email alerts switch",
-            "source": "<script lang=\"ts\">\n  let alerts = $state(true);\n</script>\n\n<FormControlLabel label=\"Email alerts\">\n  {#snippet control()}<Switch name=\"alerts\" value=\"yes\" bind:checked={alerts} defaultChecked />{/snippet}\n</FormControlLabel>"
+            "source": "<script lang=\"ts\">\n  let alerts = $state(true);\n</script>\n\n<FormControlLabel label=\"Email alerts\">\n  {#snippet control()}<Switch name=\"alerts\" value=\"yes\" checked={alerts} onChange={(_event, next) => (alerts = next)} />{/snippet}\n</FormControlLabel>"
           }
         ]
       }
@@ -450,7 +532,7 @@
       "disabled": {
         "type": "boolean",
         "default": false,
-        "description": "Dims the label and disables the wrapped control (native fieldset in Astro; Claymo context in Svelte)."
+        "description": "Dims the label and disables the wrapped control."
       }
     },
     "bridges": {
@@ -461,6 +543,11 @@
           "label": {
             "type": "string",
             "description": "Visible text used when the label slot is not supplied."
+          },
+          "disabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Dims the label and disables the wrapped control via a native fieldset."
           }
         },
         "content": [
@@ -484,6 +571,11 @@
           "label": {
             "type": "string",
             "description": "Visible text; a Svelte snippet is also accepted in markup."
+          },
+          "disabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Dims the label and disables a nested Claymo Checkbox, Radio, or Switch through context."
           }
         },
         "content": ["Required control snippet: render a Checkbox, Radio or Switch to label."],
@@ -506,17 +598,20 @@
       },
       "name": {
         "type": "string",
-        "description": "Native radio name. In Svelte a RadioGroup supplies the name unless overridden; in Astro use an explicit shared name for standalone/slotted radios."
+        "description": "Native radio name."
       },
       "checked": {
         "type": "boolean",
-        "default": false,
-        "description": "Initial checkedness in Astro and standalone checked prop in Svelte; ignored in Svelte RadioGroup."
+        "description": "Checked state."
       },
       "defaultChecked": {
         "type": "boolean",
         "default": false,
-        "description": "Standalone reset default and starting state if checked is omitted. In Astro checked takes precedence for both initial and reset state."
+        "description": "Initial and form reset checked state when checked is omitted."
+      },
+      "form": {
+        "type": "string",
+        "description": "Id of the associated form when the control is not nested in it."
       },
       "required": {
         "type": "boolean",
@@ -544,7 +639,21 @@
       "astro": {
         "imports": ["Radio", "FormControlLabel"],
         "required": ["value"],
-        "props": {},
+        "props": {
+          "name": {
+            "type": "string",
+            "description": "Native radio name; use an explicit shared name for standalone/slotted radios."
+          },
+          "checked": {
+            "type": "boolean",
+            "description": "Initial checkedness and native form reset default."
+          },
+          "defaultChecked": {
+            "type": "boolean",
+            "default": false,
+            "description": "Starting state and reset default when checked is omitted."
+          }
+        },
         "content": [],
         "events": [
           "Native input and change events on the newly selected radio; no component callback prop."
@@ -559,11 +668,28 @@
       "svelte": {
         "imports": ["Radio", "FormControlLabel"],
         "required": ["value"],
-        "props": {},
+        "props": {
+          "name": {
+            "type": "string",
+            "description": "Native field name; inherits the RadioGroup name when omitted inside a group."
+          },
+          "checked": {
+            "type": "boolean",
+            "description": "Standalone controlled checked state; ignored inside RadioGroup."
+          },
+          "defaultChecked": {
+            "type": "boolean",
+            "default": false,
+            "description": "Standalone initial and native form reset state; ignored inside RadioGroup."
+          },
+          "onChange": {
+            "description": "Callback (event: Event, value: string | number) => void on the newly checked radio."
+          }
+        },
         "content": [],
         "events": [
           "onchange(event): native change handler on the newly selected radio, called first.",
-          "onChange(event, value): Svelte callback with the supplied option value. Bind RadioGroup value for reactive group selection."
+          "onChange(event, value): Svelte callback with the supplied option value."
         ],
         "examples": [
           {
@@ -585,7 +711,7 @@
       "disabled": {
         "type": "boolean",
         "default": false,
-        "description": "Disable the radios as a group (native fieldset in Astro; Radio context in Svelte)."
+        "description": "Disable the radios as a group."
       },
       "options": {
         "type": "array",
@@ -624,6 +750,11 @@
         "imports": ["RadioGroup", "Button"],
         "required": [],
         "props": {
+          "disabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Disables the radios as a group via a native fieldset."
+          },
           "name": {
             "type": "string",
             "description": "Shared native name in data-driven mode; generated from id or a unique id if omitted. Set a name explicitly to read it reliably from FormData."
@@ -659,34 +790,42 @@
         "imports": ["RadioGroup", "Radio", "FormControlLabel", "Button"],
         "required": [],
         "props": {
+          "disabled": {
+            "type": "boolean",
+            "default": false,
+            "description": "Disables all Claymo Radio controls in the group through context."
+          },
           "name": {
             "type": "string",
             "description": "Shared native name given to child Radio components; generated if omitted. Set explicitly to read it reliably from FormData."
           },
           "value": {
             "type": ["string", "number"],
-            "description": "Live selected value, matched by serialized value. Supports bind:value."
+            "description": "Controlled selection. Compared to each radio by serialized value."
           },
           "defaultValue": {
             "type": ["string", "number"],
-            "description": "Initial selection when value is omitted, and native reset default. Without defaultValue, form reset restores the starting value."
+            "description": "Initial selection and form reset default when uncontrolled."
           },
           "required": {
             "type": "boolean",
             "default": false,
             "description": "Pass required to the child radios for native validation."
+          },
+          "onChange": {
+            "description": "Callback (event: Event, value: string | number) => void when a user chooses a radio."
           }
         },
         "content": [
           "Use options or a children snippet, not both. Supply Radio components with unique serialized values, usually wrapped with FormControlLabel. Group context passes through the label wrappers."
         ],
         "events": [
-          "onChange(event, value): called after a user selects a new Radio; value retains the Radio prop's string or number type. Form reset updates bind:value without firing onChange."
+          "onChange(event, value): called after a user selects a new Radio; value retains the Radio prop's string or number type. Form reset does not fire it."
         ],
         "examples": [
           {
             "title": "Reset a radio group",
-            "source": "<script lang=\"ts\">\n  let format = $state('paper');\n</script>\n\n<form>\n  <RadioGroup name=\"format\" aria-label=\"Preferred format\" bind:value={format} defaultValue=\"paper\" required>\n    <FormControlLabel label=\"Paper\">\n      {#snippet control()}<Radio value=\"paper\" />{/snippet}\n    </FormControlLabel>\n    <FormControlLabel label=\"Digital\">\n      {#snippet control()}<Radio value=\"digital\" />{/snippet}\n    </FormControlLabel>\n  </RadioGroup>\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
+            "source": "<form>\n  <RadioGroup name=\"format\" aria-label=\"Preferred format\" defaultValue=\"paper\" required>\n    <FormControlLabel label=\"Paper\">\n      {#snippet control()}<Radio value=\"paper\" />{/snippet}\n    </FormControlLabel>\n    <FormControlLabel label=\"Digital\">\n      {#snippet control()}<Radio value=\"digital\" />{/snippet}\n    </FormControlLabel>\n  </RadioGroup>\n  <Button type=\"reset\" variant=\"outlined\">Reset</Button>\n</form>"
           }
         ]
       }

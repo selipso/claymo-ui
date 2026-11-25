@@ -1,0 +1,15 @@
+{
+  "name": "claymo-packed-solid",
+  "private": true,
+  "type": "module",
+  "description": "Disposable Solid 2 Vite consumer for the workspace tarballs.",
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "@playwright/test": "^1.65.1",
+    "@solidjs/vite-plugin": "^3.0.1",
+    "@solidjs/web": "^2.0.3",
+    "solid-js": "^2.0.3",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.8"
+  }
+}

@@ -2,7 +2,9 @@
 import type { HTMLAttributes } from "astro/types";
 import { typographyTag, type TypographyOptions } from "@claymo/core/surfaces";
 
-type Props = Omit<HTMLAttributes<"p">, "color"> & TypographyOptions;
+type Props = Omit<HTMLAttributes<"p">, "color"> &
+  Pick<HTMLAttributes<"label">, "for"> &
+  TypographyOptions;
 
 const {
   variant = "body1",
@@ -19,13 +21,13 @@ const Tag = typographyTag(variant, as, variantMapping);
 ---
 
 <Tag
+  {...rest}
   class:list={["clay-typography", className]}
   data-variant={variant}
   data-gutter-bottom={gutterBottom ? "" : undefined}
   data-no-wrap={noWrap ? "" : undefined}
   data-tcolor={color}
   data-align={align}
-  {...rest}
 >
   <slot />
 </Tag>

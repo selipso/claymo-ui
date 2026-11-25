@@ -31,7 +31,7 @@
   if (!ctx) throw new Error("<Tab> must be rendered inside <Tabs>.");
 
   const recipe = $derived(
-    tabRecipe({ value, selected: ctx.value, enabled: ctx.enabled, ids: ctx.ids }),
+    tabRecipe({ value, selected: ctx.value, enabled: ctx.enabled, ids: ctx.ids, disabled }),
   );
 
   $effect(() => {
@@ -41,23 +41,23 @@
 
   function handleClick(event: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
     (onclick as ((e: typeof event) => void) | undefined)?.(event);
-    if (!event.defaultPrevented) ctx.select(event, value);
+    if (!disabled && !event.defaultPrevented) ctx.select(event, value);
   }
 
   function handleKeydown(
     event: KeyboardEvent & { currentTarget: EventTarget & HTMLButtonElement },
   ) {
     (onkeydown as ((e: typeof event) => void) | undefined)?.(event);
-    if (!event.defaultPrevented) moveTabFocus(event, event.currentTarget);
+    if (!disabled && !event.defaultPrevented) moveTabFocus(event, event.currentTarget);
   }
 </script>
 
 <button
+  {...rest}
   {...recipe.attrs}
   class={[recipe.className, className]}
   data-motion={motion}
   {disabled}
-  {...rest}
   onclick={handleClick}
   onkeydown={handleKeydown}
 >
